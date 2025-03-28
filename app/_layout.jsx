@@ -20,6 +20,7 @@ export default function RootLayout() {
     Poppins: require('../assets/fonts/Poppins-Black.ttf'),
     PoppinsLight:require('../assets/fonts/Poppins-Light.ttf'),
     PoppinsBold: require('../assets/fonts/Poppins-Bold.ttf'),
+    Grotesk: require('../assets/fonts/SpaceGrotesk-VariableFont_wght.ttf'),
 
   });
 
