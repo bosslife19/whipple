@@ -2,6 +2,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from "react";
 import AppIntroSlider from "react-native-app-intro-slider";
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 
 export const onboardingSwiperData = [
   {
@@ -41,6 +42,9 @@ export const onboardingSwiperData = [
 const Onboarding = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const handleGetStarted = async () => {
+     router.push("/auth/login");
+  }; 
   const renderItem = ({ item }) => (
     <LinearGradient style={styles.container} 
     colors={['rgba(238, 246, 255, 1)', 'white',]} 
@@ -50,8 +54,6 @@ const Onboarding = () => {
     <View  style={styles.ellipse}>
         {/* <LinearGradient colors={['rgb(183, 208, 236)', 'white']}></LinearGradient> */}
     </View>
-    
-
     <View style={styles.imageContainer}>
       <Image resizeMode='contain' style={styles.winImage} source={item.image}/>
     </View>
@@ -92,7 +94,7 @@ const Onboarding = () => {
         </View>
       )}
       renderDoneButton={() => (
-        <View style={styles.lowContainer}>
+        <TouchableOpacity onPress={handleGetStarted} style={styles.lowContainer}>
           <View style={styles.navigation}>
             {onboardingSwiperData.map((_, index) => (
               <View
@@ -108,7 +110,7 @@ const Onboarding = () => {
             <Text style={styles.buttonText}>Get Started</Text>
             <Image source={require('../../assets/icons/right-arrow.png')}/>
           </View>
-        </View>
+        </TouchableOpacity>
       )}
       showSkipButton={false}
       bottomButton={true}
