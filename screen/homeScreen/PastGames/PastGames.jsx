@@ -1,14 +1,20 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View, Image } from 'react-native';
-import gameImage from "../../../assets/images/girlwinning.png"; // Renamed for clarity
+import gameImage from "../../../assets/images/Rectangle 6.png"; // Renamed for clarity
+import gameImage1 from "../../../assets/images/Rectangle 7.png"; // Renamed for clarity
+import gameImage2 from "../../../assets/images/Rectangle 8.png"; // Renamed for clarity
+import gameImage3 from "../../../assets/images/Rectangle 9.png"; // Renamed for clarity
+import gameImage4 from "../../../assets/images/Rectangle 10.png"; // Renamed for clarity
 
 const PastGames = () => {
-    const gamesList = [
-        { image: gameImage },
-        { image: gameImage },
-        { image: gameImage }
-    ];
-
+     const gamesList = [
+          { image: gameImage },
+          { image: gameImage1 },
+          { image: gameImage2 },
+          { image: gameImage3 },
+          { image: gameImage4 }
+  
+      ];
     return (
         <View style={styles.container}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>

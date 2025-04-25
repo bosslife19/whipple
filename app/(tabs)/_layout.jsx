@@ -1,13 +1,13 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform, View } from 'react-native';
+import { Image, Platform, View } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { Entypo } from '@expo/vector-icons';
+import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -22,9 +22,9 @@ export default function TabLayout() {
         tabBarBackground: TabBarBackground,
         tabBarStyle: {
           position: 'absolute',
-          height: 60, // Adjust tab bar height for better spacing
+          height: 50, // Adjust tab bar height for better spacing
           backgroundColor: 'white',
-        },
+         },
       }}>
       <Tabs.Screen
         name="home"
@@ -39,12 +39,49 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="card"
         options={{
-          title: 'Explore',
+          title: '',
           tabBarIcon: ({ color, focused }) => (
             <View style={[styles.tabContainer, focused && styles.activeTab]}>
-              <IconSymbol size={28} name="paperplane.fill" color={color} />
+              <Image source={require("../../assets/icons/hugeicons_cards-01.png")} style={{width:25,height:25}} />
+              {focused && <View style={styles.bottomBorder} />}
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="games"
+        options={{
+          title: '',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.tabContainer, focused && styles.activeTab]}>
+              {/* <Entypo name="home" size={24} color={color} /> */}
+              <Image source={require("../../assets/icons/Frame 69.png")} style={{width:50,height:50}} />
+              {focused && <View style={styles.bottomBorder} />}
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="history"
+        options={{
+          title: '',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.tabContainer, focused && styles.activeTab]}>
+              <Image source={require("../../assets/icons/material-symbols_leaderboard.png")} style={{width:25,height:25}} />
+              {focused && <View style={styles.bottomBorder} />}
+            </View>
+          ),
+        }}
+      />
+       <Tabs.Screen
+        name="profile"
+        options={{
+          title: '',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.tabContainer, focused && styles.activeTab]}>
+              <Image source={require("../../assets/icons/iconamoon_profile-fill.png")} style={{width:25,height:25}} />
               {focused && <View style={styles.bottomBorder} />}
             </View>
           ),
@@ -64,7 +101,7 @@ const styles = {
   },
   bottomBorder: {
     position: 'absolute',
-    bottom: -22, // Adjust this value to control spacing from the icon
+    bottom: -12, // Adjust this value to control spacing from the icon
     width: '80%', // Make the border a bit smaller than the icon width
     height: 4,
     backgroundColor: '#007BFF',

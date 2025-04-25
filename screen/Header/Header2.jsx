@@ -1,16 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons'; // Import Material Icons
+import { Entypo, MaterialIcons } from '@expo/vector-icons'; // Import Material Icons
 import { useNavigation } from '@react-navigation/native';
 
-const Header = ({ name, backgroundColor = "#fff" }) => {
+const Header2 = ({ name, backgroundColor = "#fff" }) => {
     const navigation = useNavigation(); // Get navigation object
 
     return (
         <View style={[styles.headerContainer, { backgroundColor }]}>
             {/* Go Back Button */}
             <TouchableOpacity onPress={() => navigation.goBack()}>
-                <MaterialIcons name="arrow-back" size={21} color="#0F172A" />
+            <Entypo name="cross" size={24} color="black" />            
             </TouchableOpacity>
 
             {/* Centered Title */}
@@ -38,4 +38,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Header;
+export default Header2;

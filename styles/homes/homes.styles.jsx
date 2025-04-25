@@ -9,14 +9,14 @@ const Homes = StyleSheet.create({
     },
     Header:{
       color:"#0F172A",
-      fontFamily:"montserratMeduim",
+      fontFamily:"Poppins",
       fontSize:16,
       fontWeight:700
   },
     optionText: {
       color: "#000",
-      fontSize: 11,
-      fontFamily: "montserratMeduim",
+      fontSize: 10,
+      fontFamily: "Poppins",
       fontWeight: "bold",
           // textAlign: "center",
     },
@@ -140,7 +140,7 @@ const Homes = StyleSheet.create({
     },
     button: {
       fontSize: 13,
-      fontFamily:"montserratMeduim",
+      fontFamily:"Poppins",
       fontWeight: "700",
       // textAlign: "center",
       color: "#8A2BE2",

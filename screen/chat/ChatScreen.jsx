@@ -30,6 +30,14 @@ const chatList = [
     image: "https://randomuser.me/api/portraits/women/2.jpg",
     isOnline: false,
   },
+  {
+    id: "3",
+    name: "Jane Smith",
+    lastMessage: "See you tomorrow!",
+    lastSeen: "5 min ago",
+    image: "https://randomuser.me/api/portraits/women/2.jpg",
+    isOnline: false,
+  },
 ];
 
 const ChatSearch = () => {
@@ -41,14 +49,14 @@ const ChatSearch = () => {
 
   return (
     <>
-   <Header name="Search" arrow="arrow-back" />
+   <Header name="Messages" arrow="arrow-back" backgroundColor="#A8BFED" />
 
-   <View View style={{backgroundColor:"#000"}}>
+   <View View style={{backgroundColor:"#fff"}}>
       <View style={styles.searchContainer}>
         <Feather name="search" size={20} color="#888" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search users..."
+          placeholder="Find or start a conversation..."
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
@@ -57,7 +65,7 @@ const ChatSearch = () => {
       <View style={styles.container}>
       {filteredChats.length === 0 ? (
   <Text style={{ textAlign: "center", marginTop: 20, color: "#94A3B8" }}>
-    No users found.
+    No Chat found.
   </Text>
 ) : (
   <FlatList
@@ -68,7 +76,7 @@ const ChatSearch = () => {
         style={styles.chatItem}
         onPress={() =>
           router.push({
-            pathname: "/(routes)/chat/chatRoom",
+            pathname: "/(routes)/chatRoom",
             params: { user: JSON.stringify(item) },
           })
         }
@@ -95,7 +103,7 @@ const ChatSearch = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 10 },
+  container: {  height:"100%", backgroundColor: "#fff", padding: 10 },
   chatItem: {
     flexDirection: "row",
     padding: 10,

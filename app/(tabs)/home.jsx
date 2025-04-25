@@ -10,8 +10,6 @@ import {
  
 import front from "../../assets/images/logo.png";
 import AntDesign from '@expo/vector-icons/AntDesign';
-// import WeeklyTimeline from '../../screens/Homescreens/WeeklyTimeline';
-// import ProgressOverview from '../../screens/Homescreens/ProgressOverview';
 import { router } from 'expo-router';
 import Notification from '../../assets/icons/Notification';
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -38,7 +36,7 @@ export default function HomeScreen() {
 
 
           {/* Notification Icon */}
-          <TouchableOpacity onPress={()=> router.push("/(routes)/notification")} style={Homes.notificationContainer}>
+          <TouchableOpacity onPress={()=> router.push("/(routes)/notifications")} style={Homes.notificationContainer}>
             <Notification />
             <View style={Homes.notificationDot} />
           </TouchableOpacity>
@@ -49,7 +47,7 @@ export default function HomeScreen() {
              <Text style={[Homes.imageText,{ textAlign:"center",fontFamily:"Poppins",fontSize:24,paddingVertical:14}]}>NGN 15, 000.34</Text>
              
               <View style={[Homes.flexD,{justifyContent:"space-between"}]}>
-              <TouchableOpacity style={[Homes.flexD,{paddingHorizontal:"14%",paddingVertical:14, backgroundColor:"#0A1931",borderRadius:20,gap:8}]}>
+              <TouchableOpacity onPress={()=> router.push("/(routes)/deposit")} style={[Homes.flexD,{paddingHorizontal:"14%",paddingVertical:14, backgroundColor:"#0A1931",borderRadius:20,gap:8}]}>
               <AntDesign name="plus" size={10} color="#fff" />
                 <Text style={[Homes.imageText,{ color:"#fff",fontFamily:"Grotesk",fontSize:10}]}>
                 Deposit
@@ -67,7 +65,7 @@ export default function HomeScreen() {
         <View style={Homes.contentContainer}>
          <View style={[Homes.scrollContainer,{justifyContent:"space-between",marginHorizontal:16,}]}>
             <Text style={Homes.Header}>Available Games</Text>
-             <TouchableOpacity style={{backgroundColor:'#0040841F',paddingHorizontal:15,paddingVertical:5}} >
+             <TouchableOpacity style={{backgroundColor:'#0040841F',paddingHorizontal:15,paddingVertical:5,borderRadius:5}} >
                       <Text style={[
                          Homes.optionText
                         ]}>
@@ -84,7 +82,7 @@ export default function HomeScreen() {
          <View style={Homes.contentContainer}>
          <View style={[Homes.scrollContainer,{justifyContent:"space-between",marginHorizontal:16,}]}>
             <Text style={Homes.Header}>Past Games</Text>
-             <TouchableOpacity style={{backgroundColor:'#0040841F',paddingHorizontal:15,paddingVertical:5}} >
+             <TouchableOpacity style={{backgroundColor:'#0040841F',paddingHorizontal:15,paddingVertical:5,borderRadius:5}} >
                       <Text style={[
                          Homes.optionText
                         ]}>

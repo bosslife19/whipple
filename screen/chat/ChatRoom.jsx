@@ -104,7 +104,7 @@ const ChatScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#E2E8F0" },
+  container: { backgroundColor: "#E2E8F0",height:"100%" },
   header: { flexDirection: "row", alignItems: "center", padding: 15, paddingTop: 40, backgroundColor: "#fff"},
   profileImage: { width: 40, height: 40, borderRadius: 20, marginHorizontal: 10 },
   userDetails: { flex: 1 },
