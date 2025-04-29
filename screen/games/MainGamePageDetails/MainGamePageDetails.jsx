@@ -18,6 +18,7 @@ import game from "../../../assets/images/icons/mingcute_game-2-fill.png"
 import frames from "../../../assets/images/icons/Frame 100.png"
 import { Entypo, FontAwesome6 } from '@expo/vector-icons';
 import maingamess from '../../../styles/maingameDetails/maingameDetails.styles';
+import Winningmodal from '../../winningmodal/winningmodal';
 
 const amountOptions = [50,100,200, 500, 900, 1000, 2000,5000];
 
@@ -25,6 +26,7 @@ const MainGameDetails = () => {
   const [selectedBox, setSelectedBox] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [amount, setAmount] = useState('');
+  const [modalVisibles, setModalVisibles] = useState(false);
 
   const handleBoxSelect = (letter ) => {
     setSelectedBox(letter);
@@ -36,11 +38,16 @@ const MainGameDetails = () => {
   };
 
   const handleConfirm = () => {
-    alert(`Confirmed ${selectedBox} with amount ₦${amount}`);
-    setModalVisible(false);
+     setModalVisible(false);
+    setModalVisibles(true)
     setAmount('');
     setSelectedBox(null);
   };
+
+  const closeModals =()=>{
+    setModalVisibles(false)
+
+  }
 
   return (
     <>
@@ -78,19 +85,20 @@ const MainGameDetails = () => {
       <View style={maingamess.bottomSection}>
         {/* Left Column */}
         <View style={maingamess.leftColumn}>
+         
           <View style={[maingamess.infoBox,{flexDirection:"row",alignItems:"center",gap:10}]}>
             <Image source={wallet} style={{backgroundColor:"#333",width:"40%",height:"100%",objectFit:"contain",borderRadius:10}} />
             <View>
-            <Text style={maingamess.infoLabel}>Stake</Text>
-            <Text style={maingamess.infoValue}>{formatCurrencies('200')}</Text>
+            <Text style={[maingamess.infoLabel,{fontSize:12}]}>Stake</Text>
+            <Text style={[maingamess.infoValue,{fontSize:10}]}>{formatCurrencies('200')}</Text>
              </View>          
             </View>
 
             <View style={[maingamess.infoBox,{flexDirection:"row",alignItems:"center",gap:10}]}>
-            <Image source={pot} style={{backgroundColor:"#333",width:"40%", height:"100%",objectFit:"contain",borderRadius:10}} />
+            <Image source={pot} style={{backgroundColor:"#333",width:30, height:"100%",objectFit:"contain",borderRadius:10}} />
             <View>
-            <Text style={maingamess.infoLabel}>House Pot</Text>
-            <Text style={maingamess.infoValue}>{formatCurrencies('20000')}</Text>
+            <Text style={[maingamess.infoLabel,{fontSize:12}]}>House Pot</Text>
+            <Text style={[maingamess.infoValue,{fontSize:10}]}>{formatCurrencies('20000')}</Text>
           </View>
           </View>
         </View>
@@ -105,7 +113,7 @@ const MainGameDetails = () => {
           </View>
         </View>
       </View>
-      <Text style={[maingamess.infoLabel,{color:'#000',marginTop:20,fontWeight:'700'}]}>Choose the Correct Number(s)</Text>
+      <Text style={[maingamess.infoLabel,{color:'#000',marginTop:20,fontWeight:'bold'}]}>Choose the Correct Number(s)</Text>
       <View style={maingamess.letterBoxContainer}>
   {['A', 'B', 'C', 'D', 'E', 'F'].map((letter) => {
     const isDark = ['A', 'D', 'E'].includes(letter); // letters with dark blue background
@@ -176,6 +184,10 @@ const MainGameDetails = () => {
       </Modal>
     </SafeAreaView>
     </ScrollView>
+    <Winningmodal 
+    modalVisibles={modalVisibles}
+    closeModals={closeModals}
+    />
     </>
   );
 };

@@ -117,6 +117,28 @@ const creategame = StyleSheet.create({
       justifyContent: 'flex-end',
       backgroundColor: 'rgba(0,0,0,0.3)',
     },
+    modalOverlays: {
+      flex: 1,
+      height:"100%",
+      justifyContent: 'flex-end',
+      backgroundColor: 'rgba(0, 0, 0, 0.78)',
+      padding:10,
+      overflow:"hidden",
+      // borderRadius:30
+
+    },
+    modalContents: {
+      // backgroundColor: 'rgb(53, 52, 52)',
+     padding: 40,
+    zIndex:10000,
+    objectFit:"cover",
+    height:"90%",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    flexDirection:"column",
+    gap:20,
+ 
+  },
     modalContent: {
         backgroundColor: 'rgb(53, 52, 52)',
     //   backgroundColor: 'white',

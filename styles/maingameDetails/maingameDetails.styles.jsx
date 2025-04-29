@@ -59,7 +59,8 @@ const maingamess = StyleSheet.create({
     },
     infoBox: {
       backgroundColor: '#0A1931',
-      padding: 14,
+      paddingVertical: 21,
+      paddingHorizontal:10,
       marginBottom: 10,
       borderRadius: 10,
       elevation: 2,
