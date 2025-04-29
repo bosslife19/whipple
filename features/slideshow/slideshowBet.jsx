@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Text, View, StyleSheet, Easing, ImageBackground, TouchableOpacity } from 'react-native';
 import imags from '../../assets/images/games/pngtree-creative-website-color-contrast-background-image_2344637.jpg'
 import { MaterialIcons } from '@expo/vector-icons'; // MaterialIcons for icon
+import PlayButton from '../animations/buttons';
 
 // List of names and possible amounts to randomly choose from
 const names = ["John", "Sarah", "Mike", "Emily", "Daniel"];
@@ -50,17 +51,18 @@ const SlideShowBet = () => {
      <Animated.View style={{ transform: [{ translateY }] }}>
         <Text style={styles.winnerText}>{getRandomWinner()}</Text>
       </Animated.View>
-      <TouchableOpacity style={styles.button}>
+      <PlayButton/>
+      {/* <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Play</Text>
         <MaterialIcons name="play-arrow" size={14} color="#fff" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    // width: '100%',
     overflow: 'hidden',
     flexDirection: "row",
     justifyContent: "space-between",
@@ -90,6 +92,7 @@ const styles = StyleSheet.create({
     textShadowColor: '#000', // Adding text shadow for depth
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 5,
+    // marginHorizontal:"auto"
   },
 });
 

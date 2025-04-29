@@ -13,8 +13,9 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
+  const [loaded] = useFonts({ 
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+     montserratMeduim: require("../assets/fonts/montserrat/Montserrat-Medium.ttf"),
     MonteserratItalic: require('../assets/fonts/Montserrat-Italic-VariableFont_wght.ttf'),
     MonteserratRegular: require('../assets/fonts/Montserrat-VariableFont_wght.ttf'),
     Poppins: require('../assets/fonts/Poppins-Black.ttf'),

@@ -4,16 +4,21 @@ import { MaterialIcons } from '@expo/vector-icons'; // Import Material Icons
 import { useNavigation } from '@react-navigation/native';
 import { formatCurrency } from '../../utlils/formatCurrency';
 
-const HeaderBet = ({ name, backgroundColor = "#fff", amount = 0 }) => {
+const HeaderBet = ({ name, backgroundColor = "#fff", amount = 0, arrow }) => {
     const navigation = useNavigation(); // Get navigation object
  
     return (
         <View style={[styles.headerContainer, { backgroundColor }]}>
-            
+           {arrow && 
+             <TouchableOpacity onPress={() => navigation.goBack()}>
+                <MaterialIcons name="arrow-back" size={21} color="#0F172A" />
+             </TouchableOpacity>
+             }
             {/* Centered Title */}
             <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={styles.headerText}>{name}</Text>
             </TouchableOpacity>
+
 
                  {/* Display Amount */}
               <TouchableOpacity style={styles.amountContainer}>
@@ -37,7 +42,7 @@ const styles = StyleSheet.create({
         justifyContent:"space-between"
     },
     headerText: {
-        flex: 0.9,
+        flex: 0.9, 
         fontSize: 16,
         fontWeight: "700",
         textAlign: "center",

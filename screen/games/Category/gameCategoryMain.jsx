@@ -1,41 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Dimensions } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import Header from '../../Header/Header';
 import HeaderBet from '../../Header/HeaderBet';
 import SlideShowBet from '../../../features/slideshow/slideshowBet';
+
+// games images
+import number1 from '../../../assets/images/games/Rectangle 98.png';
+import virtualcoins from '../../../assets/images/games/Online-Casino-Bonus-1-2-1-768x432.jpg.webp';
+import cube from '../../../assets/images/games/cube.png';
+import spin from '../../../assets/images/games/spin2win.png';
+import color from '../../../assets/images/games/color.png';
+import choose from '../../../assets/images/games/koefficienty.webp';
+import wheel from '../../../assets/images/games/spin-and-win-hero-image.webp';
+import { router } from 'expo-router';
 
 const { width: screenWidth } = Dimensions.get('window');
 
 // Game categories
 const popularGames = [
-  { title: 'Football', image: 'https://via.placeholder.com/100?text=Football' },
-  { title: 'Basketball', image: 'https://via.placeholder.com/100?text=Basketball' },
-  { title: 'Tennis', image: 'https://via.placeholder.com/100?text=Tennis' },
-  { title: 'Boxing', image: 'https://via.placeholder.com/100?text=Boxing' },
+  { title: 'number game', image:number1 ,button: handlePush},
+  { title: 'virtual coin', image:virtualcoins ,button: handlePush},
+  { title: 'Dice Roll', image: cube ,button: handlePush},
 ];
 
 const topGames = [
-  { title: 'Soccer', image: 'https://via.placeholder.com/100?text=Soccer' },
-  { title: 'Cricket', image: 'https://via.placeholder.com/100?text=Cricket' },
-  { title: 'Rugby', image: 'https://via.placeholder.com/100?text=Rugby' },
-  { title: 'Esports', image: 'https://via.placeholder.com/100?text=Esports' },
-  { title: 'Snooker', image: 'https://via.placeholder.com/100?text=Snooker' },
-  { title: 'Volleyball', image: 'https://via.placeholder.com/100?text=Volleyball' },
+  { title: 'Color roulette', image: color,button: handlePush},
+  { title: 'Spin2Win', image: spin ,button: handlePush},
+  { title: 'Pick n win', image: choose ,button: handlePush},
+ 
+  { title: 'Snooker', image: number1 ,button: handlePush},
+  { title: 'Volleyball', image: number1 ,button: handlePush},
 ];
 
 const quickGames = [
-  { title: 'Spin2Win', image: 'https://via.placeholder.com/80?text=Spin' },
-  { title: 'Instant Win', image: 'https://via.placeholder.com/80?text=Instant' },
-  { title: 'Lucky 7', image: 'https://via.placeholder.com/80?text=Lucky7' },
+  { title: 'Spin2Win', image: spin ,button: handlePush},
+  { title: 'Spin2Win', image: wheel ,button: handlePush},
+  { title: 'Lucky 7', image: number1 ,button: handlePush},
 ];
 
-const cards = [
-  { title: 'Virtual Football', image: 'https://via.placeholder.com/300x150?text=Virtual+Football' },
-  { title: 'Virtual Racing', image: 'https://via.placeholder.com/300x150?text=Virtual+Racing' },
-];
-
-const allGames = [...popularGames, ...topGames, ...quickGames, ...cards];
+const handlePush =()=>{
+    router.push("/(routes)/games/category/selectcategory")
+}
+const allGames = [...popularGames, ...topGames, ...quickGames,];
 
 const GameCategoryMain = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -73,9 +79,13 @@ const GameCategoryMain = () => {
         <Text style={styles.sectionTitle}>{title}</Text>
         <View style={styles.row}>
           {games.map((game, index) => (
-            <TouchableOpacity key={index} style={styles.gameCard}>
-              <Image source={{ uri: game.image }} style={styles.gameImage} />
-              <Text style={styles.gameTitle}>{game.title}</Text>
+            <TouchableOpacity onPress={handlePush} key={index} style={styles.gameCard}>
+               <View style={styles.imageWrapper}>
+              {title === 'Top Games' && (
+                <Text style={styles.imageNumber}>{index + 1}</Text>
+              )}
+              <Image source={game.image} style={styles.gameImage} />
+            </View>            
             </TouchableOpacity>
           ))}
         </View>
@@ -85,7 +95,7 @@ const GameCategoryMain = () => {
 
   return (
     <>
-      <HeaderBet name="House Start" backgroundColor="#A8BFED" />
+      <HeaderBet name="House Start" backgroundColor="#A8BFED" amount={200}/>
       <View style={styles.main}>
         <SlideShowBet/>
       <View style={styles.topBar}>
@@ -124,10 +134,10 @@ const GameCategoryMain = () => {
     </>
   ) : selectedCategory === 'Home' ? (
     <>
-      {renderGameCategory('Popular Games', popularGames)}
       {renderGameCategory('Top Games', topGames)}
+      {renderGameCategory('Popular Games', popularGames)}
       {renderGameCategory('Quick Games', quickGames)}
-      {renderGameCategory('Cards', cards)}
+      {/* {renderGameCategory('Cards', cards)} */}
     </>
   ) : (
     <>
@@ -148,13 +158,32 @@ const styles = StyleSheet.create({
     main:{
         backgroundColor: '#F9FAFB',
         height:"100%",
-        marginBottom:"50%"
         // flex:1
     },
-  container: {
-    padding: 16,
-  height:"160%"
-  },
+    container: {
+        padding: 16,
+      height:"120%"
+      },
+    imageWrapper: {
+        position: 'relative',
+        width: '100%',
+        height: 100,
+        borderRadius: 8,
+        overflow: 'hidden',
+      },
+      imageNumber: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        backgroundColor: '#A8BFED',
+        color: '#212121',
+        fontSize: 12,
+        fontWeight: 'bold',
+        borderBottomRightRadius: 4,
+        paddingHorizontal: 6,
+        paddingVertical: 3,
+        zIndex: 1,
+      },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -173,7 +202,8 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderWidth: 1,
     marginRight: 8,
-    height:43
+    height:43,
+     fontFamily: "montserratMeduim"
   },
   pickerContainer: {
     width: 150,
@@ -192,12 +222,13 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 22,
+    fontSize: 16,
     fontWeight: '700',
     color: '#1F2937',
     marginBottom: 12,
     textTransform: 'uppercase',
     letterSpacing: 1,
+     fontFamily: "montserratMeduim"
   },
   row: {
     flexDirection: 'row',
@@ -210,7 +241,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderRadius: 10,
     alignItems: 'center',
-    paddingVertical: 16,
+    // paddingVertical: 16,
     marginBottom: 12,
     elevation: 2,
     shadowColor: '#000',
@@ -219,9 +250,10 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   gameImage: {
-    width: 70,
-    height: 70,
-    marginBottom: 8,
+    width: "100%",
+    objectFit:"cover",
+    height: 100,
+    // marginBottom: 8,
     borderRadius: 8,
   },
   gameTitle: {
@@ -229,12 +261,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#1F2937',
     textAlign: 'center',
+     fontFamily: "montserratMeduim"
   },
   noResultsText: {
     fontSize: 18,
     textAlign: 'center',
     color: '#555',
     marginTop: 20,
+     fontFamily: "montserratMeduim"
   },
 });
 
