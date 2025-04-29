@@ -143,20 +143,19 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   input: {
-    paddingHorizontal:20,
-    paddingBottom:12,
-    paddingTop:12,
+    width: 60, // fixed width
+    height: 60, // fixed height
     backgroundColor: "rgba(80, 87, 98, 1)",
-    color: "rgba(154, 154, 154, 0.6)",
+    color: "#fff",
     textAlign: 'center',
     borderWidth: 1,
-    // borderColor: 'rgba(0, 123, 255, 1)',
+    borderColor: 'transparent',
     borderRadius: 10,
-    // color:"rgba(0, 123, 255, 1)",
-    fontWeight:500,
-    fontSize: 14,
+    fontWeight: '500',
+    fontSize: 20,
     marginHorizontal: 8,
   },
+  
   inputError: {
     borderColor: 'red',
   },

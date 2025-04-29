@@ -1,27 +1,73 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, StatusBar } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import {
+  View,
+  StyleSheet,
+  Modal,
+  ImageBackground,
+  Dimensions,
+  Animated,
+  Easing,
+  StatusBar,
+} from 'react-native';
 import { useRouter } from 'expo-router';
+
+const { width } = Dimensions.get('window');
 
 const SuccessModal = ({ visible, onClose }) => {
   const router = useRouter();
+  const scaleAnim = useRef(new Animated.Value(0.5)).current;
+  const opacityAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (visible) {
+      // Animate modal appearance
+      Animated.parallel([
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 300,
+          easing: Easing.out(Easing.exp),
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+
+      // Navigate after 3s
+      const timer = setTimeout(() => {
+        onClose();
+        router.replace('/(tabs)/home');
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    } else {
+      // Reset for next open
+      scaleAnim.setValue(0.5);
+      opacityAnim.setValue(0);
+    }
+  }, [visible]);
 
   return (
-    <Modal visible={visible} animationType="slide" transparent>
-     <StatusBar backgroundColor=" rgba(0,0,0,0.5)"/>
+    <Modal visible={visible} animationType="none" transparent>
+      <StatusBar backgroundColor="rgba(0,0,0,0.5)" />
       <View style={styles.container}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Success</Text>
-          <Text style={styles.modalText}>Email verification successful.</Text>
-          <TouchableOpacity 
-            style={styles.modalButton} 
-            onPress={() => {
-              onClose(); // Close the modal
-              router.replace('/(tabs)/home'); // Navigate to Dashboard
-            }}
-          >
-            <Text style={styles.modalButtonText}>Continue</Text>
-          </TouchableOpacity>
-        </View>
+        <Animated.View
+          style={[
+            styles.animatedWrapper,
+            {
+              transform: [{ scale: scaleAnim }],
+              opacity: opacityAnim,
+            },
+          ]}
+        >
+          <ImageBackground
+            source={require('../../assets/images/OTP Successful Modal.png')}
+            style={styles.background}
+            imageStyle={{ borderRadius: 20 }}
+          />
+        </Animated.View>
       </View>
     </Modal>
   );
@@ -30,37 +76,20 @@ const SuccessModal = ({ visible, onClose }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.64)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.64)',
   },
-  modalContent: {
-    width: "80%",
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
+  animatedWrapper: {
+    width: width * 0.8,
+    height: 350,
   },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  modalText: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  modalButton: {
-    backgroundColor: "rgba(0, 123, 255, 1)",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  modalButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    overflow: 'hidden',
   },
 });
 

@@ -17,23 +17,24 @@ export default function BankTransfer({ selectedBank, setSelectedBank, banks }) {
       </View>
 
       {selected && (
-        <View style={styles.instructionsBox}>
-          <Text style={styles.instructionsTitle}>{selected.name} Transfer Instructions</Text>
-          <Text style={[styles.instructionsTitle,{fontSize:14,fontWeight:"normal"}]}>1. Login into the {selected.name} App</Text>
-          <Text style={[styles.instructionsTitle,{fontSize:14,fontWeight:"normal"}]}>2. From the homepage, select Pay Bills</Text>
-          <Text style={[styles.instructionsTitle,{fontSize:14,fontWeight:"normal"}]}>3. Select Your choice </Text>
-          <Text style={[styles.instructionsTitle,{fontSize:14,fontWeight:"normal"}]}>4. Select Our App as the Biller & as the Product</Text>
-          <Text style={[styles.instructionsTitle,{fontSize:14,fontWeight:"normal"}]}>5. Enter the amount you wish to deposit.</Text>
-          <Text style={[styles.instructionsTitle,{fontSize:14,fontWeight:"normal"}]}>6. Enter Your ClientID:
-          <Text style={styles.customerId}>{selected.customerId}</Text>
-          </Text>
+  <View style={styles.instructionsBox}>
+    <Text style={styles.instructionsTitle}>{selected.name} Transfer Instructions</Text>
+    
+    <Text style={styles.instructionStep}>1. Open the {selected.name} mobile app and log in to your account.</Text>
+    <Text style={styles.instructionStep}>2. From the home screen, navigate to the "Pay Bills" section.</Text>
+    <Text style={styles.instructionStep}>3. Choose your preferred payment category.</Text>
+    <Text style={styles.instructionStep}>4. Select our app as both the "Biller" and the "Product".</Text>
+    <Text style={styles.instructionStep}>5. Enter the amount you wish to deposit.</Text>
+    <Text style={styles.instructionStep}>
+      6. Provide your unique Client ID: <Text style={styles.customerId}>{selected.customerId}</Text>
+    </Text>
 
-          <Text style={[styles.instructionsTitle,{fontSize:14,fontWeight:"normal"}]}>
-            Upon a successful notification, the funds will reflect immediately into your bet9ja wallet.
-          </Text>
+    <Text style={styles.instructionStep}>
+      Once the payment is confirmed, the funds will be instantly credited to your Bet9ja wallet.
+    </Text>
+  </View>
+)}
 
-        </View>
-      )}
     </View>
   );
 }
@@ -50,6 +51,15 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
+  instructionStep: {
+    fontSize: 14,
+    fontWeight: 'normal',
+    marginBottom: 5,
+    fontFamily: 'montserratMedium',
+    color: '#333',
+    lineHeight: 20,
+  },
+  
   bankCard: {
     width: '48%',
     height:90,
@@ -86,7 +96,7 @@ const styles = StyleSheet.create({
     fontFamily: "montserratMeduim"
   },
   customerId: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 'bold',
     marginTop: 5,
     color: '#212121',

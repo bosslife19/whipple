@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   message: { color: "#94A3B8" },
   lastSeen: { color: "#94A3B8", fontSize: 12 },
   unreadBadge: {
-    backgroundColor: "#8A2BE2",
+    backgroundColor: "#007BFF",
     borderRadius: 15,
     width: 22,
     height: 22,

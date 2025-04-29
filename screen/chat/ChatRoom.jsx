@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
+import MoreOptionsModal from "./Modal/MoreOption";
 // import MoreOptionsModal from "./Modal/MoreOption";
 
 const ChatScreen = () => {
@@ -50,9 +51,9 @@ const ChatScreen = () => {
 
         <View style={styles.userDetails}>
           <Text style={styles.userName}>{parsedUser?.name || "Unknown"}</Text>
-          <Text style={{fontFamily: "montserratMeduim",  color: parsedUser?.isOnline ? "#0D9488" : "gray", fontSize:12 ,fontWeight:500}}>
+          {/* <Text style={{fontFamily: "montserratMeduim",  color: parsedUser?.isOnline ? "#0D9488" : "gray", fontSize:12 ,fontWeight:500}}>
           {parsedUser?.isOnline ? "Online" : "Offline"}
-          </Text>
+          </Text> */}
         </View>
         
          <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -70,7 +71,7 @@ const ChatScreen = () => {
               styles.chatBubble,
               {
                 alignSelf: item.sender === "me" ? "flex-end" : "flex-start",
-                backgroundColor: item.sender === "me" ? "#8A2BE2" : "#F1F5F9",
+                backgroundColor: item.sender === "me" ? "#007BFF" : "#F1F5F9",
               },
             ]}
           >
@@ -93,12 +94,12 @@ const ChatScreen = () => {
           onChangeText={setMessageInput}
         />
         <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
-          <MaterialIcons name="send" size={24} color="#8A2BE2" />
+          <MaterialIcons name="send" size={24} color="#007BFF" />
         </TouchableOpacity>
       </KeyboardAvoidingView>
 
       {/* Modal */}
-      {/* <MoreOptionsModal modalVisible={modalVisible} setModalVisible={setModalVisible} /> */}
+      <MoreOptionsModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
     </View>
   );
 };

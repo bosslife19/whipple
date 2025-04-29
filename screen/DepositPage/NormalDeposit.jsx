@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 8,
     fontWeight: '600',
-    fontFamily: "MonteserratRegular"
+    fontFamily: "montserratMeduim"
 
   },
   inputWrapper: {
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    fontFamily: "MonteserratRegular"
+    fontFamily: "montserratMeduim"
 
   },
   amountRow: {
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   amountText: {
     fontWeight: 'bold',
-    fontFamily: "MonteserratRegular",
+    fontFamily: "montserratMeduim",
     lineHeight:20
   },
   button: {
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     fontWeight: 'bold',
-    fontFamily: "MonteserratRegular"
+    fontFamily: "montserratMeduim"
 
   },
   outlineButton: {
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     color: '#212121',
     textAlign: 'center',
     fontWeight: 'bold',
-    fontFamily: "MonteserratRegular"
+    fontFamily: "montserratMeduim"
 
   },
 });

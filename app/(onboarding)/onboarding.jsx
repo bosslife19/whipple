@@ -13,12 +13,12 @@ export const onboardingSwiperData = [
     image: require("../../assets/images/girlwinning.png"),
     note: "Welcome to the best staking application, Stake big and win bigger",
   },
-  {
+  { 
     id: 2,
     title: "Win big by playing",
     // description: "Step of the",
     // sortDescription: "way",
-    image: require("../../assets/images/girlwinning.png"),
+    image: require("../../assets/images/image_fx___50_-removebg-preview (1) 1.png"),
     note: "Welcome to the best staking application, Stake big and win bigger",
   },
   {
@@ -26,7 +26,7 @@ export const onboardingSwiperData = [
     title: "Win big by playing",
     // description: "",
     // sortDescription: "elegance",
-    image: require("../../assets/images/girlwinning.png"),
+    image: require("../../assets/images/image_fx___53_-removebg-preview 1.png"),
     note: "Welcome to the best staking application, Stake big and win bigger",
   },
   {
@@ -34,7 +34,7 @@ export const onboardingSwiperData = [
     title: "Win big by playing",
     // description: "",
     // sortDescription: "elegance",
-    image: require("../../assets/images/girlwinning.png"),
+    image: require("../../assets/images/image_fx___52_-removebg-preview 1.png"),
     note: "Welcome to the best staking application, Stake big and win bigger",
   },
 ];
@@ -152,7 +152,9 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     backgroundColor: 'rgba(238, 246, 255,1)',
-    top: '75%',
+    top: '68%',
+    width:"100%",
+    height:"100%",
     position: "absolute",
     // padding: 5,
     paddingHorizontal:16,
