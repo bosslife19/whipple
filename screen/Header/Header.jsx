@@ -15,7 +15,7 @@ const Header = ({ name, backgroundColor = "#fff" }) => {
 
             {/* Centered Title */}
             <Text style={styles.headerText}>{name}</Text>
-        </View>
+        </View> 
     );
 };
  

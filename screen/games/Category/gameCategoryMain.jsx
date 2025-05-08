@@ -1,211 +1,249 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  TextInput,
+  Dimensions,
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { router } from 'expo-router';
+
+// Components
 import HeaderBet from '../../Header/HeaderBet';
 import SlideShowBet from '../../../features/slideshow/slideshowBet';
 
-// games images
-import number1 from '../../../assets/images/games/Rectangle 98.png';
+// Assets
+import number1 from '../../../assets/images/games/dfd0983d-43cb-479f-bd09-6da48a29a8dd.webp';
 import virtualcoins from '../../../assets/images/games/Online-Casino-Bonus-1-2-1-768x432.jpg.webp';
 import cube from '../../../assets/images/games/cube.png';
 import spin from '../../../assets/images/games/spin2win.png';
 import color from '../../../assets/images/games/color.png';
 import choose from '../../../assets/images/games/koefficienty.webp';
-import wheel from '../../../assets/images/games/spin-and-win-hero-image.webp';
-import { router } from 'expo-router';
 
 const { width: screenWidth } = Dimensions.get('window');
 
-// Game categories
+ 
+
+// Game Data
 const popularGames = [
-  { title: 'number game', image:number1 ,button: handlePush},
-  { title: 'virtual coin', image:virtualcoins ,button: handlePush},
-  { title: 'Dice Roll', image: cube ,button: handlePush},
+ 
+  {
+    title: 'Virtual Coin',
+    image: virtualcoins,
+    description: 'Simple heads or tails game with animated coin flip.',
+    variants: ['Heads or Tails'],
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
+
+  },
+  {
+    title: 'Dice Roll',
+    image: cube,
+    description: 'Roll dice and bet on outcomes.',
+    variants: ['Single Die', 'Double Die'],
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
+
+  },
 ];
 
 const topGames = [
-  { title: 'Color roulette', image: color,button: handlePush},
-  { title: 'Spin2Win', image: spin ,button: handlePush},
-  { title: 'Pick n win', image: choose ,button: handlePush},
- 
-  { title: 'Snooker', image: number1 ,button: handlePush},
-  { title: 'Volleyball', image: number1 ,button: handlePush},
+  {
+    title: 'Lucky Number',
+    image: number1,
+    description: 'Players select numbers from a range. Winners match the drawn number(s).',
+    variants: ['Category A (1-3, 1-5)', 'Category B (2 from 1-5)', 'Category C (5, 10, or 1 from 1-100)'],
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
+  },
+  {
+    title: 'Color Roulette',
+    image: color,
+    description: 'Four colors (Red, Blue, Green, Yellow); two prominent colors published.',
+    variants: ['Four Colors'],
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
+
+  },
+  {
+    title: 'Goal Challenge',
+    image: choose,
+    description: 'Virtual ball shot into goal (right, left, middle).',
+    variants: ['Standard Goal'],
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
+
+  },
 ];
 
 const quickGames = [
-  { title: 'Spin2Win', image: spin ,button: handlePush},
-  { title: 'Spin2Win', image: wheel ,button: handlePush},
-  { title: 'Lucky 7', image: number1 ,button: handlePush},
+  {
+    title: 'Wheel Spin',
+    image: spin,
+    description: 'Spin a wheel with numbers 1-10, three prominent numbers published.',
+    variants: ['Standard Wheel'],
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
+
+  },
+  {
+    title: 'Mystery Box',
+    image: number1,
+    description: 'Three boxes; one chosen as the winning box.',
+    variants: ['Three Boxes'],
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
+
+  },
 ];
 
-const handlePush =()=>{
-    router.push("/(routes)/games/category/selectcategory")
-}
-const allGames = [...popularGames, ...topGames, ...quickGames,];
+const allGames = [...popularGames, ...topGames, ...quickGames];
 
 const GameCategoryMain = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Home');
   const [filteredGames, setFilteredGames] = useState(allGames);
 
-  // Effect to filter games based on selected category and search query
   useEffect(() => {
     filterGames();
   }, [searchQuery, selectedCategory]);
 
   const filterGames = () => {
-    let tempGames = allGames;
+    let games = [...allGames];
 
-    // Apply category filter
     if (selectedCategory !== 'Home') {
-      tempGames = tempGames.filter((game) =>
+      games = games.filter(game =>
         game.title.toLowerCase().includes(selectedCategory.toLowerCase())
       );
     }
 
-    // Apply search filter on the filtered games from the category filter
-    if (searchQuery.trim() !== '') {
-      tempGames = tempGames.filter((game) =>
+    if (searchQuery.trim()) {
+      games = games.filter(game =>
         game.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    setFilteredGames(tempGames);
+    setFilteredGames(games);
   };
 
-  const renderGameCategory = (title, games) => {
-    return (
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{title}</Text>
-        <View style={styles.row}>
-          {games.map((game, index) => (
-            <TouchableOpacity onPress={handlePush} key={index} style={styles.gameCard}>
-               <View style={styles.imageWrapper}>
+
+  const renderGameSection = (title, games) => (
+    <View key={title} style={styles.section}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      <View style={styles.row}>
+        {games.map((game, index) => (
+          <View key={index} style={styles.card} >
+            <View style={styles.imageWrapper}>
               {title === 'Top Games' && (
-                <Text style={styles.imageNumber}>{index + 1}</Text>
+                <Text style={styles.imageBadge}>{index + 1}</Text>
               )}
-              <Image source={game.image} style={styles.gameImage} />
-            </View>            
+              <Image source={game.image} style={styles.image} />
+            </View>
+            <Text style={styles.gameTitle}>{game.title}</Text>
+            <Text style={styles.description}>{game.description}</Text>
+            <Text style={styles.variantLabel}>Variants:</Text>
+            {game.variants.map((variant, idx) => (
+              <Text key={idx} style={styles.variantText}>• {variant}</Text>
+            ))}
+            <TouchableOpacity style={styles.btn} onPress={game.handleNavigate}>
+              <Text style={[styles.gameTitle,{textAlign:"center",color:"#fff"}]}>Create Games</Text>
             </TouchableOpacity>
-          ))}
-        </View>
+          </View>
+        ))}
       </View>
-    );
+    </View>
+  );
+
+  const renderSections = () => {
+    if (searchQuery.trim() !== '') {
+      return filteredGames.length > 0
+        ? renderGameSection('Search Results', filteredGames)
+        : <Text style={styles.noResults}>No results found.</Text>;
+    }
+
+    if (selectedCategory === 'Home') {
+      return (
+        <>
+          {renderGameSection('Top Games', topGames)}
+          {renderGameSection('Popular Games', popularGames)}
+          {renderGameSection('Quick Games', quickGames)}
+        </>
+      );
+    }
+
+    return filteredGames.length > 0
+      ? renderGameSection(selectedCategory, filteredGames)
+      : <Text style={styles.noResults}>No results found.</Text>;
   };
 
   return (
     <>
-      <HeaderBet name="House Start" backgroundColor="#A8BFED" amount={200}/>
+      <HeaderBet arrow name="House Start" backgroundColor="#A8BFED" amount={200} />
       <View style={styles.main}>
-        <SlideShowBet/>
-      <View style={styles.topBar}>
-        {/* Search Input */}
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search..."
-          value={searchQuery}
-          onChangeText={(text) => setSearchQuery(text)} // Triggering filtering on typing
-        />
+        <SlideShowBet />
 
-        {/* Picker Dropdown */}
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={selectedCategory}
-            style={[styles.picker,{fontSize:10}]}
-            onValueChange={(itemValue) => setSelectedCategory(itemValue)}
-          >
-            <Picker.Item label="Home" value="Home"  style={{fontSize:10}}/>
-            {allGames.map((game, index) => (
-              <Picker.Item key={index} style={{fontSize:10}} label={game.title} value={game.title} />
-            ))}
-          </Picker>
+        <View style={styles.topBar}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          <View style={styles.pickerWrapper}>
+            <Picker
+              selectedValue={selectedCategory}
+              style={styles.picker}
+              onValueChange={setSelectedCategory}
+            >
+              <Picker.Item label="Home" value="Home" />
+              {allGames.map((game, idx) => (
+                <Picker.Item key={idx} label={game.title} value={game.title} />
+              ))}
+            </Picker>
+          </View>
         </View>
-      </View>
 
-      <ScrollView contentContainerStyle={styles.container}>
-  {/* If there is a search query, show filtered results */}
-  {searchQuery.trim() !== '' ? (
-    <>
-      {filteredGames.length > 0 ? (
-        renderGameCategory('Search Results', filteredGames)
-      ) : (
-        <Text style={styles.noResultsText}>No results found.</Text>
-      )}
-    </>
-  ) : selectedCategory === 'Home' ? (
-    <>
-      {renderGameCategory('Top Games', topGames)}
-      {renderGameCategory('Popular Games', popularGames)}
-      {renderGameCategory('Quick Games', quickGames)}
-      {/* {renderGameCategory('Cards', cards)} */}
-    </>
-  ) : (
-    <>
-      {filteredGames.length > 0 ? (
-        renderGameCategory(selectedCategory, filteredGames)
-      ) : (
-        <Text style={styles.noResultsText}>No results found.</Text>
-      )}
-    </>
-  )}
-     </ScrollView>
-     </View>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          {renderSections()}
+        </ScrollView>
+      </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-    main:{
-        backgroundColor: '#F9FAFB',
-        height:"100%",
-        // flex:1
-    },
-    container: {
-        padding: 16,
-      height:"120%"
-      },
-    imageWrapper: {
-        position: 'relative',
-        width: '100%',
-        height: 100,
-        borderRadius: 8,
-        overflow: 'hidden',
-      },
-      imageNumber: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        backgroundColor: '#A8BFED',
-        color: '#212121',
-        fontSize: 12,
-        fontWeight: 'bold',
-        borderBottomRightRadius: 4,
-        paddingHorizontal: 6,
-        paddingVertical: 3,
-        zIndex: 1,
-      },
+  main: {
+    backgroundColor: '#F9FAFB',
+    height:"100%"
+    // flex: 1,
+  },
+  scrollContainer: {
+    // padding: 16,
+    paddingBottom: "100%",
+  },
+  btn:{
+  width:"100%",
+  backgroundColor:"#0F172A",
+  padding:15,
+  borderBottomLeftRadius:10,
+  borderBottomRightRadius:10
+  },
   topBar: {
     flexDirection: 'row',
-    alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 8,
-    backgroundColor: '#F9FAFB',
+    paddingVertical: 10,
+    alignItems: 'center',
     justifyContent: 'space-between',
   },
   searchInput: {
     flex: 1,
-    fontSize:10,
     backgroundColor: '#fff',
     borderRadius: 8,
     paddingHorizontal: 10,
     borderColor: '#ddd',
     borderWidth: 1,
     marginRight: 8,
-    height:43,
-     fontFamily: "montserratMeduim"
+    fontSize: 12,
+    height: 43,
   },
-  pickerContainer: {
+  pickerWrapper: {
     width: 150,
     backgroundColor: '#fff',
     borderRadius: 8,
@@ -216,8 +254,7 @@ const styles = StyleSheet.create({
   picker: {
     height: 43,
     width: '100%',
-    fontSize:10
-   },
+  },
   section: {
     marginBottom: 24,
   },
@@ -226,50 +263,93 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1F2937',
     marginBottom: 12,
+    fontFamily:"montserratMeduim",
     textTransform: 'uppercase',
-    letterSpacing: 1,
-     fontFamily: "montserratMeduim"
   },
   row: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap:7,
-    // justifyContent: 'space-between',
+    gap: 10,
+    justifyContent:"center",
+    marginHorizontal:"auto"
   },
-  gameCard: {
-    width: (screenWidth - 48) / 3,
-    backgroundColor: '#ffffff',
+  card: {
+    width: (screenWidth - 48) / 1,
+    backgroundColor: '#fff',
     borderRadius: 10,
-    alignItems: 'center',
-    // paddingVertical: 16,
+    
+    // paddingBottom:8,
     marginBottom: 12,
     elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
+    flexDirection:"column",
+    justifyContent:"space-between",
+    gap:6
   },
-  gameImage: {
-    width: "100%",
-    objectFit:"cover",
-    height: 100,
-    // marginBottom: 8,
+  imageWrapper: {
+    position: 'relative',
+    width: '100%',
+    height: 120,
     borderRadius: 8,
+    overflow: 'hidden',
+    marginHorizontal:"auto"
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    objectFit:"fill"
+  },
+  imageBadge: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    backgroundColor: '#A8BFED',
+    color: '#212121',
+    fontSize: 12,
+    fontWeight: 'bold',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderBottomRightRadius: 4,
+    zIndex: 1,
   },
   gameTitle: {
     fontSize: 14,
     fontWeight: '600',
+    marginTop: 5,
     color: '#1F2937',
-    textAlign: 'center',
-     fontFamily: "montserratMeduim"
+    fontFamily:"montserratMeduim",
+    paddingHorizontal: 12,
   },
-  noResultsText: {
-    fontSize: 18,
-    textAlign: 'center',
+  description: {
+    fontSize: 12,
     color: '#555',
-    marginTop: 20,
-     fontFamily: "montserratMeduim"
+    fontFamily:"montserratMeduim",
+    paddingHorizontal: 12,
+    marginTop: 4,
   },
+  variantLabel: {
+    fontWeight: '600',
+    marginTop: 6,
+    fontSize: 12,
+    fontFamily:"montserratMeduim",
+    paddingHorizontal: 12,
+  },
+  variantText: {
+    fontSize: 12,
+    color: '#333',
+    fontFamily:"montserratMeduim",
+
+    marginLeft: 4,
+  },
+  noResults: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#888',
+    marginTop: 20,
+    fontFamily:"montserratMeduim",
+
+  }, 
 });
 
 export default GameCategoryMain;

@@ -3,12 +3,13 @@ import { StyleSheet } from "react-native";
 const creategame = StyleSheet.create({
     container: {
       // flex: 1,
-      backgroundColor: '#111827',  
+      backgroundColor: '#E5E7EB', // Lighter shade of #111827
       
       paddingHorizontal: 20,
       paddingTop:10,
-      height:"100%"
-    },
+      height:"100%",
+      
+    }, 
     title: {
       fontSize: 16,
       fontWeight: '700',

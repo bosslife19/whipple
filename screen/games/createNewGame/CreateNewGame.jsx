@@ -31,7 +31,7 @@ const CreateGameScreen = () => {
     <HeaderBet   arrow backgroundColor='#A8BFED' amount={200} />
    <ScrollView contentContainerStyle={{height:"110%"}}>
     <ImageBackground source={bgs} style={creategame.container}>
-      {/* Title & Subtitle */}
+      {/* Title & Subtitle */} 
       <Text style={creategame.title}>Create Your Game</Text>
       <Text style={creategame.subtitle}>Setup game configuration, rules and parameters</Text>
 
