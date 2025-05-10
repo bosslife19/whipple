@@ -19,6 +19,9 @@ export default function RootLayout() {
     MonteserratItalic: require('../assets/fonts/Montserrat-Italic-VariableFont_wght.ttf'),
     MonteserratRegular: require('../assets/fonts/Montserrat-VariableFont_wght.ttf'),
     Poppins: require('../assets/fonts/Poppins-Black.ttf'),
+    PoppinsMed: require('../assets/fonts/Poppins-Medium.ttf'),
+    PoppinsReg: require('../assets/fonts/Poppins-Regular.ttf'),
+ 
     PoppinsLight:require('../assets/fonts/Poppins-Light.ttf'),
     PoppinsBold: require('../assets/fonts/Poppins-Bold.ttf'),
     Grotesk: require('../assets/fonts/SpaceGrotesk-VariableFont_wght.ttf'),

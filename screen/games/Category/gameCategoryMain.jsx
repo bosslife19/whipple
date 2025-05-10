@@ -37,7 +37,7 @@ const popularGames = [
     image: cube,
     description: 'Roll dice and bet on outcomes.',
     variants: ['Single Die', 'Double Die'],
-    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/DiceRoll'),
 
   },
   {
@@ -45,7 +45,7 @@ const popularGames = [
     image: color,
     description: 'Four colors (Red, Blue, Green, Yellow); two prominent colors published.',
     variants: ['Four Colors'],
-    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/colorRoulette'),
 
   },
 ];
@@ -83,7 +83,7 @@ const quickGames = [
     image: spin,
     description: 'Spin a wheel with numbers 1-10, three prominent numbers published.',
     variants: ['Standard Wheel'],
-    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/spinwheel'),
 
   },
   {

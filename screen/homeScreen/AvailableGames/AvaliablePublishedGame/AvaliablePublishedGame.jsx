@@ -18,23 +18,51 @@ const AvaliablePublishedGame = () => {
   const isGameAvailable =
     selectedTab === 'All' || selectedTab.toLowerCase().includes(GameName?.toLowerCase());
 
-  const handlePlayNow = () => {
-    // Hide card
-    setGamePlayed(true);
+    const normalizedGameName = GameName?.toLowerCase?.();
 
-    // Navigate to game detail
-    router.push({
-      pathname: '/(routes)/games/details',
-      params: {
+    const handlePlayNow = () => {
+      // Set the game as played
+      setGamePlayed(true);
+  
+      // Prepare the game details for navigation
+      const gameDetails = {
         stake: stake?.toString(),
-        odds: odds?.toString(),
-        gameLabel,
+        odds,
+        gameLabel: GameName,
         GameName,
-        range: range?.toString(),
-        selected: selected?.toString(),
-      },
-    });
-  };
+        range,
+        selected, 
+      };
+  
+      // Check game type and navigate accordingly
+      if (normalizedGameName === 'dice roll' || normalizedGameName === 'wheel spin') {
+        router.push({
+          pathname: '/games/vote',
+          params: {
+            stake: stake,
+            odds,
+            gameLabel,
+            GameName,
+            range,
+            result: gameLabel,
+          }
+        });
+      } else {
+        router.push({
+          pathname: '/games/details',
+          params: {
+            stake: stake,
+            odds,
+            gameLabel,
+            GameName,
+            range,
+            result: gameLabel,
+          }
+        });
+      }
+    };
+  
+    
 
   return (
     <View style={{ height:"100%", backgroundColor:"#EEF6FF"}}>
@@ -79,7 +107,9 @@ const AvaliablePublishedGame = () => {
                           </View>
 
                           <TouchableOpacity style={styles.playButton} onPress={handlePlayNow}>
-                              <Text style={styles.playButtonText}>Play Now</Text>
+                              <Text style={styles.playButtonText}>
+                              {normalizedGameName === 'dice roll' || normalizedGameName === 'wheel spin' ? 'Vote Now' : 'Play Now'}
+                              </Text>
                           </TouchableOpacity>
                       </View>
                   </View>

@@ -15,18 +15,21 @@ import LosersGameList from '../../../../styles/losersgameList/LosersGameList';
 
 const LosersGames = () => {
   const router = useRouter();
-  const { stake, odds, gameLabel, range, selected, GameName, isGameLost } = useLocalSearchParams();
+  const { stake,
+    flipResult,
+     
+     odds, gameLabel, range, selected, GameName, isGameLost } = useLocalSearchParams();
 
   const [gamePlayed, setGamePlayed] = useState(false);
   const [selectedTab, setSelectedTab] = useState('All');
 
   const isLostAvailable =
-    stake && odds && gameLabel && range && isGameLost && !gamePlayed;
+    stake &&  isGameLost 
 
   const handlePlayNow = () => {
     setGamePlayed(true);
     router.push({
-      pathname: '/(routes)/games/availablegames/luckynumbers/details',
+      pathname: '/(routes)/games/details',
       params: {
         stake: stake?.toString(),
         odds: odds?.toString(),
@@ -35,24 +38,23 @@ const LosersGames = () => {
         range: range?.toString(),
         selected: selected?.toString(),
       },
-    });
+    }); 
   };
 
   const shouldDisplayGame =
     selectedTab === 'All' || selectedTab.toLowerCase().includes(GameName?.toLowerCase());
-
-  if (!isLostAvailable) {
-    return (
-
-      <View style={LosersGameList.centeredContainer}>
-       <Header name="Loser's Game" backgroundColor="transparent" />
-        <Text style={LosersGameList.noGameText}>No game is currently published.</Text>
-      </View>
-    );
-  }
-
+ 
+    if (!isLostAvailable) {
+      return (
+  
+        <View style={LosersGameList.centeredContainer}>
+         <Header name="Loser's Game" backgroundColor="transparent" />
+          <Text style={LosersGameList.noGameText}>No game is currently published.</Text>
+        </View>
+      );
+    }
   return (
-    <>
+    <View>
       <Header name="Loser's Game" backgroundColor="#EEF6FF" />
       <View style={LosersGameList.container}>
         {/* Rules Card */}
@@ -72,7 +74,7 @@ const LosersGames = () => {
         <FilterTabPanel onTabChange={setSelectedTab} />
 
         <ScrollView contentContainerStyle={LosersGameList.scrollContainer} showsHorizontalScrollIndicator={false}>
-          {shouldDisplayGame && (
+          {shouldDisplayGame ? (
             <View style={LosersGameList.card}>
               <View style={LosersGameList.cardHeader}>
                 <Text style={LosersGameList.headerIcon}>🎲</Text>
@@ -105,10 +107,12 @@ const LosersGames = () => {
                 </TouchableOpacity>
               </View>
             </View>
+          ):(
+            <Text style={LosersGameList.noGameText}>No game is currently published.</Text>
           )}
         </ScrollView>
       </View>
-    </>
+    </View>
   );
 };
 

@@ -5,7 +5,8 @@ const screenWidth = Dimensions.get('window').width;
 const LosersGameList = StyleSheet.create({
     container: {
       backgroundColor: '#EEF6FF',
-      paddingBottom: 100,
+      paddingBottom: 100, 
+         
     },
     centeredContainer: {
       // flex: 1,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 // Images
 import gameImage from "../../../assets/images/games/dfd0983d-43cb-479f-bd09-6da48a29a8dd.webp";
@@ -10,14 +10,14 @@ import gameImage3 from "../../../assets/images/Rectangle 9.png";
 import gameImage4 from "../../../assets/images/Rectangle 10.png";
 
 const AvailableGames = () => {
+  const router = useRouter(); // Use router hook
+
   const gamesList = [
-    {
-      image: gameImage,
-     },
-    { image: gameImage1, navigateTo: "/(routes)/" },
-    { image: gameImage2, navigateTo: "/(routes)/" },
-    { image: gameImage3, navigateTo: "/(routes)/" },
-    { image: gameImage4, navigateTo: "/(routes)/" },
+    { image: gameImage,navigateTo: "/(routes)/games/availablegames" },
+    { image: gameImage1, navigateTo: "/(routes)/games/availablegames" },
+    { image: gameImage2, navigateTo: "/(routes)/games/availablegames" },
+    { image: gameImage3, navigateTo: "/(routes)/games/availablegames" },
+    { image: gameImage4, navigateTo: "/(routes)/games/availablegames" },
   ];
 
   return (
@@ -26,7 +26,8 @@ const AvailableGames = () => {
         {gamesList.map((item, index) => (
           <TouchableOpacity
             key={index}
-             style={styles.gameItem}
+            onPress={() => router.push(item.navigateTo)} // Properly call the navigation function
+            style={styles.gameItem}
           >
             <Image source={item.image} style={styles.gameImage} resizeMode="cover" />
           </TouchableOpacity>

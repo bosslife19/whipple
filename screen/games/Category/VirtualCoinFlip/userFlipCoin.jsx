@@ -16,8 +16,8 @@ import Losingmodal from '../../../loseModal/LoseModal';
 
 const UserFlipCoin = () => {
   const {
-    gameLabel ,
-    range ,
+    gameLabel,
+    range,
     totalOdds = '2.0',
     selectionCount = '1',
     result: passedResult = 'Heads',
@@ -76,20 +76,23 @@ const UserFlipCoin = () => {
     });
   };
 
-    const moveForward = ()=>{
-          router.push({
-            pathname: '/(routes)/games/LostGames/ViewLostGames',
-            params: {
-              stake: stake.toString(),
-              odds: parsedTotalOdds + 'x',
-              gameLabel,
-              GameName,
-              range,
-              selected: selectedNumbers.join(','),
-              isGameLost: true  // Flag indicating if the game is lost
-            },
-          });
-    }
+  const moveForward = () => {
+    router.push({
+      pathname: '/(routes)/games/LostGames/ViewLostGames',
+      params: {
+        stake: stake.toString(),
+        odds: parsedTotalOdds + 'x',
+        gameLabel,
+        GameName,
+        range,
+        selected: selectedNumbers.join(','),
+        isGameLost: true, // Flag indicating if the game is lost
+        flipResult, // Pass the flip result to the next page
+      },
+    });
+  };
+  
+
   return (
     <>
       <HeaderBet name={GameName} />
@@ -118,49 +121,48 @@ const UserFlipCoin = () => {
 
           <Text style={styles.chooseText}>Choose Your Side</Text>
           <View style={styles.choiceButtons}>
-  {success === null ? (
-    <>
-      <TouchableOpacity
-        style={[FLipCoin.button, { width: '43%' }]}
-        onPress={() => handleChoice('Heads')}
-        disabled={isFlipping}
-      >
-        {isFlipping && flippingButton === 'Heads' ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Flip Coin</Text>
-        )}
-      </TouchableOpacity>
+            {success === null ? (
+              <>
+                <TouchableOpacity
+                  style={[FLipCoin.button, { width: '43%' }]}
+                  onPress={() => handleChoice('Heads')}
+                  disabled={isFlipping}
+                >
+                  {isFlipping && flippingButton === 'Heads' ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Flip Coin</Text>
+                  )}
+                </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[FLipCoin.button, { width: '43%' }]}
-        onPress={() => handleChoice('Tails')}
-        disabled={isFlipping}
-      >
-        {isFlipping && flippingButton === 'Tails' ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Flip Coin</Text>
-        )}
-      </TouchableOpacity>
-    </>
-  ) : success === true ? (
-    <TouchableOpacity
-      style={[FLipCoin.button, { width: '90%' }]}
-      onPress={() => router.push('/home')}
-    >
-      <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Back to Home</Text>
-    </TouchableOpacity>
-  ) : (
-    <TouchableOpacity
-      style={[FLipCoin.button, { width: '90%' }]}
-      onPress={moveForward}
-    >
-      <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Go to Losers Game</Text>
-    </TouchableOpacity>
-  )}
-</View>
-
+                <TouchableOpacity
+                  style={[FLipCoin.button, { width: '43%' }]}
+                  onPress={() => handleChoice('Tails')}
+                  disabled={isFlipping}
+                >
+                  {isFlipping && flippingButton === 'Tails' ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Flip Coin</Text>
+                  )}
+                </TouchableOpacity>
+              </>
+            ) : success === true ? (
+              <TouchableOpacity
+                style={[FLipCoin.button, { width: '90%' }]}
+                onPress={() => router.push('/home')}
+              >
+                <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Back to Home</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={[FLipCoin.button, { width: '90%' }]}
+                onPress={moveForward}
+              >
+                <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Go to Losers Game</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         <View style={styles.instructionsCard}>

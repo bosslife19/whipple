@@ -11,7 +11,7 @@ const ConfirmGameDetails = () => {
     gameLabel,
     GameName,
     range,
-    selected,
+    selected, 
     selectionCount,
   } = useLocalSearchParams();
 
@@ -19,10 +19,15 @@ const ConfirmGameDetails = () => {
   const normalizedGameName = GameName?.toLowerCase?.();
 
   const handleContinue = () => {
-    if (normalizedGameName === 'lucky number') {
-      router.push({
-        pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
-        params: {
+    // Ensure all parameters are strings for safe navigation
+    
+  
+    // Navigate based on the selected game
+    switch (normalizedGameName) {
+      case 'lucky number':
+        router.push({
+          pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+          params: {
           stake: stake?.toString(),
           odds,
           selectionCount,
@@ -31,11 +36,13 @@ const ConfirmGameDetails = () => {
           range,
           selected,
         },
-      });
-    } else if (normalizedGameName === 'flip the coin') {
-      router.push({
-        pathname: '/games/availablegames/CoinFLip/confirmFlipCoin',
-        params: {
+        });
+        break;
+  
+      case 'flip the coin':
+        router.push({
+          pathname: '/games/availablegames/CoinFLip/confirmFlipCoin',
+          params: {
           stake: stake?.toString(),
           odds,
           selectionCount,
@@ -44,12 +51,31 @@ const ConfirmGameDetails = () => {
           range,
           selected,
         },
-      });
-    } else {
-      // fallback or error
-      console.warn('Unknown game selected');
+        });
+        break;
+  
+      case 'color roulette':
+        router.push({
+          pathname: '/games/category/becomethehouse/colorRoulette/selectedColor',
+          params: {
+          stake: stake?.toString(),
+          odds,
+          selectionCount,
+          gameLabel,
+          GameName,
+          range,
+          selected,
+        },
+        });
+        break;
+  
+      default:
+        // Handle unknown game gracefully
+        console.warn(`[Navigation Error]: Unknown game "${GameName}" selected.`);
+        alert('An error occurred: Unknown game selected. Please try again.');
     }
   };
+  
 
   return (
     <>

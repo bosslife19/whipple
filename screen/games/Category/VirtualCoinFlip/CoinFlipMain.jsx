@@ -164,7 +164,7 @@ const FlipTheCoin = () => {
             />
             <TouchableOpacity style={[FLipCoin.button, { marginTop: 16 }]} onPress={handlePublish}>
               <Text style={FLipCoin.buttonText}>Publish Game</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> 
             <View style={FLipCoin.totals}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 15 }}>
                 <Text style={[FLipCoin.walletText, { fontWeight: '600', fontSize: 16, paddingHorizontal: 15, paddingVertical: 6 }]}>

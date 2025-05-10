@@ -4,10 +4,10 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-nati
 const tabs = [
   'All',
   'Lucky Number ',
-  'Coin Flip',
+  'Flip The Coin',
   'Dice Roll',
-  'Wheel',
-  'Colors',
+  'Wheel Spin',
+  'Color Roulette',
   'Mystery',
   'Goal',
 ];
