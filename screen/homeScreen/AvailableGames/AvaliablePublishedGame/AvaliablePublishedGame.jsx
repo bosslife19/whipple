@@ -66,7 +66,7 @@ const AvaliablePublishedGame = () => {
 
   return (
     <View style={{ height:"100%", backgroundColor:"#EEF6FF"}}>
-    <Header name='Recently Pushlished Games' />
+    <Header name='Available Games' />
     <View style={styles.container}>
     <View style={LosersGameList.rulesCard}>
           <Text style={LosersGameList.rulesTitle}> Game Rules</Text>
@@ -76,9 +76,10 @@ const AvaliablePublishedGame = () => {
          </View>
 
         <FilterTabPanel onTabChange={setSelectedTab} />
-    
+        <Text style={[LosersGameList.rulesTitle,{paddingHorizontal:20,paddingTop:10}]}> Recently Pushlished Games</Text>
+
           {isGameAvailable ? (
-              <ScrollView horizontal contentContainerStyle={styles.scrollContainer} showsHorizontalScrollIndicator={false}>
+              <ScrollView  contentContainerStyle={styles.scrollContainer} showsHorizontalScrollIndicator={false}>
                   <View style={styles.card}>
                       <View style={styles.cardHeader}>
                           <Text style={styles.headerIcon}>🔢</Text>
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
    
     },
     scrollContainer: {
-        marginHorizontal:"auto",
+        marginHorizontal:"20",
          backgroundColor:"#EEF6FF",
            
          paddingVertical: 16,
@@ -145,8 +146,8 @@ const styles = StyleSheet.create({
       paddingHorizontal: 20,
     },
     card: {
-      width: screenWidth * 0.8,
-      marginRight: 16,
+      width: "100%",
+      // marginRight: 16,
       borderWidth: 1,
       borderColor: '#ccc',
       borderRadius: 12,
