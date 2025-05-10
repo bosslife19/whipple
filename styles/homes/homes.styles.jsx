@@ -3,6 +3,11 @@ import { StyleSheet } from "react-native";
 const Homes = StyleSheet.create({
     scrollViewContainer: {
       flexGrow: 1,
+      // marginBottom: '40%',
+
+      // marginBottom:"250%",
+ 
+      // height:"100%"
       
       // alignItems:"center"
       // backgroundColor:"#F8FAFC"
@@ -42,7 +47,9 @@ const Homes = StyleSheet.create({
       gap: 10,
       // paddingHorizontal:10,
       backgroundColor:"#EEF6FF",
-      height:"100%"
+      height:"100%",
+      // marginBottom:"50%",
+
     },
     Containers: {
       flexDirection: "row",

@@ -68,6 +68,7 @@ const maingamess = StyleSheet.create({
     infoLabel: {
       fontSize: 14,
       color: '#fff',
+      fontWeight:'400',
       fontFamily: "montserratMeduim"
   
     },
@@ -182,7 +183,7 @@ const maingamess = StyleSheet.create({
     confirmText: {
       color: '#fff',
       fontWeight: '500',
-  
+      fontSize:13,
       fontFamily: "montserratMeduim"
   
     },

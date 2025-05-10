@@ -18,7 +18,7 @@ import SlideShowBet from '../../../features/slideshow/slideshowBet';
 
 // Assets
 import number1 from '../../../assets/images/games/dfd0983d-43cb-479f-bd09-6da48a29a8dd.webp';
-import virtualcoins from '../../../assets/images/games/Online-Casino-Bonus-1-2-1-768x432.jpg.webp';
+import virtualcoins from '../../../assets/images/games/coinflip.jpg';
 import cube from '../../../assets/images/games/cube.png';
 import spin from '../../../assets/images/games/spin2win.png';
 import color from '../../../assets/images/games/color.png';
@@ -31,14 +31,7 @@ const { width: screenWidth } = Dimensions.get('window');
 // Game Data
 const popularGames = [
  
-  {
-    title: 'Virtual Coin',
-    image: virtualcoins,
-    description: 'Simple heads or tails game with animated coin flip.',
-    variants: ['Heads or Tails'],
-    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
-
-  },
+ 
   {
     title: 'Dice Roll',
     image: cube,
@@ -46,16 +39,6 @@ const popularGames = [
     variants: ['Single Die', 'Double Die'],
     handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
 
-  },
-];
-
-const topGames = [
-  {
-    title: 'Lucky Number',
-    image: number1,
-    description: 'Players select numbers from a range. Winners match the drawn number(s).',
-    variants: ['Category A (1-3, 1-5)', 'Category B (2 from 1-5)', 'Category C (5, 10, or 1 from 1-100)'],
-    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
   },
   {
     title: 'Color Roulette',
@@ -65,6 +48,25 @@ const topGames = [
     handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
 
   },
+];
+
+const topGames = [ 
+  {
+    title: 'Lucky Number',
+    image: number1,
+    description: 'Players select numbers from a range. Winners match the drawn number(s).',
+    variants: ['Category A (1-3, 1-5)', 'Category B (2 from 1-5)', 'Category C (5, 10, or 1 from 1-100)'],
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
+  },
+  {
+    title: 'Virtual Coin Flip',
+    image: virtualcoins,
+    description: 'Simple heads or tails game with animated coin flip.',
+    variants: ['Heads or Tails'],
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/CoinFlip'),
+
+  },
+ 
   {
     title: 'Goal Challenge',
     image: choose,

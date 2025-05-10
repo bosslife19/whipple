@@ -34,7 +34,7 @@ const CreateLuckyNumbers = () => {
   const [stakeAmount, setStakeAmount] = useState('');
   const [isInputFocused, setIsInputFocused] = useState(false);
 
-  const handleNumberSelect = (number) => {
+  const handleNumberSelect = (number) => { 
     if (selectedNumbers.includes(number)) {
       setSelectedNumbers((prev) => prev.filter((n) => n !== number));
     } else {
@@ -60,8 +60,8 @@ const CreateLuckyNumbers = () => {
       return;
     }
   
-    router.push({
-      pathname: '/(tabs)/home',
+    router.push({ 
+      pathname: '/(routes)/games/availablegames',
       params: {
         stake: stake.toString(),
         odds: parsedTotalOdds + 'x',
@@ -117,7 +117,7 @@ const CreateLuckyNumbers = () => {
                           isSelected && CreateGames2.numberBtnActive,
                         ]}
                       >
-                        <Text
+                        <Text 
                           style={[
                             CreateGames2.numberText,
                             isSelected && CreateGames2.numberTextActive,

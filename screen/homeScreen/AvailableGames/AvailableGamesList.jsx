@@ -1,0 +1,57 @@
+import React from 'react';
+import { ScrollView, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
+import { router } from 'expo-router';
+
+// Images
+import gameImage from "../../../assets/images/games/dfd0983d-43cb-479f-bd09-6da48a29a8dd.webp";
+import gameImage1 from "../../../assets/images/Rectangle 7.png";
+import gameImage2 from "../../../assets/images/Rectangle 8.png";
+import gameImage3 from "../../../assets/images/Rectangle 9.png";
+import gameImage4 from "../../../assets/images/Rectangle 10.png";
+
+const AvailableGames = () => {
+  const gamesList = [
+    {
+      image: gameImage,
+     },
+    { image: gameImage1, navigateTo: "/(routes)/" },
+    { image: gameImage2, navigateTo: "/(routes)/" },
+    { image: gameImage3, navigateTo: "/(routes)/" },
+    { image: gameImage4, navigateTo: "/(routes)/" },
+  ];
+
+  return (
+    <View style={styles.container}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {gamesList.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+             style={styles.gameItem}
+          >
+            <Image source={item.image} style={styles.gameImage} resizeMode="cover" />
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  gameItem: {
+    alignItems: "center",
+    marginRight: 15,
+  },
+  gameImage: {
+    width: 120,
+    height: 120,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    borderRadius: 10,
+  },
+});
+
+export default AvailableGames;

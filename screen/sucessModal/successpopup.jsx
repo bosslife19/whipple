@@ -17,7 +17,7 @@ const SuccessModal = ({ visible, onClose }) => {
   const router = useRouter();
   const scaleAnim = useRef(new Animated.Value(0.5)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
-
+ 
   useEffect(() => {
     if (visible) {
       // Animate modal appearance

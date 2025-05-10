@@ -6,7 +6,7 @@ import { formatCurrency } from '../../utlils/formatCurrency';
 
 const HeaderBet = ({ name, backgroundColor = "#fff", amount = 0, arrow }) => {
     const navigation = useNavigation(); // Get navigation object
- 
+   
     return (
         <View style={[styles.headerContainer, { backgroundColor }]}>
            {arrow && 

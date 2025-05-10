@@ -1,51 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import {
-  ImageBackground,
-  Modal,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View
-} from 'react-native';
-// import creategame from '../../../../styles/creategame/creategame.styles';
-import { formatCurrencies } from '../../utlils/formatCurrency';
+import React from 'react';
+import { Modal, StatusBar, Text, TouchableOpacity, View, ImageBackground, TouchableWithoutFeedback, Image } from 'react-native';
 import bgs from "../../assets/images/icons/Loss Modal (1).png";
 import { router } from 'expo-router';
 import creategame from '../../styles/creategame/creategame.styles';
 import closes from "../../assets/images/icons/material-symbols_close.png";
-import share from "../../assets/images/icons/Frame 103.png";
-import view from "../../assets/images/icons/Frame 102.png";
-
-
-import { Image } from 'react-native';
 import maingamess from '../../styles/maingameDetails/maingameDetails.styles';
 
-const Losingmodal = ({
-  modalVisibles,
-  closeModals,
- 
+const Losingmodal = ({ visible,GameName, closeModal, correctNumber,stake,odds,gameLabel ,range,selected,parsedTotalOdds,selectedNumbers,  isFirstLoss = true, // default to true
 }) => {
+ 
+
+  const moveForward = ()=>{
+        router.push({
+          pathname: '/(routes)/games/LostGames/ViewLostGames',
+          params: {
+            stake: stake.toString(),
+            odds: parsedTotalOdds + 'x',
+            gameLabel,
+            GameName,
+            range,
+            selected: selectedNumbers.join(','),
+            isGameLost: true  // Flag indicating if the game is lost
+          },
+        });
+  }
   return (
-    <Modal visible={modalVisibles} transparent animationType="slide">
-            <StatusBar backgroundColor="transparent" barStyle="dark-content" />
-      <TouchableWithoutFeedback onPress={closeModals}>
-        <View style={[creategame.modalOverlays,{position:"relative"}]}>
-          <TouchableWithoutFeedback onPress={() => {}}>
+    <Modal visible={visible} transparent animationType="slide">
+      <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+      <TouchableWithoutFeedback onPress={closeModal}>
+        <View style={[creategame.modalOverlays, { position: "relative" }]}>
+          <TouchableWithoutFeedback>
             <ImageBackground source={bgs} style={creategame.modalContents}>
-              <TouchableOpacity style={{right:10,position:"absolute",top:10}} onPress={()=> router.push("/(routes)/games/main-game-details")}>
-                <Image source={closes} style={{width:30,height:30}} />
+              <TouchableOpacity
+                style={{ right: 10, position: "absolute", top: 10 }}
+                onPress={closeModal}
+              >
+                <Image source={closes} style={{ width: 30, height: 30 }} />
               </TouchableOpacity>
+              {/* <View style={{ margin: "auto" }}>
+                <Text style={[maingamess.confirmText, { fontSize: 23, color: "#fff", fontWeight: "700", letterSpacing: 1 }]}>
+                  Winning numbers:
+                </Text>
+                <Text style={[maingamess.confirmText, { fontSize: 45, marginHorizontal: "auto", color: "#FF8C00" }]}>
+                  {correctNumber}
+                </Text>
+              </View> */}
+              <View style={{ flexDirection: "row", position: "absolute", bottom: "25%", right: "13%", gap: 10, marginHorizontal: "auto" }}>
+                <TouchableOpacity style={{ paddingHorizontal: "4%", borderWidth: 1, paddingVertical: 10, borderRadius: 5 }}>
+                  <Text style={maingamess.confirmText}>View Details</Text>
+                </TouchableOpacity>
 
-              <View style={{flexDirection:"row",position:"absolute",bottom:"25%",right:"13%", gap:20,marginHorizontal:"auto",flex:1}}>
-              <TouchableOpacity style={{paddingHorizontal:"8%",borderWidth:1,paddingVertical:10,borderRadius:5}}>
-                <Text style={maingamess.confirmText}>View Details</Text>
-                {/* <Image source={view} style={{width:100,height:"110%",objectFit:"cover",}} /> */}
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ paddingHorizontal: "6%", backgroundColor: "#0A1931", paddingVertical: 10, borderRadius: 5 }}
+                  onPress={moveForward}
+                >
+                  <Text style={maingamess.confirmText}>
+                  {isFirstLoss ? 'Play Losers Game' : 'Go Back Home'}
 
-              <TouchableOpacity onPress={()=> router.push("/(routes)/games/main-game-details")} style={{paddingHorizontal:"16%",backgroundColor:"#0A1931",paddingVertical:10,borderRadius:5}}>
-                <Text style={maingamess.confirmText}>Share</Text>
-               </TouchableOpacity>
+                    </Text>
+                </TouchableOpacity>
               </View>
             </ImageBackground>
           </TouchableWithoutFeedback>

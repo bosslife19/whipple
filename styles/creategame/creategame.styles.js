@@ -130,7 +130,7 @@ const creategame = StyleSheet.create({
     },
     modalContents: {
       // backgroundColor: 'rgb(53, 52, 52)',
-     padding: 40,
+     padding: 30,
     zIndex:10000,
     objectFit:"cover",
     height:"90%",
@@ -138,7 +138,9 @@ const creategame = StyleSheet.create({
     borderTopRightRadius: 20,
     flexDirection:"column",
     gap:20,
- 
+    // marginHorizontal:"auto",
+    // width:"100%"
+    // justifyContent:"center"
   },
     modalContent: {
         backgroundColor: 'rgb(53, 52, 52)',

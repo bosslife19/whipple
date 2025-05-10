@@ -13,10 +13,11 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { router } from 'expo-router';
 import Notification from '../../assets/icons/Notification';
 import { FontAwesome6 } from '@expo/vector-icons';
-import AvailableGames from '../../screen/homeScreen/AvailableGames/AvailableGames';
+// import AvailableGames from '../../screen/homeScreen/AvailableGames/AvailableGames';
 import Homes from '../../styles/homes/homes.styles';
 import PastGames from '../../screen/homeScreen/PastGames/PastGames';
 import FloatingMessage from '../../screen/homeScreen/Message/Message';
+import AvailableGamesList from '../../screen/homeScreen/AvailableGames/AvailableGamesList';
 
 export default function HomeScreen() {
   return (
@@ -65,7 +66,9 @@ export default function HomeScreen() {
         <View style={Homes.contentContainer}>
          <View style={[Homes.scrollContainer,{justifyContent:"space-between",marginHorizontal:16,}]}>
             <Text style={Homes.Header}>Available Games</Text>
-             <TouchableOpacity style={{backgroundColor:'#0040841F',paddingHorizontal:15,paddingVertical:5,borderRadius:5}} >
+             <TouchableOpacity 
+             onPress={()=> router.push("/(routes)/games/availablegames")}
+             style={{backgroundColor:'#0040841F',paddingHorizontal:15,paddingVertical:5,borderRadius:5}} >
                       <Text style={[
                          Homes.optionText
                         ]}>
@@ -75,20 +78,22 @@ export default function HomeScreen() {
             </TouchableOpacity>
          </View>
           {/* Available Games */}
-          <AvailableGames/>
+          <AvailableGamesList/>
         </View>
 
          {/* Past Games*/}
          <View style={Homes.contentContainer}>
          <View style={[Homes.scrollContainer,{justifyContent:"space-between",marginHorizontal:16,}]}>
             <Text style={Homes.Header}>Past Games</Text>
-             <TouchableOpacity style={{backgroundColor:'#0040841F',paddingHorizontal:15,paddingVertical:5,borderRadius:5}} >
+             <TouchableOpacity 
+              onPress={()=> router.push("/(routes)/games/LostGames/ViewLostGames")}
+             style={{backgroundColor:'#0040841F',paddingHorizontal:15,paddingVertical:5,borderRadius:5}} >
                       <Text style={[
                          Homes.optionText
                         ]}>
                       See all
                       </Text>
-                   
+                    
             </TouchableOpacity>
          </View>
           {/* Available Games */}
