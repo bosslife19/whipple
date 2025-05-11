@@ -10,20 +10,7 @@ const Losingmodal = ({ visible,GameName, closeModal, correctNumber,stake,odds,ga
 }) => {
  
 
-  const moveForward = ()=>{
-        router.push({
-          pathname: '/(routes)/games/LostGames/ViewLostGames',
-          params: {
-            stake: stake.toString(),
-            odds: parsedTotalOdds + 'x',
-            gameLabel,
-            GameName,
-            range,
-            selected: selectedNumbers.join(','),
-            isGameLost: true  // Flag indicating if the game is lost
-          },
-        });
-  }
+
   return (
     <Modal visible={visible} transparent animationType="slide">
       <StatusBar backgroundColor="transparent" barStyle="dark-content" />
@@ -52,13 +39,13 @@ const Losingmodal = ({ visible,GameName, closeModal, correctNumber,stake,odds,ga
 
                 <TouchableOpacity
                   style={{ paddingHorizontal: "6%", backgroundColor: "#0A1931", paddingVertical: 10, borderRadius: 5 }}
-                  onPress={moveForward}
+                  onPress={()=>router.push('/(tabs)/home')}
                 >
                   <Text style={maingamess.confirmText}>
-                  {isFirstLoss ? 'Play Losers Game' : 'Go Back Home'}
+                  Go Back Home
 
                     </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> 
               </View>
             </ImageBackground>
           </TouchableWithoutFeedback>

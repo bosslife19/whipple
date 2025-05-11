@@ -20,6 +20,9 @@ const AvaliablePublishedGame = () => {
 
     const normalizedGameName = GameName?.toLowerCase?.();
 
+    const isAvailable =
+    stake &&  GameName  && odds;
+
     const handlePlayNow = () => {
       // Set the game as played
       setGamePlayed(true);
@@ -62,7 +65,15 @@ const AvaliablePublishedGame = () => {
       }
     };
   
-    
+    if (!isAvailable) {
+      return (
+  
+        <View style={LosersGameList.centeredContainer}>
+         <Header name="Available Games" backgroundColor="transparent" />
+          <Text style={LosersGameList.noGameText}>No game is currently published.</Text>
+        </View>
+      );
+    }
 
   return (
     <View style={{ height:"100%", backgroundColor:"#EEF6FF"}}>
@@ -128,8 +139,7 @@ const styles = StyleSheet.create({
     //   paddingLeft: 16,
     //   flex: 1,
     //   justifyContent: 'center',
-     
-   
+
    
     },
     scrollContainer: {

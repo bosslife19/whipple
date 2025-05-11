@@ -14,6 +14,7 @@ const ConFirmGameReplay = () => {
   const { stake, odds, gameLabel, GameName, range, selected, selectionCount,totalOdds } = useLocalSearchParams();
   const correctNumber = parseInt(selected); // Ensures comparison is number-based
   const parsedTotalOdds = parseFloat(totalOdds);
+  const [isFirstLoss, setIsFirstLoss] = useState(true);
 
   const [selectedNumbers, setSelectedNumbers] = useState([]);
   const [success, setSuccess] = useState(null); // null initially, true/false after check
@@ -26,13 +27,15 @@ const ConFirmGameReplay = () => {
 
   }
   const handleNumberSelect = (number) => {
-    // Toggle number selection logic
+    if (success !== null) return; // Prevent interaction if already submitted
+  
     if (selectedNumbers.includes(number)) {
       setSelectedNumbers(selectedNumbers.filter((num) => num !== number));
     } else if (selectedNumbers.length < 1) {
       setSelectedNumbers([...selectedNumbers, number]);
     }
   };
+  
 
   const handleSubmit = () => {
     if (selectedNumbers.includes(correctNumber)) {
@@ -42,6 +45,21 @@ const ConFirmGameReplay = () => {
     }
     setModalVisibled(true);
   };
+
+  const losers = ()=>{
+    router.push({
+      pathname: '/(routes)/games/LostGames/ViewLostGames',
+      params: {
+        stake: stake.toString(),
+        odds,
+        gameLabel,
+        GameName,
+        range,
+        selected: selectedNumbers.join(','),
+        isGameLost: true  // Flag indicating if the game is lost
+      },
+    });
+}
   
   return (
     <>
@@ -75,15 +93,20 @@ const ConFirmGameReplay = () => {
         <View style={ConfirmsSTy.card}>
           <Text style={ConfirmsSTy.sectionTitle}>Select Your Lucky Numbers</Text>
           <Text style={ConfirmsSTy.info}>House: @current-user</Text>
-          <View style={ConfirmsSTy.numberGrid}>
+    
+         <View style={ConfirmsSTy.numberGrid}>
           {Array.from({ length: parseInt(range) }, (_, i) => i + 1).map((num) => (
               <TouchableOpacity
                 key={num}
                 style={[
                   ConfirmsSTy.numberButton,
                   selectedNumbers.includes(num) && ConfirmsSTy.selectedNumber,
+                  success !== null && { opacity: 0.5 }, // visually indicate disabled
+
                 ]}
                 onPress={() => handleNumberSelect(num)}
+                disabled={success !== null} // disable after submission
+
               >
                 <Text style={[ConfirmsSTy.numberText,
                       selectedNumbers.includes(num) && ConfirmsSTy.selectedTexts,
@@ -91,12 +114,27 @@ const ConFirmGameReplay = () => {
               </TouchableOpacity>
             ))}
           </View>
+        
+
+
           <Text style={ConfirmsSTy.selectionCountText}>
             {selectedNumbers.length}/1 numbers selected
           </Text>
-          <TouchableOpacity onPress={handleSubmit} style={ConfirmsSTy.primaryBtn}>
-            <Text style={ConfirmsSTy.primaryBtnText}>Submit Your Numbers</Text>
-          </TouchableOpacity>
+
+          {success === false ? (
+  <TouchableOpacity
+    onPress={losers} // Change this route as needed
+    style={ConfirmsSTy.primaryBtn}
+  >
+    <Text style={ConfirmsSTy.primaryBtnText}>Play Losers Game</Text>
+  </TouchableOpacity>
+) : (
+  <TouchableOpacity onPress={handleSubmit} style={ConfirmsSTy.primaryBtn}>
+    <Text style={ConfirmsSTy.primaryBtnText}>Submit Your Numbers</Text>
+  </TouchableOpacity>
+)}
+
+
         </View>
         <View style={ConfirmsSTy.cards}>
       <Text style={ConfirmsSTy.titles}>How To Win</Text>

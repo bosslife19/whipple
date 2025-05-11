@@ -24,7 +24,7 @@ const Winningmodal = ({ visible, closeModal }) => {
                 style={{
                   flexDirection: "row",
                   position: "absolute",
-                  bottom: "25%",
+                  bottom: "23%",
                   right: "13%",
                   gap: 20,
                   marginHorizontal: "auto",
@@ -44,13 +44,14 @@ const Winningmodal = ({ visible, closeModal }) => {
 
                 <TouchableOpacity
                   style={{
-                    paddingHorizontal: "16%",
+                    paddingHorizontal: "11%",
                     backgroundColor: "#0A1931",
                     paddingVertical: 10,
                     borderRadius: 5,
                   }}
+                    onPress={()=>router.push('/(tabs)/home')}
                 >
-                  <Text style={maingamess.confirmText}>Share</Text>
+                  <Text style={maingamess.confirmText}>Go Home</Text>
                 </TouchableOpacity>
               </View>
             </ImageBackground>
