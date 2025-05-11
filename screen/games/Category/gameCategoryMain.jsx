@@ -87,11 +87,11 @@ const quickGames = [
 
   },
   {
-    title: 'Mystery Box',
+    title: 'mysteryGame',
     image: number1,
     description: 'Three boxes; one chosen as the winning box.',
     variants: ['Three Boxes'],
-    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/mysteryGame'),
 
   },
 ];

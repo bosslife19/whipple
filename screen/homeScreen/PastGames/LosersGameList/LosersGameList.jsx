@@ -45,7 +45,7 @@ const LosersGames = () => {
     selectedTab === 'All' || selectedTab.toLowerCase().includes(GameName?.toLowerCase());
  
     if (!isLostAvailable) {
-      return (
+      return ( 
   
         <View style={LosersGameList.centeredContainer}>
          <Header name="Loser's Game" backgroundColor="transparent" />
