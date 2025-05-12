@@ -17,6 +17,7 @@ import Header from '../../../Header/Header';
 import bgs from '../../../../assets/images/games/image_fx_ (35) 1.png';
 import CreateGames2 from '../../../../styles/creategames/creategames.styles';
 import creategame from '../../../../styles/creategame/creategame.styles';
+import { useGameContext } from '../../../../context/AppContext';
 
 const formatCurrency = (value) => {
   if (!value) return '';
@@ -25,7 +26,11 @@ const formatCurrency = (value) => {
 };
 
 const CreateLuckyNumbers = () => {
-  const { gameLabel, range, totalOdds, selectionCount,GameName } = useLocalSearchParams();
+
+      const { gameData ,updateGameData } = useGameContext();
+      const {  totalOdds,  gameLabel, range, GameName ,selectionCount ,} = gameData || {};
+    
+  // const { gameLabel, range, totalOdds, selectionCount,GameName } = useLocalSearchParams();
   const parsedRange = parseInt(range, 10);
   const parsedSelectionCount = parseInt(selectionCount, 10);
   const parsedTotalOdds = parseFloat(totalOdds);
@@ -60,17 +65,16 @@ const CreateLuckyNumbers = () => {
       return;
     }
   
-    router.push({ 
-      pathname: '/(routes)/games/availablegames',
-      params: {
-        stake: stake.toString(),
+    router.push('/(routes)/games/availablegames');
+      updateGameData({
+        stake: totalAmount.toString(),
         odds: parsedTotalOdds + 'x',
         gameLabel,
-        GameName,
+        GameName, 
         range,
         selected: selectedNumbers.join(','),
-      },
-    });
+      });
+    
   };
   
 

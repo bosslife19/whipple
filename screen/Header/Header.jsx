@@ -12,7 +12,7 @@ const Header = ({ name, backgroundColor = "#fff" }) => {
             <TouchableOpacity onPress={() => navigation.goBack()}>
                 <MaterialIcons name="arrow-back" size={21} color="#0F172A" />
             </TouchableOpacity>
-
+  
             {/* Centered Title */}
             <Text style={styles.headerText}>{name}</Text>
         </View> 

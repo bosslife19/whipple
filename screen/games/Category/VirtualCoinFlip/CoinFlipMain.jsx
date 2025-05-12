@@ -10,18 +10,22 @@ import {
   ScrollView,
 } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import HeaderBet from '../../../Header/HeaderBet';
 import FLipCoin from '../../../../styles/flipcoin/flipCoin';
+import { useGameContext } from '../../../../context/AppContext';
+// import { useGameContext } from '../../../../context/AppContext';
+// import { useGameContext } from '../../../../context/AppContext';
 
 const MIN_STAKE = 200;
 const MAX_STAKE = 100000;
 
 const FlipTheCoin = () => {
-  const { gameLabel, range, totalOdds, result: initialResult, GameName = 'Flip The Coin' } = useLocalSearchParams();
-  
+  const {  updateGameData } = useGameContext();
+  const GameName =  'Flip The Coin';
+
   const router = useRouter();
-  const [flipResult, setFlipResult] = useState(null); // renamed to flipResult
+  const [flipResult, setFlipResult] = useState(null);
   const [isFlipping, setIsFlipping] = useState(false);
   const [stake, setStake] = useState('');
   const [walletBalance] = useState(150000);
@@ -80,26 +84,24 @@ const FlipTheCoin = () => {
       Alert.alert('Incomplete', 'Flip the coin and enter a stake first.');
       return;
     }
-  
+
     const parsedTotalOdds = '2.0';
-    const gameLabel = flipResult; // use flipResult as label
-    const range = ''; // Optional or unused
-    const selectedNumbers = []; // Optional or unused
-  
-    router.push({
-      pathname: '/(routes)/games/availablegames',
-      params: {
-        stake: stake.toString(),
-        odds: parsedTotalOdds + 'x',
-        gameLabel,
-        GameName,
-        range,
-        selected: selectedNumbers.join(','),
-        result: flipResult, // ✅ added this line
-      },
+    const gameLabel = flipResult;
+    const range = '';
+    const selectedNumbers = [];
+
+    updateGameData({
+      stake: stake.toString(),
+      odds: parsedTotalOdds + 'x',
+      gameLabel,
+      GameName,
+      range,
+      selected: selectedNumbers,
+      result: flipResult,
     });
+
+    router.push('/(routes)/games/availablegames');
   };
-  
 
   return (
     <>
@@ -121,7 +123,9 @@ const FlipTheCoin = () => {
 
           {flipResult && (
             <View style={FLipCoin.resultContainer}>
-              <Text style={FLipCoin.resultText}>Result: <Text style={{ textTransform: 'uppercase' }}>{flipResult}</Text></Text>
+              <Text style={FLipCoin.resultText}>
+                Result: <Text style={{ textTransform: 'uppercase' }}>{flipResult}</Text>
+              </Text>
               <Text style={FLipCoin.odds}>Odds: 2.0</Text>
             </View>
           )}
@@ -162,15 +166,37 @@ const FlipTheCoin = () => {
               value={stake}
               onChangeText={setStake}
             />
-            <TouchableOpacity style={[FLipCoin.button, { marginTop: 16 }]} onPress={handlePublish}>
+
+            <TouchableOpacity
+              style={[FLipCoin.button, { marginTop: 16 }]}
+              onPress={handlePublish}
+            >
               <Text style={FLipCoin.buttonText}>Publish Game</Text>
-            </TouchableOpacity> 
+            </TouchableOpacity>
+
             <View style={FLipCoin.totals}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 15 }}>
-                <Text style={[FLipCoin.walletText, { fontWeight: '600', fontSize: 16, paddingHorizontal: 15, paddingVertical: 6 }]}>
+                <Text
+                  style={[
+                    FLipCoin.walletText,
+                    { fontWeight: '600', fontSize: 16, paddingHorizontal: 15, paddingVertical: 6 },
+                  ]}
+                >
                   My bets
                 </Text>
-                <Text style={[FLipCoin.walletText, { fontWeight: '600', fontSize: 16, backgroundColor: '#4C6388', paddingHorizontal: 15, paddingVertical: 6, borderRadius: 5 }]}>
+                <Text
+                  style={[
+                    FLipCoin.walletText,
+                    {
+                      fontWeight: '600',
+                      fontSize: 16,
+                      backgroundColor: '#4C6388',
+                      paddingHorizontal: 15,
+                      paddingVertical: 6,
+                      borderRadius: 5,
+                    },
+                  ]}
+                >
                   Submission
                 </Text>
               </View>
@@ -180,11 +206,15 @@ const FlipTheCoin = () => {
               </View>
               <View style={FLipCoin.totalRow}>
                 <Text style={[FLipCoin.totalLabel, { fontWeight: '600' }]}>Total Amount</Text>
-                <Text style={[FLipCoin.totalValue, { fontWeight: '700' }]}>₦{totalAmount.toLocaleString()}</Text>
+                <Text style={[FLipCoin.totalValue, { fontWeight: '700' }]}>
+                  ₦{totalAmount.toLocaleString()}
+                </Text>
               </View>
               <View style={FLipCoin.totalRow}>
                 <Text style={FLipCoin.walletText}>Your wallet balance:</Text>
-                <Text style={[FLipCoin.walletText, { fontWeight: '600' }]}>₦{walletBalance.toLocaleString()}</Text>
+                <Text style={[FLipCoin.walletText, { fontWeight: '600' }]}>
+                  ₦{walletBalance.toLocaleString()}
+                </Text>
               </View>
             </View>
           </View>
@@ -192,7 +222,8 @@ const FlipTheCoin = () => {
           <View style={FLipCoin.infoBox}>
             <Text style={FLipCoin.infoTitle}>How It Works</Text>
             <Text style={FLipCoin.infoText}>
-              Flip the coin and set your stake. Players will bet against your result with odds of 2.0. If they guess right, they win. If they’re wrong, you win.
+              Flip the coin and set your stake. Players will bet against your result with odds of 2.0. If
+              they guess right, they win. If they’re wrong, you win.
             </Text>
           </View>
         </View>

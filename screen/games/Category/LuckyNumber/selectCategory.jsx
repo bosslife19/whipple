@@ -6,6 +6,7 @@ import {
 import Checkbox from 'expo-checkbox';
 import { router } from 'expo-router';
 import Header from '../../../Header/Header';
+import { useGameContext } from '../../../../context/AppContext';
 
 const gameOptions = {
   A: [
@@ -29,22 +30,24 @@ const SelectCategoryScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedGame, setSelectedGame] = useState(null);
 
+  
+      const { updateGameData } = useGameContext();
+     
   const handleCategorySelect = (key) => {
     setSelectedCategory(key === selectedCategory ? null : key);
     setSelectedGame(null);
-  };
+  }; 
 
   const handleGameSelect = (game) => {
     setSelectedGame(game);
-    router.push({
-      pathname: '/(routes)/games/category/becomethehouse/luckynumbers-category/create-game',
-      params: {
+    router.push('/(routes)/games/category/becomethehouse/luckynumbers-category/create-game',)
+      updateGameData({
         gameLabel: game.label,
         GameName:game.names,
         range: game.range.toString(),
         totalOdds: game.totalOdds.toString(),
         selectionCount: game.selectionCount.toString()
-      }
+   
     });
   };
 

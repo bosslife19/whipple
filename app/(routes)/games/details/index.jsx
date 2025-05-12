@@ -2,19 +2,23 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import HeaderBet from '../../../../screen/Header/HeaderBet';
+import { useGameContext } from '../../../../context/AppContext';
 
 const ConfirmGameDetails = () => {
   const router = useRouter();
-  const {
-    stake,
-    odds,
-    gameLabel,
-    GameName,
-    range,
-    selected, 
-    selectionCount,
-  } = useLocalSearchParams();
+  // const {
+  //   stake,
+  //   odds,
+  //   gameLabel,
+  //   GameName,
+  //   range,
+  //   selected, 
+  //   selectionCount,
+  // } = useLocalSearchParams();
 
+    const { gameData } = useGameContext();
+    const { stake, odds, gameLabel, range, selected, GameName } = gameData || {};
+  
   // Normalize GameName
   const normalizedGameName = GameName?.toLowerCase?.();
 
@@ -30,8 +34,7 @@ const ConfirmGameDetails = () => {
           params: {
           stake: stake?.toString(),
           odds,
-          selectionCount,
-          gameLabel,
+           gameLabel,
           GameName,
           range,
           selected,
@@ -45,7 +48,6 @@ const ConfirmGameDetails = () => {
           params: {
           stake: stake?.toString(),
           odds,
-          selectionCount,
           gameLabel,
           GameName,
           range,
@@ -60,14 +62,27 @@ const ConfirmGameDetails = () => {
           params: {
           stake: stake?.toString(),
           odds,
-          selectionCount,
-          gameLabel,
+           gameLabel,
           GameName,
           range,
           selected,
         },
         });
         break;
+
+        case 'mystery box':
+          router.push({
+            pathname: '/games/category/becomethehouse/mysteryGame/mysterySelect',
+            params: {
+            stake: stake?.toString(),
+            odds,
+             gameLabel,
+            GameName,
+            range,
+            selected,
+          },
+          });
+          break;
   
       default:
         // Handle unknown game gracefully

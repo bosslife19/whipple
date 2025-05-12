@@ -7,11 +7,16 @@ import Winningmodal from '../../../screen/winningmodal/winningmodal';
 import Losingmodal from '../../../screen/loseModal/LoseModal';
 import ConfirmsSTy from '../../../styles/confirmGame/confirmGame.styles';
 import HeaderBet from '../../Header/HeaderBet';
+import { useGameContext } from '../../../context/AppContext';
 // import HeaderBet from '../../../../../screen/Header/HeaderBet';
 
 const ConFirmGameReplay = () => {
   const router = useRouter();
-  const { stake, odds, gameLabel, GameName, range, selected, selectionCount,totalOdds } = useLocalSearchParams();
+  // const { stake, odds, gameLabel, GameName, range, selected, selectionCount,totalOdds } = useLocalSearchParams();
+
+        const { gameData ,updateGameData } = useGameContext();
+        const {  odds,  gameLabel, range, GameName ,stake,selected,totalOdds} = gameData || {};
+      
   const correctNumber = parseInt(selected); // Ensures comparison is number-based
   const parsedTotalOdds = parseFloat(totalOdds);
   const [isFirstLoss, setIsFirstLoss] = useState(true);
@@ -47,17 +52,15 @@ const ConFirmGameReplay = () => {
   };
 
   const losers = ()=>{
-    router.push({
-      pathname: '/(routes)/games/LostGames/ViewLostGames',
-      params: {
+    router.push( '/(routes)/games/LostGames/ViewLostGames',  )
+      updateGameData({
         stake: stake.toString(),
         odds,
         gameLabel,
         GameName,
         range,
         selected: selectedNumbers.join(','),
-        isGameLost: true  // Flag indicating if the game is lost
-      },
+       isGameLost: true, // Flag indicating if the game is lost
     });
 }
   
@@ -122,20 +125,21 @@ const ConFirmGameReplay = () => {
           </Text>
 
           {success === false ? (
-  <TouchableOpacity
-    onPress={losers} // Change this route as needed
-    style={ConfirmsSTy.primaryBtn}
-  >
-    <Text style={ConfirmsSTy.primaryBtnText}>Play Losers Game</Text>
-  </TouchableOpacity>
-) : (
-  <TouchableOpacity onPress={handleSubmit} style={ConfirmsSTy.primaryBtn}>
-    <Text style={ConfirmsSTy.primaryBtnText}>Submit Your Numbers</Text>
-  </TouchableOpacity>
-)}
-
-
-        </View>
+       <TouchableOpacity onPress={losers} style={ConfirmsSTy.primaryBtn}>
+        <Text style={ConfirmsSTy.primaryBtnText}>Play Losers Game</Text>
+       </TouchableOpacity>
+       ) : success === true ? (
+      <TouchableOpacity
+       onPress={() => router.push('/(routes)/games/category/category-main')}
+         style={ConfirmsSTy.primaryBtn}  >
+      <Text style={ConfirmsSTy.primaryBtnText}>Go to Games</Text>
+    </TouchableOpacity>
+     ) : (
+    <TouchableOpacity onPress={handleSubmit} style={ConfirmsSTy.primaryBtn}>
+     <Text style={ConfirmsSTy.primaryBtnText}>Submit Your Numbers</Text>
+      </TouchableOpacity>
+    )}
+      </View>
         <View style={ConfirmsSTy.cards}>
       <Text style={ConfirmsSTy.titles}>How To Win</Text>
       <Text style={ConfirmsSTy.descriptions}>

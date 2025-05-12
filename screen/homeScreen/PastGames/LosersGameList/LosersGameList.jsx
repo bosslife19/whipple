@@ -1,63 +1,51 @@
 import React, { useState } from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
 import Header from '../../../Header/Header';
 import FilterTabPanel from '../../../../features/TabPanel/FilterTabPanel';
 import LosersGameList from '../../../../styles/losersgameList/LosersGameList';
-
+// import { useGameContext } from '../../../../context/AppContext';
+import { useRouter } from 'expo-router';
+import { useGameContext } from '../../../../context/AppContext';
 
 const LosersGames = () => {
   const router = useRouter();
-  const { stake,
-    flipResult,
-     
-     odds, gameLabel, range, selected, GameName, isGameLost } = useLocalSearchParams();
+  const { gameData } = useGameContext();
+  const { stake, odds, gameLabel, range, selected, GameName, isGameLost } = gameData;
 
-  const [gamePlayed, setGamePlayed] = useState(false);
   const [selectedTab, setSelectedTab] = useState('All');
 
-  const isLostAvailable =
-    stake &&  isGameLost 
+  const isLostAvailable = stake && isGameLost;
 
   const handlePlayNow = () => {
-    setGamePlayed(true);
     router.push({
       pathname: '/(routes)/games/details',
       params: {
-        stake: stake?.toString(),
-        odds: odds?.toString(),
+        stake,
+        odds,
         gameLabel,
         GameName,
-        range: range?.toString(),
-        selected: selected?.toString(),
+        range,
+        selected,
       },
-    }); 
+    });
   };
 
   const shouldDisplayGame =
     selectedTab === 'All' || selectedTab.toLowerCase().includes(GameName?.toLowerCase());
- 
-    if (!isLostAvailable) {
-      return ( 
-  
-        <View style={LosersGameList.centeredContainer}>
-         <Header name="Loser's Game" backgroundColor="transparent" />
-          <Text style={LosersGameList.noGameText}>No game is currently published.</Text>
-        </View>
-      );
-    }
+
+  if (!isLostAvailable) {
+    return (
+      <View style={LosersGameList.centeredContainer}>
+        <Header name="Loser's Game" backgroundColor="transparent" />
+        <Text style={LosersGameList.noGameText}>No game is currently published.</Text>
+      </View>
+    );
+  }
+
   return (
     <View>
       <Header name="Loser's Game" backgroundColor="#EEF6FF" />
       <View style={LosersGameList.container}>
-        {/* Rules Card */}
         <View style={LosersGameList.rulesCard}>
           <Text style={LosersGameList.rulesTitle}>🎯 Losers' Game Rules</Text>
           <Text style={LosersGameList.rulesSubtitle}>
@@ -65,15 +53,15 @@ const LosersGames = () => {
           </Text>
 
           <Text style={LosersGameList.rulesSectionTitle}>Benefits:</Text>
-          <View style={LosersGameList.listItem}><Text>• 1.5x your original stake</Text></View>
-          <View style={LosersGameList.listItem}><Text>• 1.2x better odds</Text></View>
-          <View style={LosersGameList.listItem}><Text>• Same gameplay rules</Text></View>
-          <View style={LosersGameList.listItem}><Text>• Fresh, randomly drawn numbers</Text></View>
+          <Text style={LosersGameList.listItem}>• 1.5x your original stake</Text>
+          <Text style={LosersGameList.listItem}>• 1.2x better odds</Text>
+          <Text style={LosersGameList.listItem}>• Same gameplay rules</Text>
+          <Text style={LosersGameList.listItem}>• Fresh, randomly drawn numbers</Text>
         </View>
 
         <FilterTabPanel onTabChange={setSelectedTab} />
 
-        <ScrollView contentContainerStyle={LosersGameList.scrollContainer} showsHorizontalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={LosersGameList.scrollContainer}>
           {shouldDisplayGame ? (
             <View style={LosersGameList.card}>
               <View style={LosersGameList.cardHeader}>
@@ -107,7 +95,7 @@ const LosersGames = () => {
                 </TouchableOpacity>
               </View>
             </View>
-          ):(
+          ) : (
             <Text style={LosersGameList.noGameText}>No game is currently published.</Text>
           )}
         </ScrollView>
@@ -115,7 +103,5 @@ const LosersGames = () => {
     </View>
   );
 };
-
-
 
 export default LosersGames;

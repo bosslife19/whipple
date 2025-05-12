@@ -16,6 +16,7 @@ import creategame from '../../../../styles/creategame/creategame.styles';
 import WheelSPins from '../../../../styles/spining/wheelspining.styles';
 import bgs from "../../../../assets/images/games/image_fx_ (35) 1.png";
 import FLipCoin from '../../../../styles/flipcoin/flipCoin';
+import { useGameContext } from '../../../../context/AppContext';
 
 const SpinTheWheel = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
@@ -28,7 +29,7 @@ const SpinTheWheel = () => {
   // Calculate admissionFee and stake from totalAmount
   const totalAmount = parseFloat(totalInput) || 0;
   const admissionFee = totalAmount * 0.25;
-  const stake = totalAmount - admissionFee;
+  const stake = totalAmount + admissionFee;
 
   const spinWheel = () => {
     setShowResult(false);
@@ -39,14 +40,14 @@ const SpinTheWheel = () => {
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start(() => {
-      const numbers = [];
-      while (numbers.length < 3) {
+      const winningNumbers = [];
+      while (winningNumbers.length < 3) {
         const num = Math.floor(Math.random() * 10) + 1;
-        if (!numbers.includes(num)) {
-          numbers.push(num);
+        if (!winningNumbers.includes(num)) {
+          winningNumbers.push(num);
         }
       }
-      setWinningNumbers(numbers);
+      setWinningNumbers(winningNumbers);
       setShowResult(true);
       setIsButtonDisabled(totalAmount === 0); // Enable if input is valid
     });
@@ -57,23 +58,25 @@ const SpinTheWheel = () => {
     outputRange: ['0deg', '1080deg'],
   });
 
-  const { odds = '3.333', gameLabel, range, selected, GameName = 'Wheel Spin' } = useLocalSearchParams();
+  // const {  gameLabel, range, selected, } = useLocalSearchParams();
+  const {  odds= '3.333',  gameLabel, range, GameName  = 'Wheel Spin' } = gameData || {};
+        const {gameData, updateGameData } = useGameContext();
+        // const GameName = 'Wheel Spin' 
+        // const odds = '3.333';
 
   const handlePublishGame = () => {
     setLoading(true);
     const formattedOdds = `${odds}x`;
 
     setTimeout(() => {
-      router.push({
-        pathname: '/(routes)/games/availablegames',
-        params: {
-          stake: stake.toFixed(2),
+      router.push( '/(routes)/games/availablegames')
+      updateGameData({
+        stake: stake.toFixed(2),
           odds: formattedOdds,
-          gameLabel,
+          gameLabel: `${winningNumbers.join(', ')}`,
           GameName,
           range,
           result: gameLabel,
-        },
       });
       setLoading(false);
     }, 2000);
@@ -177,9 +180,11 @@ const SpinTheWheel = () => {
                   style={[
                     FLipCoin.button,
                     isButtonDisabled && WheelSPins.publishButton,
+                    {width:"100%",justifyContent:"center",alignItems:"center"}
                   ]}
                   disabled={isButtonDisabled}
-                  onPress={handlePublishGame}>
+                  onPress={handlePublishGame}
+                  >
                   {loading ? (
                     <ActivityIndicator color="#fff" />
                   ) : (
@@ -193,8 +198,8 @@ const SpinTheWheel = () => {
               <View style={WheelSPins.cardContent}>
                 <Text style={WheelSPins.cardTitle}>How It Works</Text>
                 <Text style={WheelSPins.cardText}>
-                  Spin the wheel to randomly select three winning numbers from 1–10. Players will bet
-                  against your result with odds of 3.333. If they guess any of the numbers, they win. If not, you win.
+                  Spin the wheel to randomly select three winning winningNumbers from 1–10. Players will bet
+                  against your result with odds of 3.333. If they guess any of the winningNumbers, they win. If not, you win.
                 </Text>
               </View>
             </View>

@@ -5,14 +5,24 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import ColorRou from '../../../../styles/colorRoulete.styles';
 import HeaderBet from '../../../Header/HeaderBet';
 import Slectedcol from '../../../../styles/selectedColorsstyles';
+import Losingmodal from '../../../loseModal/LoseModal';
+import Winningmodal from '../../../winningmodal/winningmodal';
 
 const ColorRouletteSelect = () => {
     const [selectedColor, setSelectedColor] = useState(null);
     const [activeColors, setActiveColors] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hasSpun, setHasSpun] = useState(false);
+    const [success, setSuccess] = useState(null); // null initially, true/false after check
   
-    const { stake,gameLabel,  odds, selected: selectedParam, GameName = 'Color Roulette' } = useLocalSearchParams();
+    const [visible, setModalVisibled] = useState(false);
+   
+  
+   const closeModal =()=>{
+      setModalVisibled(false)
+  
+    }
+    const { stake,gameLabel,  odds,  GameName = 'Color Roulette' } = useLocalSearchParams();
     const router = useRouter();
     const spinValue = useRef(new Animated.Value(0)).current;
   
@@ -24,13 +34,13 @@ const ColorRouletteSelect = () => {
     ];
   
     useEffect(() => {
-      if (selectedParam) {
-        const match = colors.find(c => c.id === selectedParam);
+      if (gameLabel) {
+        const match = colors.find(c => c.id === gameLabel);
         if (match) {
           setSelectedColor(match);
         }
       }
-    }, [selectedParam]);
+    }, [gameLabel]);
   
     const handleColorSelect = (color) => {
       setSelectedColor(color);
@@ -78,10 +88,12 @@ const ColorRouletteSelect = () => {
     useEffect(() => {
       if (!loading && activeColors.length > 0 && selectedColor) {
         if (activeColors.includes(selectedColor.id)) {
-          Alert.alert('🎉 You won!');
+          setSuccess(true); // It's a win
         } else {
-          Alert.alert('😢 Better luck next time!');
+          setSuccess(false); // lose
+
         }
+        setModalVisibled(true);
       }
     }, [activeColors, loading]);
   
@@ -166,6 +178,19 @@ const ColorRouletteSelect = () => {
             </Text>
           </View>
         </ScrollView>
+
+        {success === true && (
+       <Winningmodal
+       visible={visible}
+       closeModal={closeModal}
+      />
+     )}
+    {success === false && (
+    <Losingmodal 
+    visible={visible}
+    closeModal={closeModal}
+    />
+    )}
       </View>
     );
   };

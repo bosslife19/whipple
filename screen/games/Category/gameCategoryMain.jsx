@@ -72,7 +72,7 @@ const topGames = [
     image: choose,
     description: 'Virtual ball shot into goal (right, left, middle).',
     variants: ['Standard Goal'],
-    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/luckynumbers-category'),
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/goal'),
 
   },
 ];

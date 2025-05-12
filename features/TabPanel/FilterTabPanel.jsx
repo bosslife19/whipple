@@ -8,7 +8,7 @@ const tabs = [
   'Dice Roll',
   'Wheel Spin',
   'Color Roulette',
-  'Mystery',
+  'Mystery Box',
   'Goal',
 ];
 

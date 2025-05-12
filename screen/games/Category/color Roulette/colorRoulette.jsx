@@ -7,6 +7,7 @@ import { ScrollView } from 'react-native';
 import dicestyles from '../../../../styles/diceGame/dice.styles';
 import Header from '../../../Header/Header';
 import { router, useLocalSearchParams } from 'expo-router';
+import { useGameContext } from '../../../../context/AppContext';
 
 const colors = [
   { id: 'red', hex: '#EA384C', label: 'Red' },
@@ -75,8 +76,11 @@ const ColorRouletteGame = () => {
   const parsedTotalOdds = '2'; // This can be calculated or assigned as needed
 
 
-    const { gameLabel, range, totalOdds, selectionCount,GameName='Color Roulette' } = useLocalSearchParams();
-  
+    // const { gameLabel, range, totalOdds, selectionCount,GameName='Color Roulette' } = useLocalSearchParams();
+          const { gameData ,updateGameData } = useGameContext();
+          const {  range  } = gameData || {};
+          const GameName='Color Roulette' 
+          const gameLabel=`${activeColors}`
   const handlePublish = () => {
       // Ensure there are exactly 2 selected colors (or any other valid number)
       if (activeColors.length !== 2) {
@@ -84,18 +88,17 @@ const ColorRouletteGame = () => {
         return;
       }
       const selectedColors = activeColors.join(','); // Join selected color IDs into a comma-separated string
+    
+    router.push( '/(routes)/games/availablegames',)
 
-  
-    router.push({ 
-      pathname: '/(routes)/games/availablegames',
-      params: {
+      updateGameData({
         stake: stake.toString(),
         odds: parsedTotalOdds + 'x',
         gameLabel,
         GameName,
         range,
         selected: selectedColors, // ✅ included selected colors here
-      },
+      
     });
   };
 

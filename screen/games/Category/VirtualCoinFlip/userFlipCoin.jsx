@@ -13,17 +13,21 @@ import FLipCoin from '../../../../styles/flipcoin/flipCoin';
 import HeaderBet from '../../../Header/HeaderBet';
 import Winningmodal from '../../../winningmodal/winningmodal';
 import Losingmodal from '../../../loseModal/LoseModal';
+import { useGameContext } from '../../../../context/AppContext';
 
 const UserFlipCoin = () => {
-  const {
-    gameLabel,
-    range,
-    totalOdds = '2.0',
-    selectionCount = '1',
-    result: passedResult = 'Heads',
-    GameName = 'Flip The Coin',
-  } = useLocalSearchParams();
+  // const {
+  //   gameLabel,
+  //   range, 
+  //   totalOdds = '2.0',
+  //   selectionCount = '1',
+  //   result: passedResult = 'Heads',
+  //   GameName = 'Flip The Coin',
+  // } = useLocalSearchParams();
 
+    const { gameData ,updateGameData } = useGameContext();
+    const {  totalOdds = '2.0',  gameLabel, range, GameName ,result: passedResult ,} = gameData || {};
+  
   const router = useRouter();
   const rotation = useRef(new Animated.Value(0)).current;
   const [flipResult, setFlipResult] = useState(null);
@@ -77,30 +81,42 @@ const UserFlipCoin = () => {
   };
 
   const moveForward = () => {
-    router.push({
-      pathname: '/(routes)/games/LostGames/ViewLostGames',
-      params: {
-        stake: stake.toString(),
-        odds: parsedTotalOdds + 'x',
-        gameLabel,
-        GameName,
-        range,
-        selected: selectedNumbers.join(','),
-        isGameLost: true, // Flag indicating if the game is lost
-        flipResult, // Pass the flip result to the next page
-      },
+    updateGameData({
+      stake: stake.toString(),
+      odds: parsedTotalOdds + 'x',
+      gameLabel,
+      GameName,
+      range,
+      selected: selectedNumbers.join(','),
+      isGameLost: true, // Flag indicating if the game is lost
+      flipResult,
     });
+    // router.push({
+    //   pathname: '/(routes)/games/LostGames/ViewLostGames',
+    //   params: {
+    //     stake: stake.toString(),
+    //     odds: parsedTotalOdds + 'x',
+    //     gameLabel,
+    //     GameName,
+    //     range,
+    //     selected: selectedNumbers.join(','),
+    //     isGameLost: true, // Flag indicating if the game is lost
+    //     flipResult, // Pass the flip result to the next page
+    //   },
+    // });
+    router.push('/(routes)/games/LostGames/ViewLostGames');
+
   };
   
 
   return (
     <>
-      <HeaderBet name={GameName} />
+      <HeaderBet name={GameName} arrow />
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          {/* <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <Text style={styles.backText}>← Back to Games</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <Text style={styles.title}>{GameName}</Text>
           <Text style={styles.subTitle}>Pick Heads or Tails to match The House and win!</Text>
         </View>
@@ -121,6 +137,7 @@ const UserFlipCoin = () => {
 
           <Text style={styles.chooseText}>Choose Your Side</Text>
           <View style={styles.choiceButtons}>
+           
             {success === null ? (
               <>
                 <TouchableOpacity

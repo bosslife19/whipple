@@ -14,6 +14,7 @@ import HeaderBet from '../../../Header/HeaderBet';
 import FLipCoin from '../../../../styles/flipcoin/flipCoin';
 import dicestyles from '../../../../styles/diceGame/dice.styles';
 import { router, useLocalSearchParams } from 'expo-router';
+import { useGameContext } from '../../../../context/AppContext';
 
 export default function DiceGameScreen() {
   const [diceType, setDiceType] = useState('single');
@@ -136,7 +137,7 @@ export default function DiceGameScreen() {
       default:
         return 0;
     }
-  };
+  }; 
 
   const isStakeValid = !isNaN(Number(stake)) && Number(stake) > 0;
 
@@ -144,20 +145,22 @@ export default function DiceGameScreen() {
 
     const { gameLabel, range, totalOdds, result: initialResult, GameName = 'Dice Roll' } = useLocalSearchParams();
   
+      const { updateGameData } = useGameContext();
+      // const { stake, odds, gameLabel, range, selected, GameName, isGameLost } = gameData;
+    
     const handlePublish = () => {
         const odds = getOdds();
         const gameLabel = diceType === 'double' ? `${face1 + face2}` : `${face1}`;
       
-        router.push({
-          pathname: '/(routes)/games/availablegames',
-          params: {
+        router.push('/(routes)/games/availablegames')
+        updateGameData({
             stake: stake.toString(),
             odds: `${odds}x`,
             gameLabel,
             GameName,
             range,
             result: gameLabel,
-          },
+          
         });
       };
   return (

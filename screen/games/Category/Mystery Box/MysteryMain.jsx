@@ -1,68 +1,152 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Box, Check, CheckCheck } from 'lucide-react-native'; // Check icon from lucide-react-native
+// components/MysteryMain.js
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ImageBackground, ActivityIndicator, TextInput } from 'react-native';
+import { Box, Check } from 'lucide-react-native'; // Check icon from lucide-react-native
+// import { useGameContext } from '../../../../context/GameContext'; // Import useGameContext hook
 import Header from '../../../Header/Header';
 import dicestyles from '../../../../styles/diceGame/dice.styles';
+import WheelSPins from '../../../../styles/spining/wheelspining.styles';
+import { router } from 'expo-router';
+import { useGameContext } from '../../../../context/AppContext';
 
 const MysteryMain = () => {
   const boxes = ['Box 1', 'Box 2', 'Box 3'];
-  
-  // State to track selected box
-  const [selectedBox, setSelectedBox] = useState(null);
 
-  // State to track hovered box (for hover effect simulation)
-  const [hoveredBox, setHoveredBox] = useState(null);
+  // Access game data from context
+  const { gameData, updateGameData } = useGameContext();
+
+  const [stake, setStake] = useState(''); // Use game data from context
+  const [walletBalance, setWalletBalance] = useState(10000); // Example wallet balance
+  const [loading, setLoading] = useState(false);
+
+  // Track selected box
+  const [selectedBox, setSelectedBox] = useState(gameData.selectedBox || null);
 
   const handleBoxPress = (label) => {
-    setSelectedBox(label); // Mark the box as selected
+    // If the same box is tapped again, unselect it
+    if (selectedBox === label) {
+      setSelectedBox(null);
+    } else if (selectedBox === null) {
+      // Only allow selecting a new box if none is currently selected
+      setSelectedBox(label);
+    }
   };
+
+  const handleStakeChange = (value) => {
+    setStake(value);
+    updateGameData({ stake: value }); // Update stake in context
+  };
+
+  const parsedStake = parseFloat(stake) || 0;
+  const admissionFee = parsedStake * 0.25;
+
+  const isPublishEnabled = parsedStake > 0 && selectedBox;
+  const totalAmount = parsedStake + admissionFee;
+
+  const handlePublish = () => {
+    const mainOdd = '3.003x';
+    const GameName = 'Mystery Box';
+    setLoading(true);
+
+    // Save game data to the context
+    updateGameData({
+      selectedBox,
+      stake: totalAmount,
+      odds: mainOdd,
+      GameName,
+      gameLabel: `${selectedBox} is the winning box`,
+    });
+
+    setTimeout(() => {
+      // Now navigate to the game page
+      router.push('/(routes)/games/availablegames');
+      setLoading(false);
+    }, 2000);
+  };
+
+useEffect(() => {
+  // Only update the context if the selectedBox has actually changed
+  if (gameData.selectedBox !== selectedBox) {
+    updateGameData({ selectedBox });
+  }
+}, [selectedBox, gameData.selectedBox, updateGameData]);
+
 
   return (
     <>
-    <Header name={'Mystery Box Game'} />
-    <View style={styles.container}>
-    <Text style={[styles.title,{textAlign:"left",width:"100%"}]}>Create Mystery Box Game </Text>
-    <Text style={[dicestyles.label,{marginTop:-19}]}>Select a winning box and set your stake as The House</Text>
+      <Header name={'Mystery Box Game'} backgroundColor="#EEF6FF" />
+      <ScrollView>
+        <ImageBackground source={require("../../../../assets/images/games/mys.jpg")} style={{}} resizeMode="cover">
+          <View style={styles.container}>
+            <Text style={[styles.title, { textAlign: 'left', width: '100%' }]}>Create Mystery Box Game</Text>
+            <Text style={[dicestyles.label, { marginTop: -19, fontWeight: '400', color: "#333" }]}>Select a winning box and set your stake as The House</Text>
 
-          <Text style={styles.title}>Select a Winning Box</Text>
+            <Text style={[styles.title, { marginVertical: 15 }]}>Select a Winning Box</Text>
 
-          <View style={styles.boxContainer}>
+            <View style={styles.boxContainer}>
               {boxes.map((label, index) => (
-                  <TouchableOpacity
-                      key={index}
-                      style={[
-                          styles.box,
-                          {
-                              borderColor: selectedBox === label
-                                  ? 'green' // Green border when selected
-                                  : hoveredBox === label
-                                      ? 'blue' // Blue border on hover
-                                      : '#D1D5DB', // Default gray border
-                          },
-                      ]}
-                      activeOpacity={0.7}
-                      onPress={() => handleBoxPress(label)}
-                      onMouseEnter={() => setHoveredBox(label)} // Hover effect simulation (for web)
-                      onMouseLeave={() => setHoveredBox(null)} // Reset hover state
-                  >
-                      <Box size={32} color={selectedBox === label ? 'green' : '#6B7280'} />
-
-                      <Text style={styles.boxLabel}>{label}</Text>
-
-
-                      {/* Check icon */}
-                      {selectedBox === label && (
-                          //  <CheckCheck/>
-                          <Check size={20} color="green" />
-                      )}
-                  </TouchableOpacity>
+                <TouchableOpacity
+                  key={index}
+                  style={[styles.box, {
+                    borderColor: selectedBox === label ? '#22C55E' : '#D1D5DB',
+                  }]}
+                  activeOpacity={0.7}
+                  onPress={() => handleBoxPress(label)}
+                >
+                  <Box size={32} color={'#6B7280'} />
+                  <Text style={styles.boxLabel}>{label}</Text>
+                  {selectedBox === label && <Check size={20} color="#22C55E" />}
+                </TouchableOpacity>
               ))}
-          </View>
+            </View>
 
-          <Text style={styles.infoText}>
-              Click on a box to select it as the winning box. Players will bet against your selected box.
-          </Text>
-      </View></>
+            {selectedBox && <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 16 }}>{selectedBox} is the winning Box!</Text>}
+            <Text style={styles.infoText}>Click on a box to select it as the winning box. Players will bet against your selected box.</Text>
+
+            <View style={[dicestyles.card, { marginTop: 20, width: "100%", borderColor: "#0A1931", borderWidth: 1, backgroundColor: "#EEF6FF" }]}>
+              <Text style={dicestyles.title}>Set Your Stake</Text>
+              <Text style={dicestyles.label}>Your Stake (₦)</Text>
+
+              <TextInput
+                style={[dicestyles.input, { borderColor: "#0A1931", borderWidth: 1 }]}
+                placeholder="Enter stake amount"
+                value={stake}
+                onChangeText={handleStakeChange}
+                keyboardType="numeric"
+              />
+
+              <View style={dicestyles.feeRow}>
+                <Text>Admission Fee (25%)</Text>
+                <Text>₦{admissionFee.toLocaleString(undefined, { maximumFractionDigits: 2 })}</Text>
+              </View>
+
+              <View style={dicestyles.feeRow}>
+                <Text style={{ fontWeight: 'bold', color: "#0A1931" }}>Total Amount</Text>
+                <Text style={{ fontWeight: 'bold' }}>₦{totalAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</Text>
+              </View>
+
+              <Text>Your wallet balance: ₦{walletBalance.toLocaleString()}</Text>
+
+              <TouchableOpacity
+                onPress={handlePublish}
+                style={[dicestyles.button, { backgroundColor: isPublishEnabled ? '#0A1931' : '#ccc', marginTop: 16 }]}
+                disabled={!isPublishEnabled}
+              >
+                {loading ? <ActivityIndicator color="#fff" /> : <Text style={WheelSPins.publishText}>Publish Game</Text>}
+              </TouchableOpacity>
+            </View>
+
+            <View style={[dicestyles.card, { borderColor: "#0A1931", borderWidth: 1, backgroundColor: "#EEF6FF" }]}>
+              <Text style={dicestyles.title}>How It Works</Text>
+              <Text style={dicestyles.description}>
+                Select one of the three boxes as the winning box. Players will bet against your selection with odds of 3.003x.
+                If they correctly guess which box you selected, they win. If they guess wrong, you win.
+              </Text>
+            </View>
+          </View>
+        </ImageBackground>
+      </ScrollView>
+    </>
   );
 };
 
@@ -70,17 +154,19 @@ const styles = StyleSheet.create({
   container: {
     padding: 24,
     alignItems: 'center',
+    marginBottom: '50%',
   },
   title: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '700',
     marginBottom: 24,
+    fontFamily: "PoppinsReg",
   },
   boxContainer: {
     flexDirection: 'row',
-    gap: 2, // For RN < 0.73, use marginRight manually
+    gap: 2,
     marginBottom: 32,
-    paddingHorizontal:20
+    paddingHorizontal: 20,
   },
   box: {
     width: "36%",
@@ -91,7 +177,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 8,
-    position: 'relative', // For positioning the check icon inside the box
+    position: 'relative',
   },
   boxLabel: {
     marginTop: 4,
@@ -101,12 +187,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6B7280',
     textAlign: 'center',
-  },
-  checkIcon: {
-    // position: 'absolute',
-    // top: '50%',
-    // left: '50%',
-    transform: [{ translateX: -12 }, { translateY: -12 }], // Center the check icon inside the box
+    fontFamily: "montserratMeduim",
   },
 });
 
