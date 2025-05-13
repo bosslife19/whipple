@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View, Image, TouchableOpacity } from 'react-nat
 import { useRouter } from 'expo-router';
 
 // Images
-import gameImage from "../../../assets/images/games/dfd0983d-43cb-479f-bd09-6da48a29a8dd.webp";
+import gameImage from "../../../assets/images/games/Online-Casino-Bonus-1-2-1-768x432.jpg.webp";
 import gameImage1 from "../../../assets/images/Rectangle 7.png";
 import gameImage2 from "../../../assets/images/Rectangle 8.png";
 import gameImage3 from "../../../assets/images/Rectangle 9.png";

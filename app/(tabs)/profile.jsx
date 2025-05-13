@@ -2,23 +2,21 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { Ionicons, Feather, MaterialIcons, FontAwesome5, Fontisto, AntDesign, FontAwesome6 } from '@expo/vector-icons';
 import Header from '../../screen/Header/Header';
+import { router } from 'expo-router';
 
 const settingsItems = [
-  { id: '1', label: 'Profile', icon: () => <FontAwesome5 name="user-alt" size={24} color="black" /> },
-  { id: '2', label: 'Notification', icon: () => <Ionicons name="notifications" size={22} color="#333" /> },
-  { id: '3', label: 'Display', icon: () => <MaterialIcons name="display-settings" size={24} color="black" /> },
-  { id: '4', label: 'Language', icon: () => <Fontisto name="world-o" size={24} color="black" /> },
-  { id: '5', label: 'Support', icon: () => <AntDesign name="questioncircle" size={24} color="black" /> },
-  { id: '6', label: 'Security and Privacy', icon: () => <MaterialIcons name="security" size={22} color="#333" /> },
-  { id: '7', label: 'Refer and Earn', icon: () => <FontAwesome6 name="coins" size={24} color="black" /> },
-  { id: '8', label: 'Logout', icon: () => <AntDesign name="logout" size={24} color="#FF0000" />, noArrow: true },
+  { id: '1', label: 'Profile', icon: () => <FontAwesome5 name="user-alt" size={24} color="black" />,handOnclick:()=>router.push('/(routes)/profile/profileScreen') },
+ { id: '5', label: 'Support', icon: () => <AntDesign name="questioncircle" size={24} color="black" />,handOnclick:()=>router.push('/(routes)/profile/support') },
+  { id: '6', label: 'Security and Privacy', icon: () => <MaterialIcons name="security" size={22} color="#333" /> ,handOnclick:()=>router.push('/(routes)/profile/security')},
+  { id: '7', label: 'Refer and Earn', icon: () => <FontAwesome6 name="coins" size={24} color="black" />,handOnclick:()=>router.push('/(routes)/profile/refer-and-earn') },
+  { id: '8', label: 'Logout', icon: () => <AntDesign name="logout" size={24} color="#FF0000" />, noArrow: true ,handOnclick:()=> {}},
 ];
 
 export default function Profile() {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.itemContainer}
-      onPress={() => console.log(`${item.label} clicked`)}
+      onPress={item.handOnclick}
       activeOpacity={0.7}
     >
       <View style={styles.iconContainer}>

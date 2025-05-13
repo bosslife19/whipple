@@ -21,6 +21,8 @@ const Slectedcol = StyleSheet.create({
     colorBlockText: {
       color: '#fff',
       fontWeight: 'bold',
+      fontFamily: "montserratMeduim",
+
     },
     
     header: {
@@ -29,10 +31,14 @@ const Slectedcol = StyleSheet.create({
     title: {
       fontSize: 24,
       fontWeight: 'bold',
+      fontFamily: "montserratMeduim",
+
       marginBottom: 8,
     },
     description: {
       color: '#666',
+      fontFamily: "montserratMeduim",
+
       fontSize: 16,
     },
     card: {
@@ -47,13 +53,17 @@ const Slectedcol = StyleSheet.create({
     },
     cardTitle: {
       fontSize: 18,
+      fontFamily: "montserratMeduim",
+
       fontWeight: 'bold',
     },
     cardSubtitle: {
       fontSize: 14,
+      fontFamily: "montserratMeduim",
+
       color: '#888',
     },
-    wheelContainer: {
+    wheelContainer: { 
       alignItems: 'center',
       marginBottom: 16,
     },
@@ -73,6 +83,8 @@ const Slectedcol = StyleSheet.create({
     colorButtonText: {
       color: '#fff',
       fontSize: 14,
+      fontFamily: "montserratMeduim",
+
     },
     spinButton: {
       backgroundColor: '#0A1931',
@@ -84,6 +96,8 @@ const Slectedcol = StyleSheet.create({
     },
     spinButtonText: {
       color: '#fff',
+      fontFamily: "montserratMeduim",
+
       fontSize: 16,
     },
     resultBox: {
@@ -91,19 +105,27 @@ const Slectedcol = StyleSheet.create({
       padding: 16,
       borderRadius: 10,
       alignItems: 'center',
+      fontFamily: "montserratMeduim",
+
     },
     resultText: {
       fontSize: 18,
       fontWeight: 'bold',
+      fontFamily: "montserratMeduim",
+
       marginBottom: 8,
     },
     houseColorsText: {
       fontSize: 16,
       color: '#333',
+      fontFamily: "montserratMeduim",
+
     },
     
     cardDescription: {
       color: '#666',
+      fontFamily: "montserratMeduim",
+
       fontSize: 14,
     },
   });

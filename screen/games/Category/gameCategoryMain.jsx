@@ -21,8 +21,9 @@ import number1 from '../../../assets/images/games/dfd0983d-43cb-479f-bd09-6da48a
 import virtualcoins from '../../../assets/images/games/coinflip.jpg';
 import cube from '../../../assets/images/games/cube.png';
 import spin from '../../../assets/images/games/spin2win.png';
-import color from '../../../assets/images/games/color.png';
+import color from '../../../assets/images/games/spinningcolo.avif';
 import choose from '../../../assets/images/games/koefficienty.webp';
+import mystry from '../../../assets/images/games/mys.jpg';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -88,7 +89,7 @@ const quickGames = [
   },
   {
     title: 'mysteryGame',
-    image: number1,
+    image: mystry,
     description: 'Three boxes; one chosen as the winning box.',
     variants: ['Three Boxes'],
     handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/mysteryGame'),
@@ -179,7 +180,7 @@ const GameCategoryMain = () => {
     <>
       <HeaderBet arrow name="House Start" backgroundColor="#A8BFED" amount={200} />
       <View style={styles.main}>
-        <SlideShowBet />
+        {/* <SlideShowBet /> */}
 
         <View style={styles.topBar}>
           <TextInput
@@ -194,7 +195,7 @@ const GameCategoryMain = () => {
               style={styles.picker}
               onValueChange={setSelectedCategory}
             >
-              <Picker.Item label="Home" value="Home" />
+              <Picker.Item label="All" value="Home" />
               {allGames.map((game, idx) => (
                 <Picker.Item key={idx} label={game.title} value={game.title} />
               ))}
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   picker: {
-    height: 43,
+    height: 49,
     width: '100%',
   },
   section: {
@@ -265,6 +266,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1F2937',
     marginBottom: 12,
+    marginLeft:25,
     fontFamily:"montserratMeduim",
     textTransform: 'uppercase',
   },
@@ -300,13 +302,13 @@ const styles = StyleSheet.create({
     height: '100%',
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
-    objectFit:"fill"
+    // objectFit:"contain"
   },
   imageBadge: {
     position: 'absolute',
     top: 0,
     left: 0,
-    backgroundColor: '#A8BFED',
+    backgroundColor: '#FACC15',
     color: '#212121',
     fontSize: 12,
     fontWeight: 'bold',

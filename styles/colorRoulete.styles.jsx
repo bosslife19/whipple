@@ -10,6 +10,8 @@ const ColorRou = StyleSheet.create({
     fontSize: 24,
     fontWeight: '600',
     marginBottom: 20,
+    fontFamily: "montserratMeduim",
+
   },
   wheelContainer: {
     width: 256,
@@ -49,6 +51,8 @@ const ColorRou = StyleSheet.create({
   },
   selectedText: {
     fontSize: 16,
+    fontFamily: "montserratMeduim",
+
     fontWeight: '500',
     marginBottom: 6,
   },
@@ -75,6 +79,8 @@ const ColorRou = StyleSheet.create({
   buttonText: {
     color: '#fff',
     textAlign: 'center',
+    fontFamily: "montserratMeduim",
+
     flex: 1,
   },
   rightBox: {
@@ -84,6 +90,8 @@ const ColorRou = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    fontFamily: "montserratMeduim",
+
     marginBottom: 10,
   },
  
@@ -124,10 +132,14 @@ const ColorRou = StyleSheet.create({
   spinText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontFamily: "montserratMeduim",
+
   },
   label: {
     fontSize: 14,
     marginBottom: 6,
+    fontFamily: "montserratMeduim",
+
   },
   input: {
     borderWidth: 1,
@@ -143,14 +155,20 @@ const ColorRou = StyleSheet.create({
   },
   grayText: {
     color: 'gray',
+    fontFamily: "montserratMeduim",
+
   },
   boldText: {
     fontWeight: 'bold',
+    fontFamily: "montserratMeduim",
+
   },
   walletText: {
     marginBottom: 20,
     fontSize: 14,
     color: 'gray',
+    fontFamily: "montserratMeduim",
+
   },
   disabledButton: {
     backgroundColor: '#ccc',
@@ -161,6 +179,8 @@ const ColorRou = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontFamily: "montserratMeduim",
+
   },
   howItWorksBox: {
     backgroundColor: '#F9FAFB',
@@ -171,10 +191,14 @@ const ColorRou = StyleSheet.create({
   howItWorksTitle: {
     fontWeight: 'bold',
     marginBottom: 4,
+    fontFamily: "montserratMeduim",
+
   },
   howItWorksText: {
     color: 'gray',
     fontSize: 13,
+    fontFamily: "montserratMeduim",
+
   },
 });
 

@@ -18,6 +18,8 @@ import Homes from '../../styles/homes/homes.styles';
 import PastGames from '../../screen/homeScreen/PastGames/PastGames';
 import FloatingMessage from '../../screen/homeScreen/Message/Message';
 import AvailableGamesList from '../../screen/homeScreen/AvailableGames/AvailableGamesList';
+import FeaturesSection from '../../screen/homeScreen/features/Features';
+import SlideShowBet from '../../features/slideshow/slideshowBet';
 
 export default function HomeScreen() {
   return (
@@ -43,6 +45,7 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={Homes.scrollViewContainer}>
+        <SlideShowBet />
         <View style={Homes.imageBackground}>
           <Text style={[Homes.imageText,{ fontSize:14,fontWeight:500,textAlign:"center",fontFamily:"Grotesk",paddingVertical:4}]}>Available Balance </Text>
              <Text style={[Homes.imageText,{ textAlign:"center",fontFamily:"Poppins",fontSize:24,paddingVertical:14}]}>NGN 15, 000.34</Text>
@@ -81,10 +84,10 @@ export default function HomeScreen() {
           <AvailableGamesList/>
         </View>
 
-         {/* Past Games*/}
+         {/* Lost Games*/}
          <View style={Homes.contentContainer}>
          <View style={[Homes.scrollContainer,{justifyContent:"space-between",marginHorizontal:16,}]}>
-            <Text style={Homes.Header}>Past Games</Text>
+            <Text style={Homes.Header}>Lost Games</Text>
              <TouchableOpacity 
               onPress={()=> router.push("/(routes)/games/LostGames/ViewLostGames")}
              style={{backgroundColor:'#0040841F',paddingHorizontal:15,paddingVertical:5,borderRadius:5}} >
@@ -99,10 +102,13 @@ export default function HomeScreen() {
           {/* Available Games */}
           <PastGames/>
         </View>
+
+        {/* Features */}
+        <FeaturesSection/>
       </ScrollView>
       <FloatingMessage/>
     </View>
   );
 }
-
+ 
 

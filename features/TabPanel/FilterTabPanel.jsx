@@ -9,7 +9,7 @@ const tabs = [
   'Wheel Spin',
   'Color Roulette',
   'Mystery Box',
-  'Goal',
+  'Goal Challenge',
 ];
 
 const FilterTabPanel = ({ onTabChange }) => {

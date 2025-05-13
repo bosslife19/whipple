@@ -1,13 +1,13 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View, Image } from 'react-native';
-import gameImage from "../../../assets/images/Rectangle 6.png"; // Renamed for clarity
-import gameImage1 from "../../../assets/images/Rectangle 7.png"; // Renamed for clarity
-import gameImage2 from "../../../assets/images/Rectangle 8.png"; // Renamed for clarity
-import gameImage3 from "../../../assets/images/Rectangle 9.png"; // Renamed for clarity
-import gameImage4 from "../../../assets/images/Rectangle 10.png"; // Renamed for clarity
+import gameImage from "../../../assets/images/games/spinningcolo.avif"; // Renamed for clarity
+import gameImage1 from "../../../assets/images/games/spin-and-win-hero-image.webp"; // Renamed for clarity
+import gameImage2 from "../../../assets/images/games/colod.png"; // Renamed for clarity
+import gameImage3 from "../../../assets/images/games/mysterbox.jpg"; // Renamed for clarity
+import gameImage4 from "../../../assets/images/games/Rectangle 97.png"; // Renamed for clarity
 
 const PastGames = () => {
-     const gamesList = [
+     const gamesList = [  
           { image: gameImage },
           { image: gameImage1 },
           { image: gameImage2 },

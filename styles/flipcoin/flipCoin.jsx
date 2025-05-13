@@ -143,7 +143,7 @@ const FLipCoin = StyleSheet.create({
       textAlign:"center",
       fontFamily: 'montserratMeduim',
   
-    },
+    }, 
     amountButtons: {
       flexDirection: 'row',
       // gap: 7,

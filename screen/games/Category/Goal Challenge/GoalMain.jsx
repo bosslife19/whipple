@@ -1,28 +1,46 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Animated, Image, ImageBackground, ScrollView } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  Animated,
+  ImageBackground,
+  ScrollView,
+  TextInput,
+  ActivityIndicator,
+  Image,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Goal } from 'lucide-react-native';
+
+import Header from '../../../Header/Header';
+import { useGameContext } from '../../../../context/AppContext';
+
+// Styles
 import WheelSPins from '../../../../styles/spining/wheelspining.styles';
 import creategame from '../../../../styles/creategame/creategame.styles';
 import FLipCoin from '../../../../styles/flipcoin/flipCoin';
-import { TextInput } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import Header from '../../../Header/Header';
-import { useGameContext } from '../../../../context/AppContext';
 import Goalstyles from '../../../../styles/Goal.styles';
-// import goalpost from ''
+import { router } from 'expo-router';
+
 const { width } = Dimensions.get('window');
 const segmentWidth = width - 20;
 
 const GoalMain = () => {
   const ballBottom = useRef(new Animated.Value(24)).current;
   const ballLeft = useRef(new Animated.Value(segmentWidth / 2 - 20)).current;
-  
+
   const [isBallUp, setIsBallUp] = useState(false);
   const [previousPositions, setPreviousPositions] = useState(new Set());
-  const [shotMessage, setShotMessage] = useState("");
+  const [shotMessage, setShotMessage] = useState('');
+  const [selectedGoal, setSelectedGoal] = useState('');
+  const [mainOdd, setMainOdd] = useState('3.003x');
+  const GameName = 'Goal Challenge';
 
-    const { gameData, updateGameData } = useGameContext();
-  
+  const { gameData, updateGameData } = useGameContext();
+
   const shootBall = () => {
     if (!isBallUp) {
       let random = Math.floor(Math.random() * 3);
@@ -32,21 +50,26 @@ const GoalMain = () => {
       }
 
       let targetLeft;
-      let message = "";
+      let message = '';
+      let goalPos = '';
 
       if (random === 0) {
         targetLeft = segmentWidth / 6 - 10;
-        message = "Goal to the left!";
+        message = 'Goal to the left!';
+        goalPos = 'Left';
       } else if (random === 1) {
         targetLeft = segmentWidth / 2 - 40;
-        message = "Goal to the center!";
+        message = 'Goal to the center!';
+        goalPos = 'Center';
       } else {
         targetLeft = (segmentWidth * 5) / 6 - 50;
-        message = "Goal to the right!";
+        message = 'Goal to the right!';
+        goalPos = 'Right';
       }
 
       setPreviousPositions(new Set(previousPositions).add(random));
       setShotMessage(message);
+      setSelectedGoal(goalPos);
 
       Animated.parallel([
         Animated.timing(ballLeft, {
@@ -77,150 +100,156 @@ const GoalMain = () => {
       ]).start(() => {
         setIsBallUp(false);
         setPreviousPositions(new Set());
-        setShotMessage("");
+        setShotMessage('');
       });
     }
   };
 
+  // Amount and Button Logic
+  const [totalInput, setTotalInput] = useState('');
+  const [admissionFee, setAdmissionFee] = useState(0);
+  const [stake, setStake] = useState(0);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [showResult, setShowResult] = useState(true); // Set true so button is enabled after input
 
-    //  AMount and Button
-    const [totalInput, setTotalInput] = useState('');
-    const [admissionFee, setAdmissionFee] = useState(0);
-    const [stake, setStake] = useState(0);
-    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-    const [loading, setLoading] = useState(false);
-    const [showResult, setShowResult] = useState(true); // assuming true for now
+  const handlePublishGame = () => {
+    setLoading(true);
+    const totalAmount = parseFloat(totalInput);
+
+    setTimeout(() => {
+      updateGameData({
+        selectedBox: selectedGoal,
+        stake: totalAmount,
+        odds: mainOdd,
+        GameName,
+        gameLabel: `${selectedGoal} is the winning goal`,
+      });
+
+      setLoading(false);
+      router.push('/(routes)/games/availablegames');
+    }, 2000);
+  };
+
+  const handleTotalInputChange = (text) => {
+    const numericValue = parseFloat(text);
+    setTotalInput(text);
   
-    
-    const handlePublishGame = () => {
-      setLoading(true);
-      // Simulate an API call
-      setTimeout(() => {
-        updateGameData({
-            selectedBox,
-            stake: totalAmount,
-            odds: mainOdd,
-            GameName,
-            gameLabel: `${selectedGoal} is the winning box`,
-          });
-      
-        setLoading(false);
-       }, 2000);
-    };
+    if (!isNaN(numericValue)) {
+      const admission = numericValue * 0.25;
+      const stakeValue = numericValue + admission;
+      setAdmissionFee(admission);
+      setStake(stakeValue);
+    } else {
+      setAdmissionFee(0);
+      setStake(0);
+    }
+  };
+
   
-    const handleTotalInputChange = (text) => {
-      const numericValue = parseFloat(text);
-      setTotalInput(text);
+  useEffect(() => {
+    const totalAmount = parseFloat(totalInput);
+    const isValidAmount = !isNaN(totalAmount) && totalAmount > 0;
+    const isGoalSelected = selectedGoal !== '';
   
-      if (!isNaN(numericValue)) {
-        const admission = numericValue * 0.25;
-        const stakeValue = numericValue - admission;
-        setAdmissionFee(admission);
-        setStake(stakeValue);
-        setIsButtonDisabled(!showResult || isNaN(numericValue));
-      } else {
-        setAdmissionFee(0);
-        setStake(0);
-        setIsButtonDisabled(true);
-      }
-    };
+    setIsButtonDisabled(!(isValidAmount && isGoalSelected));
+  }, [totalInput, selectedGoal]);
 
   return (
-    <View style={{height:"100%"}}>
-    <Header name={'Goal Challenge'}/>
-    <ScrollView>
-    <View style={Goalstyles.card}>
+    <View style={{ height: '100%' }}>
+      <Header name={'Goal Challenge'} />
+      <ScrollView>
+        <View style={Goalstyles.card}>
           <Text style={Goalstyles.header}>Shoot The Ball</Text>
 
-          <ImageBackground source={require('../../../../assets/images/games/football-field.png')} style={Goalstyles.field}>
-              {/* Header Segments */}
-              <View style={Goalstyles.fieldHeader}>
-                  <View style={Goalstyles.segment}>
-                    <Image style={Goalstyles.segmentText} source={require('../../../../assets/images/games/goal-post.png')} />
-                      {/* <Text style={Goalstyles.segmentText}>Left</Text> */}
-                  </View>
-                  <View style={Goalstyles.segment}>
-                  <Image style={Goalstyles.segmentText} source={require('../../../../assets/images/games/goal-post.png')} />
-                  </View>
-                  <View style={Goalstyles.segment}>
-                  <Image style={Goalstyles.segmentText} source={require('../../../../assets/images/games/goal-post.png')} />
-                  </View>
-              </View>
+          <ImageBackground
+            source={require('../../../../assets/images/games/football-field.png')}
+            style={Goalstyles.field}
+          >
+            <View style={Goalstyles.fieldHeader}>
+              {[...Array(3)].map((_, idx) => (
+                <View style={Goalstyles.segment} key={idx}>
+                  <Image
+                    style={Goalstyles.segmentText}
+                    source={require('../../../../assets/images/games/goal-post.png')}
+                  />
+                </View>
+              ))}
+            </View>
 
-              {/* Ball */}
-              <Animated.View style={[Goalstyles.ballWrapper, { bottom: ballBottom, left: ballLeft }]}>
+            <Animated.View
+              style={[Goalstyles.ballWrapper, { bottom: ballBottom, left: ballLeft }]}
+            >
               <Ionicons name="football" size={24} color="white" />
-              </Animated.View>
+            </Animated.View>
           </ImageBackground>
 
           <TouchableOpacity style={Goalstyles.button} onPress={shootBall}>
-              <Goal size={16} color="#fff" style={{ marginRight: 8 }} />
-              <Text style={Goalstyles.buttonText}>Shoot Ball</Text>
+            <Goal size={16} color="#fff" style={{ marginRight: 8 }} />
+            <Text style={Goalstyles.buttonText}>Shoot Ball</Text>
           </TouchableOpacity>
 
-          {/* Directional Message */}
           <Text style={Goalstyles.message}>{shotMessage}</Text>
-          
-          <View>
-              <View style={WheelSPins.inputGroup}>
-              <Text style={[WheelSPins.cardTitle,{color:"#212121"}]}>Enter Total Amount</Text>
-                  <TextInput
-                      style={creategame.input}
-                      placeholder="Enter total amount"
-                      keyboardType="numeric"
-                      value={totalInput}
-                      placeholderTextColor={'gray'}
-                      onChangeText={handleTotalInputChange}                      />
-              </View>
 
-              <View style={creategame.summary}>
-                  <View style={WheelSPins.rowBetween}>
-                      <Text style={creategame.summaryText}>Admission Fee (25%)</Text>
-                      <Text style={creategame.summaryText}>₦{admissionFee.toFixed(2)}</Text>
-                  </View>
-                  <View style={WheelSPins.rowBetween}>
-                      <Text style={WheelSPins.totalLabel}>Your Stake</Text>
-                      <Text style={WheelSPins.totalValue}>₦{stake.toFixed(2)}</Text>
-                  </View>
-                  <View style={WheelSPins.wallet}>
-                      <Text style={WheelSPins.walletText}>
-                          Your wallet balance: <Text style={WheelSPins.walletAmount}>₦150,000</Text>
-                      </Text>
-                  </View>
-                  <TouchableOpacity
-                      style={[
-                          FLipCoin.button,
-                          isButtonDisabled && WheelSPins.publishButton,
-                          { width: "100%", justifyContent: "center", alignItems: "center" }
-                      ]}
-                      disabled={isButtonDisabled}
-                      onPress={handlePublishGame}
-                  >
-                      {loading ? (
-                          <ActivityIndicator color="#fff" />
-                      ) : (
-                          <Text style={WheelSPins.publishText}>Publish Game</Text>
-                      )}
-                  </TouchableOpacity>
+          <View style={WheelSPins.fullWidth}>
+            <View style={WheelSPins.inputGroup}>
+              <Text style={[WheelSPins.cardTitle, { color: '#212121' }]}>
+                Enter Total Amount
+              </Text>
+              <TextInput
+                style={creategame.input}
+                placeholder="Enter total amount"
+                keyboardType="numeric"
+                value={totalInput}
+                placeholderTextColor={'gray'}
+                onChangeText={handleTotalInputChange}
+              />
+            </View>
+
+            <View style={[creategame.summary,{marginTop:0}]}>
+              <View style={WheelSPins.rowBetween}>
+                <Text style={creategame.summaryText}>Admission Fee (25%)</Text>
+                <Text style={creategame.summaryText}>₦{admissionFee.toFixed(2)}</Text>
               </View>
+              <View style={WheelSPins.rowBetween}>
+                <Text style={WheelSPins.totalLabel}>Your Stake</Text>
+                <Text style={WheelSPins.totalValue}>₦{stake.toFixed(2)}</Text>
+              </View>
+              <View style={WheelSPins.wallet}>
+                <Text style={WheelSPins.walletText}>
+                  Your wallet balance:{' '}
+                  <Text style={WheelSPins.walletAmount}>₦150,000</Text>
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={[
+                  FLipCoin.button,
+                  isButtonDisabled && WheelSPins.publishButton,
+                  { width: '100%', justifyContent: 'center', alignItems: 'center' },
+                ]}
+                disabled={isButtonDisabled}
+                onPress={handlePublishGame}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={WheelSPins.publishText}>Publish Game</Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View style={WheelSPins.infoCard}>
-              <View style={WheelSPins.cardContent}>
-                  <Text style={WheelSPins.cardTitle}>How It Works</Text>
-                  <Text style={WheelSPins.cardText}>
-                      Spin the wheel to randomly select three winning winningNumbers from 1–10. Players will bet
-                      against your result with odds of 3.333. If they guess any of the winningNumbers, they win. If not, you win.
-                  </Text>
-              </View>
-     </View>
-      </View>
-    
-     </ScrollView>
+            <View style={WheelSPins.cardContent}>
+              <Text style={WheelSPins.cardTitle}>How It Works</Text>
+              <Text style={WheelSPins.cardText}>
+              Shoot the ball into the goal and see where it lands. Players will bet against your shot direction with odds of 3.003x. If they correctly guess where your shot went, they win. If they guess wrong, you win.              </Text>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
     </View>
-  
   );
 };
-
 
 export default GoalMain;

@@ -2,64 +2,94 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
 import Header from '../../screen/Header/Header';
 import img from "../../assets/images/Rectangle 69.png"
-const TABS = ['My Games', 'Post Games'];
+import { useGameContext } from '../../context/AppContext';
+import Goalstyles from '../../styles/Goal.styles';
 
-const myGamesData = [
-  {
-    id: '1',
-    gameId: 'MY123',
-    players: '3/7 Players',
-    category: 'Category A',
-    amount: '$100',
-    image: img,
-  },
-  {
-    id: '2',
-    gameId: 'MY456',
-    players: '5/7 Players',
-    category: 'Category B',
-    amount: '$150',
-    image: img,
-  },
-];
-
-const postGamesData = [
-  {
-    id: '3',
-    gameId: 'POST789',
-    players: '7/7 Players',
-    category: 'Category C',
-    amount: '$200',
-    status: 'won',
-    image: img,
-  },
-  {
-    id: '4',
-    gameId: 'POST321',
-    players: '6/7 Players',
-    category: 'Category D',
-    amount: '$75',
-    status: 'lost',
-    image: img,
-  },
-];
 
 export default function History() {
   const [activeTab, setActiveTab] = useState('My Games');
+  const TABS = ['My Games', 'Post Games'];
+
+  const myGamesData = [
+    {
+      id: '1',
+      gameName: GameName,
+      players: '3/7 Players',
+      category: 'Category A',
+      amount: '$100',
+     
+    },
+    {
+      id: '2',
+      gameName: GameName,
+      players: '5/7 Players',
+      category: 'Category B',
+      amount: '$150',
+     
+    },
+  ];
+  
+  const postGamesData = [
+    {
+      id: '3',
+      gameName: 'POST789',
+      players: '7/7 Players',
+      concluded: 'Concluded',
+      amount: '$200',
+      status: 'won',
+     
+    },
+    {
+      id: '4',
+      gameName: 'POST321',
+      players: '6/7 Players',
+      concluded: 'Concluded',
+      amount: '$75',
+      status: 'lost',
+     
+    },
+  ];
+  
+  const { gameData } = useGameContext();
+  const { stake, odds, gameLabel, range, selected, GameName } = gameData || {};
+
 
   const renderGameCard = ({ item }) => (
-    <View style={styles.card}>
-      <Image source={item.image} style={styles.image} />
+    <View style={[styles.card,{marginBottom: 14,}]}>
+      <View style={styles.flexD}>
+      <Text style={styles.value}>{item.gameName} Goal Challenge</Text>
+      {activeTab === 'My Games' ? (
+  <Text style={[styles.value, { backgroundColor: '#3B82F6', padding: 4, borderRadius: 25, color: '#fff' }]}>
+    GameList
+  </Text>
+) : (
+  <Text style={[
+    styles.value,
+    {
+      backgroundColor: item.concluded === 'Concluded' && '#F97316' , // green or red
+      padding: 6,
+      borderRadius: 25,
+      color: '#fff'
+    }
+  ]}>
+    {item.concluded}
+  </Text>
+)}
+
+      </View> 
+
+    <View style={[styles.card,{ flexDirection: 'row',}]}> 
       <View style={styles.details}>
-        <Text style={styles.label}>Game ID:</Text>
-        <Text style={styles.value}>{item.gameId}</Text>
+        <Text style={styles.label}>Odds:</Text>
+        <Text style={styles.value}>3.003x</Text>
 
-        <Text style={styles.label}>Players:</Text>
-        <Text style={styles.value}>{item.players}</Text>
+        <Text style={[styles.label,{maxWidth:"77%"}]}>Left, right, or center? Choose where to shoot!</Text>
+        <Text style={styles.value}>Status: 2 winner</Text>
+        <Text style={styles.label}>House: @GoalKeeper22</Text>
 
-        <Text style={styles.label}>Category:</Text>
-        <Text style={styles.value}>{item.category}</Text>
       </View>
+      <View>
+      <Text style={styles.value}> Stake</Text>
       <Text
         style={[
           styles.amount,
@@ -69,6 +99,13 @@ export default function History() {
       >
         {item.amount}
       </Text>
+
+      </View>
+      </View>
+      <TouchableOpacity
+    style={[Goalstyles.button,{opacity:0.3}]} >
+     <Text style={[styles.buttonText,{textAlign:"center",width:"100%"}]}> Game Ended</Text>
+  </TouchableOpacity>
     </View>
   );
 
@@ -130,17 +167,24 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 14,
     fontWeight: '500',
+    fontFamily:'PoppinsMed',
     color: '#777',
   },
   activeTabText: {
     color: '#fff',
+    fontFamily:'PoppinsMed',
+
+  },
+  flexD:{
+    flexDirection: 'row',
+    alignItems:"center",
+    justifyContent:"space-between"
   },
   card: {
-    flexDirection: 'row',
     backgroundColor: '#f1f1f1',
     borderRadius: 12,
     padding: 12,
-    marginBottom: 14,
+    
     // alignItems: 'center',
   },
   image: {
@@ -156,21 +200,31 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 12,
     color: '#666',
+    fontFamily:'PoppinsMed',
+    fontWeight:'400'
   },
   value: {
     fontSize: 13,
     fontWeight: '600',
     marginBottom: 4,
     color: '#222',
+    fontFamily:'PoppinsMed',
+
   },
   amount: {
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily:'PoppinsMed',
+
   },
   amountWon: {
     color: '#2b8a3e',
+    fontFamily:'PoppinsMed',
+
   },
   amountLost: {
     color: '#d32f2f',
+    fontFamily:'PoppinsMed',
+
   },
 });

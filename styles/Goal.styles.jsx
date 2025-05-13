@@ -5,13 +5,15 @@ const Goalstyles = StyleSheet.create({
       backgroundColor: '#fff',
       padding: 24,
       
-      alignItems: 'center',
+      alignItems: 'center',  
     },
     header: {
       fontSize: 22,
       fontWeight: '700',
       marginBottom: 20,
       color: '#333',
+      fontFamily: "PoppinsMed",
+
     },
     field: {
       width: '100%',
@@ -80,12 +82,16 @@ const Goalstyles = StyleSheet.create({
     buttonText: {
       color: '#fff',
       fontWeight: '600',
+      fontFamily: "PoppinsMed",
+
       fontSize: 16,
     },
     message: {
       fontSize: 16,
       fontWeight: '500',
       marginVertical: 20,
+      fontFamily: "PoppinsMed",
+
       color: '#333',
     },
   });

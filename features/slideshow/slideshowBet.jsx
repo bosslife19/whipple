@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Text, View, StyleSheet, Easing, ImageBackground, TouchableOpacity } from 'react-native';
-import imags from '../../assets/images/games/pngtree-creative-website-color-contrast-background-image_2344637.jpg'
+import imags from '../../assets/images/games/image_fx_ (35) 1.png'
 import { MaterialIcons } from '@expo/vector-icons'; // MaterialIcons for icon
 import PlayButton from '../animations/buttons';
 

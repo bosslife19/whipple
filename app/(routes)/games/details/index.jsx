@@ -83,6 +83,20 @@ const ConfirmGameDetails = () => {
           },
           });
           break;
+
+          case 'goal challenge':
+            router.push({
+              pathname: '/games/category/becomethehouse/goal/selectedGoal',
+              params: {
+              stake: stake?.toString(),
+              odds,
+               gameLabel,
+              GameName,
+              range,
+              selected,
+            },
+            });
+            break;
   
       default:
         // Handle unknown game gracefully
