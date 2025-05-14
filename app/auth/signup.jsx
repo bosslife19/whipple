@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
 
 const Signup = () => {
   const [checked, setChecked] = useState(false);
@@ -89,7 +90,7 @@ const Signup = () => {
           >
             Already have an account?{" "}
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={()=> router.push("/auth/login")}>
             <Text style={{ color: "rgba(0, 123, 255, 1)", fontWeight: "bold" , fontSize:13}}>
               Sign in
             </Text>

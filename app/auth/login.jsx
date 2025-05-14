@@ -1,5 +1,6 @@
 import {
   Image,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -14,6 +15,7 @@ const Login = () => {
   const [checked, setChecked] = useState(false);
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="rgba(238, 246, 255, 1)" />
       <View style={{ paddingHorizontal: "5%" }}>
         <Text style={styles.registerText}>Welcome Back</Text>
 
@@ -35,7 +37,7 @@ const Login = () => {
         <View>
             
         </View>
-        <TouchableOpacity style={styles.blueButton}>
+        <TouchableOpacity style={styles.blueButton}  onPress={()=>router.push('/auth/otp')}>
           <Text
             style={{
               fontFamily: "Grotesk",
@@ -105,7 +107,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  blueButton: {
+  blueButton: { 
     backgroundColor: "rgba(0, 123, 255, 1)",
     height: "9%",
     alignItems: "center",

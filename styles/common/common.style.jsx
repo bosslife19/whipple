@@ -30,7 +30,7 @@ export const commonstyles = StyleSheet.create({
         backgroundColor: "#0A2EE226",
         marginHorizontal: 4,
       },
-      activePaginationDot: {
+      activePaginationDot: { 
         backgroundColor: "#0A2EE2", // Active dot color
         // width: responsiveWidth(25),      
      },
