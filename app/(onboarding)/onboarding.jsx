@@ -2,6 +2,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from "react";
 import AppIntroSlider from "react-native-app-intro-slider";
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 
 export const onboardingSwiperData = [
   {
@@ -85,10 +86,10 @@ const Onboarding = () => {
               />
             ))}
           </View>
-          <View style={styles.blueButton}>
+          <TouchableOpacity style={styles.blueButton} onPress={()=>router.push('/auth/signup')}>
             <Text style={styles.buttonText}>Get Started</Text>
             <Image source={require('../../assets/icons/right-arrow.png')}/>
-          </View>
+          </TouchableOpacity>
         </View>
       )}
       renderDoneButton={() => (
@@ -154,6 +155,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     // padding: 5,
     paddingHorizontal:16,
+    height:'50%'
   },
   text: {
     fontFamily: 'MonteserratRegular',
@@ -174,6 +176,7 @@ const styles = StyleSheet.create({
     marginTop: '2%',
     paddingHorizontal: '3%',
     alignItems: 'center',
+    
   },
   navigation: {
     flex: 1,
@@ -203,7 +206,8 @@ const styles = StyleSheet.create({
 
     alignItems:'center',
     justifyContent:'center',
-    gap:5
+    gap:5,
+    
   },
   buttonText: {
     color: 'white',
