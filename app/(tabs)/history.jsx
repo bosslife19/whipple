@@ -8,7 +8,7 @@ import Goalstyles from '../../styles/Goal.styles';
 
 export default function History() {
   const [activeTab, setActiveTab] = useState('My Games');
-  const TABS = ['My Games', 'Post Games'];
+  const TABS = ['My Games', 'Past Games'];
 
   const myGamesData = [
     {
