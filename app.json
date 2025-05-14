@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.mako116.Whipple"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +37,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f80512c4-ff80-427c-9670-250885ae7645"
+      }
     }
   }
 }
