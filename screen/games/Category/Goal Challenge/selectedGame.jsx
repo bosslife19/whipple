@@ -11,10 +11,10 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import HeaderBet from '../../../Header/HeaderBet';
 import { useGameContext } from '../../../../context/AppContext';
-import { GoalIcon } from 'lucide-react-native';
+// import { GoalIcon } from 'lucide-react-native';
 import Goalstyles from '../../../../styles/Goal.styles';
 import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
@@ -135,12 +135,12 @@ const GoalSelected = () => {
     style={Goalstyles.button}
     onPress={() => router.push("/(routes)/games/availablegames")}
   >
-    <GoalIcon size={16} color="#fff" style={{ marginRight: 8 }} />
+    <Feather name="target" size={16} color="#fff" style={{ marginRight: 8 }} />
     <Text style={styles.buttonText}>Go Back to Games</Text>
   </TouchableOpacity>
 ) : (
   <TouchableOpacity style={Goalstyles.button} onPress={shootBall}>
-    <GoalIcon size={16} color="#fff" style={{ marginRight: 8 }} />
+    {/* <GoalIcon size={16} color="#fff" style={{ marginRight: 8 }} /> */}
     <Text style={styles.buttonText}>Shoot Ball</Text>
   </TouchableOpacity>
 )}     

@@ -6,11 +6,12 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
-import { Package } from 'lucide-react-native';
+// import { Package } from 'lucide-react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
 import HeaderBet from '../../../Header/HeaderBet';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const MyseterySelect = () => {
   const { selected, GameName } = useLocalSearchParams();
@@ -64,7 +65,7 @@ const MyseterySelect = () => {
                           ]}
                           onPress={() => handleBoxPress(box)}
                       >
-                          <Package size={64} color="#92400e" />
+                        <MaterialCommunityIcons name="package-variant" size={64} color="#92400e" />
                           <Text style={styles.boxNumber}>{box}</Text>
                       </TouchableOpacity>
                   ))}

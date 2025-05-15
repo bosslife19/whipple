@@ -12,8 +12,8 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Goal } from 'lucide-react-native';
+import { FontAwesome5, Ionicons } from '@expo/vector-icons';
+// import { Goal } from 'lucide-react-native';
 
 import Header from '../../../Header/Header';
 import { useGameContext } from '../../../../context/AppContext';
@@ -180,12 +180,15 @@ const GoalMain = () => {
             <Animated.View
               style={[Goalstyles.ballWrapper, { bottom: ballBottom, left: ballLeft }]}
             >
-              <Ionicons name="football" size={24} color="white" />
+               <Ionicons name="football" size={24} color="white" />
             </Animated.View>
           </ImageBackground>
 
           <TouchableOpacity style={Goalstyles.button} onPress={shootBall}>
-            <Goal size={16} color="#fff" style={{ marginRight: 8 }} />
+          {/* <Icon name="bullseye" size={16} color="#fff" style={{ marginRight: 8 }} /> */}
+          <FontAwesome5 name="bullseye" size={16} color="#fff" style={{ marginRight: 8 }} />
+
+            {/* <Goal size={16} color="#fff" style={{ marginRight: 8 }} /> */}
             <Text style={Goalstyles.buttonText}>Shoot Ball</Text>
           </TouchableOpacity>
 

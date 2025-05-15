@@ -1,13 +1,14 @@
 // components/MysteryMain.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ImageBackground, ActivityIndicator, TextInput } from 'react-native';
-import { Box, Check } from 'lucide-react-native'; // Check icon from lucide-react-native
+// import { Box, Check } from 'lucide-react-native'; // Check icon from lucide-react-native
 // import { useGameContext } from '../../../../context/GameContext'; // Import useGameContext hook
 import Header from '../../../Header/Header';
 import dicestyles from '../../../../styles/diceGame/dice.styles';
 import WheelSPins from '../../../../styles/spining/wheelspining.styles';
 import { router } from 'expo-router';
 import { useGameContext } from '../../../../context/AppContext';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const MysteryMain = () => {
   const boxes = ['Box 1', 'Box 2', 'Box 3'];
@@ -93,9 +94,13 @@ useEffect(() => {
                   activeOpacity={0.7}
                   onPress={() => handleBoxPress(label)}
                 >
-                  <Box size={32} color={'#6B7280'} />
+                  <MaterialCommunityIcons name="cube-outline" size={32} color="#6B7280" />
+                  {/* <Box size={32} color={'#6B7280'} /> */}
                   <Text style={styles.boxLabel}>{label}</Text>
-                  {selectedBox === label && <Check size={20} color="#22C55E" />}
+                  {selectedBox === label && 
+                  <Feather name="check" size={20} color="#22C55E" />
+                  // <Check size={20} color="#22C55E" />
+                  }
                 </TouchableOpacity>
               ))}
             </View>
