@@ -1,18 +1,30 @@
 {
   "cli": {
-    "version": ">= 16.6.0",
+    "version": ">= 13.4.2",
     "appVersionSource": "remote"
   },
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EAS_BUILD_NPM_FLAGS": "--legacy-peer-deps"
+      }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EAS_BUILD_NPM_FLAGS": "--legacy-peer-deps"
+      }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EAS_BUILD_NPM_FLAGS": "--legacy-peer-deps"
+      }
     }
   },
   "submit": {
