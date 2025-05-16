@@ -39,7 +39,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="card"
+        name="PreBetActivities"
         options={{
           title: '',
           tabBarIcon: ({ color, focused }) => (

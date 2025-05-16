@@ -7,13 +7,15 @@ import {
   ActivityIndicator,
   Text,
 } from 'react-native';
-import HeaderBet from '../../Header/HeaderBet';
+// import HeaderBet from '../../../../Header/HeaderBet';
 import { router, useLocalSearchParams } from 'expo-router';
-import Votes from '../../../styles/voteDistri.styles';
+// import Votes from '../../../styles/voteDistri.styles';
+import HeaderBet from '../../../Header/HeaderBet';
+import Votes from '../../../../styles/voteDistri.styles';
 
 const PRIMARY_COLOR = '#1A4ED8'; // Deep Blue
 
-const VoteDistributionScreen = () => {
+const VoteColorRouletteScreen = () => {
   const [value, setValue] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -25,11 +27,12 @@ const VoteDistributionScreen = () => {
       alert('Please select an option.');
       return;
     }
+    
  
     setIsSubmitting(true);
     setTimeout(() => {
       router.push({
-        pathname: '/(routes)/games/availablegames',
+        pathname: '/(routes)/games/category/becomethehouse/colorRoulette',
         params: {
           stake: stake?.toString(),
           odds: odds?.toString(),
@@ -37,6 +40,7 @@ const VoteDistributionScreen = () => {
           GameName,
           range: range?.toString(),
           selected: selected?.toString(),
+          
         },
       });
       setIsSubmitting(false);
@@ -114,6 +118,6 @@ const VoteDistributionScreen = () => {
   );
 };
 
-export default VoteDistributionScreen;
+export default VoteColorRouletteScreen;
 
 

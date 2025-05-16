@@ -7,6 +7,7 @@ import HeaderBet from '../../../Header/HeaderBet';
 import Slectedcol from '../../../../styles/selectedColorsstyles';
 import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
+import { useGameContext } from '../../../../context/AppContext';
 
 const ColorRouletteSelect = () => {
     const [selectedColor, setSelectedColor] = useState(null);
@@ -22,7 +23,11 @@ const ColorRouletteSelect = () => {
       setModalVisibled(false)
   
     }
-    const { stake,gameLabel,  odds,  GameName = 'Color Roulette' } = useLocalSearchParams();
+    // const { stake,gameLabel,  odds,  GameName = 'Color Roulette' } = useLocalSearchParams();
+   
+    const { gameData ,updateGameData } = useGameContext();
+       const {selected,  stake,  odds,  GameName='Color Roulette'} = gameData || {};
+   
     const router = useRouter();
     const spinValue = useRef(new Animated.Value(0)).current;
   
@@ -34,13 +39,13 @@ const ColorRouletteSelect = () => {
     ];
   
     useEffect(() => {
-      if (gameLabel) {
-        const match = colors.find(c => c.id === gameLabel);
+      if (selected) {
+        const match = colors.find(c => c.id === selected);
         if (match) {
           setSelectedColor(match);
         }
       }
-    }, [gameLabel]);
+    }, [selected]);
   
     const handleColorSelect = (color) => {
       setSelectedColor(color);
@@ -63,17 +68,20 @@ const ColorRouletteSelect = () => {
       });
     };
 
-     const handleAvailableGame = () => {
-          
-        router.push({ 
-          pathname: '/(routes)/games/availablegames',
-          params: {
-            stake ,
-            odds,
-            gameLabel,
-             GameName,
-            },
-        });
+       
+
+     const handleLosersGame = () => {
+      // to get the active colors 
+     const gameLabel=`${activeColors}`
+
+     updateGameData({
+      stake ,
+       odds,
+       gameLabel,
+       GameName,
+       isGameLost: true, // Flag indicating if the game is lost
+     });
+        router.push('/(routes)/games/LostGames/ViewLostGames');
       };
   
     const spin = spinValue.interpolate({
@@ -157,8 +165,8 @@ const ColorRouletteSelect = () => {
             </View>
   
             {hasSpun ? (
-              <TouchableOpacity style={Slectedcol.spinButton} onPress={handleAvailableGame}>
-                <Text style={Slectedcol.spinButtonText}>Go Back Home</Text>
+              <TouchableOpacity style={Slectedcol.spinButton} onPress={handleLosersGame}>
+                <Text style={Slectedcol.spinButtonText}>Play Losers Game</Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity

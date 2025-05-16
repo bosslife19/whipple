@@ -1,11 +1,11 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import CorrectScore from '../../../../screen/games/Category/Pre-Bet/CorrectScore';
-
+import PredictScoresScreen from '../../../../screen/Pre-Bet/CorrectScore';
+ 
 const CorrectScores = () => {
     return (
         <View>
-            <CorrectScore/>
+            <PredictScoresScreen/>
         </View>
     );
 }

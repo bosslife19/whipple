@@ -46,9 +46,9 @@ const GameDetails = () => {
           });
           break;
     
-        case 'color roulette':
+        case 'color roulette': 
           router.push({
-            pathname: '/games/category/becomethehouse/colorRoulette/selectedColor',
+            pathname: '/games/category/becomethehouse/colorRoulette/voteColorRoullete',
             params: {
             stake: stake?.toString(),
             odds,

@@ -82,7 +82,9 @@ const LosersGames = () => {
                 </View>
 
                 <Text style={LosersGameList.description}>
-                  {GameName} - Option 1, Game B (2 from 1–{range})
+                  {GameName} - {gameLabel} 
+                  {/* this range is for lucky numbers */}
+                  {range}
                 </Text>
 
                 <View style={LosersGameList.row}>

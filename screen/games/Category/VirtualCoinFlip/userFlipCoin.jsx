@@ -85,25 +85,13 @@ const UserFlipCoin = () => {
       stake: stake.toString(),
       odds: parsedTotalOdds + 'x',
       gameLabel,
-      GameName,
+      GameName, 
       range,
       selected: selectedNumbers.join(','),
       isGameLost: true, // Flag indicating if the game is lost
       flipResult,
     });
-    // router.push({
-    //   pathname: '/(routes)/games/LostGames/ViewLostGames',
-    //   params: {
-    //     stake: stake.toString(),
-    //     odds: parsedTotalOdds + 'x',
-    //     gameLabel,
-    //     GameName,
-    //     range,
-    //     selected: selectedNumbers.join(','),
-    //     isGameLost: true, // Flag indicating if the game is lost
-    //     flipResult, // Pass the flip result to the next page
-    //   },
-    // });
+ 
     router.push('/(routes)/games/LostGames/ViewLostGames');
 
   };

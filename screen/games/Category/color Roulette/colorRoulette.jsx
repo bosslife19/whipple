@@ -187,7 +187,8 @@ const ColorRouletteGame = () => {
           </Text>
         </View>
       </View>
-    </ScrollView></>
+    </ScrollView>
+    </> 
   );
 };
 

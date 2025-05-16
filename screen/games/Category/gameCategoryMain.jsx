@@ -46,7 +46,7 @@ const popularGames = [
     image: color,
     description: 'Four colors (Red, Blue, Green, Yellow); two prominent colors published.',
     variants: ['Four Colors'],
-    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/colorRoulette'),
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/colorRoulette/voteColorRoullete'), 
 
   },
 ];
