@@ -40,6 +40,21 @@ const MyseterySelect = () => {
     setModalVisibled(false);
   };
 
+  
+     const handleLosersGame = () => {
+      // to get the active colors 
+ 
+     updateGameData({
+      stake ,
+       odds,
+       gameLabel,
+       GameName,
+       isGameLost: true, // Flag indicating if the game is lost
+     });
+        router.push('/(routes)/games/LostGames/ViewLostGames');
+      };
+  
+
   return (
     <>
     <HeaderBet amount={'200'} name={GameName} arrow />
@@ -73,7 +88,7 @@ const MyseterySelect = () => {
 
               {success === null ? (
                   <TouchableOpacity
-                      style={styles.revealButton}
+                      style={styles.revealButton} 
                       onPress={handleRevealBox}
                   >
                       <Text style={styles.revealButtonText}>Reveal Box</Text>
@@ -81,9 +96,9 @@ const MyseterySelect = () => {
               ) : (
                   <TouchableOpacity
                       style={styles.backHomeButton}
-                      onPress={() => router.push('/(tabs)/home')}
+                      onPress={handleLosersGame}
                   >
-                      <Text style={styles.backHomeButtonText}>Back to Home</Text>
+                      <Text style={styles.backHomeButtonText}>Back to Loser's Game</Text>
                   </TouchableOpacity>
               )}
           </View>

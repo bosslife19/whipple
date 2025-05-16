@@ -88,7 +88,7 @@ const quickGames = [
 
   },
   {
-    title: 'mysteryGame',
+    title: 'mystery box',
     image: mystry,
     description: 'Three boxes; one chosen as the winning box.',
     variants: ['Three Boxes'],

@@ -126,20 +126,20 @@ const VoteColorRouletteScreen = () => {
       }
       
     setIsSubmitting(true);
-    setTimeout(() => {
-      router.push({
-        pathname: path,
-        params: {
-          stake: stake?.toString(),
-          odds: odds?.toString(),
-          gameLabel,
-          GameName,
-          range: range?.toString(),
-          selected: selected?.toString(),
-        },
-      });
-      setIsSubmitting(false);
-    }, 2000);
+    // setTimeout(() => {
+    //   router.push({
+    //     pathname: path,
+    //     params: {
+    //       stake: stake?.toString(),
+    //       odds: odds?.toString(),
+    //       gameLabel,
+    //       GameName,
+    //       range: range?.toString(),
+    //       selected: selected?.toString(),
+    //     },
+    //   });
+    //   setIsSubmitting(false);
+    // }, 2000);
   };
 
   const handleCancel = () => {
