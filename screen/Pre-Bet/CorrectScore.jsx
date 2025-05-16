@@ -115,7 +115,7 @@ export default function PredictScoresScreen() {
         style={[styles.confirmButton, !isAnyScoreSelected && { opacity: 0.5 }]}
         disabled={!isAnyScoreSelected}
         onPress={() => {
-          router.push('(routes)/')
+          router.push('(tabs)/PreBetActivities')
         }}
       >
         <Text style={styles.buttonText}>Confirm Predictions ($1 fee)</Text>

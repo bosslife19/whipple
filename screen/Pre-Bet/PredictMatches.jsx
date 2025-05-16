@@ -128,6 +128,10 @@ const PredictMatches = () => {
 
       <View style={styles.confirmSection}>
         <TouchableOpacity
+         onPress={() => {
+                  router.push('(tabs)/PreBetActivities')
+          }}
+          
           style={[
             styles.confirmButton,
             { opacity: selections === 0 ? 0.5 : 1 },
