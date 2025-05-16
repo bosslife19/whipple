@@ -21,7 +21,7 @@ const MysteryMain = () => {
   const [loading, setLoading] = useState(false);
 
   // Track selected box
-  const [selectedBox, setSelectedBox] = useState(gameData.selectedBox || null);
+  const [selectedBox, setSelectedBox] = useState( null);
 
   const handleBoxPress = (label) => {
     // If the same box is tapped again, unselect it
