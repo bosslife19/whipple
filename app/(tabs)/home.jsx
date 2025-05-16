@@ -87,7 +87,7 @@ export default function HomeScreen() {
          {/* Lost Games*/}
          <View style={Homes.contentContainer}>
          <View style={[Homes.scrollContainer,{justifyContent:"space-between",marginHorizontal:16,}]}>
-            <Text style={Homes.Header}>Lost Games</Text>
+            <Text style={Homes.Header}>Loser's Games</Text>
              <TouchableOpacity 
               onPress={()=> router.push("/(routes)/games/LostGames/ViewLostGames")}
              style={{backgroundColor:'#0040841F',paddingHorizontal:15,paddingVertical:5,borderRadius:5}} >

@@ -10,26 +10,50 @@ import {
 import HeaderBet from '../../Header/HeaderBet';
 import { router, useLocalSearchParams } from 'expo-router';
 import Votes from '../../../styles/voteDistri.styles';
+import { useGameContext } from '../../../context/AppContext';
 
 const PRIMARY_COLOR = '#1A4ED8'; // Deep Blue
 
-const VoteDistributionScreen = () => {
+const VoteColorRouletteScreen = () => {
   const [value, setValue] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
 
-  const { stake, odds, gameLabel, range, selected, GameName } = useLocalSearchParams();
+  // const { stake, odds, gameLabel, range, selected, GameName } = useLocalSearchParams();
 
+    const { gameData } = useGameContext();
+        const { stake, odds, gameLabel, range, selected, GameName } = gameData || {};
+  
   const handleSubmit = () => {
     if (!value) {
       alert('Please select an option.');
       return;
     }
- 
+
+    const normalizedGameName = GameName?.toLowerCase?.();
+
+    let path = '';
+
+    switch (normalizedGameName) {
+      case 'color roulette':
+        path = '/(routes)/games/category/becomethehouse/colorRoulette';
+        break;
+
+        case 'lucky number':
+         path = '/(routes)/games/category/becomethehouse/luckynumbers-category/create-game';
+        break;
+        
+      default:
+          // Handle unknown game gracefully
+          console.warn(`[Navigation Error]: Unknown game "${GameName}" selected.`);
+          alert('An error occurred: Unknown game selected. Please try again.');
+      
+    }
+
     setIsSubmitting(true);
     setTimeout(() => {
       router.push({
-        pathname: '/(routes)/games/availablegames',
+        pathname: path,
         params: {
           stake: stake?.toString(),
           odds: odds?.toString(),
@@ -54,11 +78,10 @@ const VoteDistributionScreen = () => {
   const options = [
     { key: 'one', label: 'One Winner Takes All' },
     { key: 'two', label: 'Three Winners Share Rewards' },
-    { key: 'Five', label: 'Five Winners Share Rewards' },
+    { key: 'five', label: 'Five Winners Share Rewards' },
   ];
 
   return (
-
     <>
       <HeaderBet arrow amount={'200'} backgroundColor="#E0EBFF" />
       <ScrollView contentContainerStyle={Votes.container}>
@@ -78,7 +101,12 @@ const VoteDistributionScreen = () => {
               ]}
               onPress={() => setValue(item.key)}
             >
-              <View style={[Votes.radioCircle, value === item.key && Votes.radioCircleSelected]} />
+              <View
+                style={[
+                  Votes.radioCircle,
+                  value === item.key && Votes.radioCircleSelected,
+                ]}
+              />
               <Text style={Votes.radioLabel}>{item.label}</Text>
             </TouchableOpacity>
           ))}
@@ -114,6 +142,4 @@ const VoteDistributionScreen = () => {
   );
 };
 
-export default VoteDistributionScreen;
-
-
+export default VoteColorRouletteScreen;

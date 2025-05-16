@@ -36,7 +36,7 @@ const gameOptions = {
       totalOdds: 2.5,
       selectionCount: 2,
       names: 'Lucky Number',
-      route: '/(routes)/games/category/becomethehouse/luckynumbers-category/multiple-game', // different route
+      route: '/(routes)/games/vote',
     },
   ],
   C: [
@@ -46,7 +46,7 @@ const gameOptions = {
       totalOdds: 20,
       selectionCount: 5,
       names: 'Lucky Number',
-      route: '/(routes)/games/category/becomethehouse/luckynumbers-category/multiple-game',
+      route: '/(routes)/games/vote',
     },
     {
       label: 'Game B - 10 numbers (1-100) - 10 Odds',
@@ -54,7 +54,7 @@ const gameOptions = {
       totalOdds: 10,
       selectionCount: 10,
       names: 'Lucky Number',
-      route: '/(routes)/games/category/becomethehouse/luckynumbers-category/multiple-game',
+      route: '/(routes)/games/vote',
     },
     {
       label: 'Game C - 1 number (1-100) - 100 Odds',
@@ -62,7 +62,7 @@ const gameOptions = {
       totalOdds: 100,
       selectionCount: 1,
       names: 'Lucky Number',
-      route: '/(routes)/games/category/becomethehouse/luckynumbers-category/multiple-game',
+      route: '/(routes)/games/vote',
     },
   ],
 };
