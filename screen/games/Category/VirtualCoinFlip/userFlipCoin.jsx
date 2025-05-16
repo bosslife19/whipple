@@ -68,7 +68,7 @@ const UserFlipCoin = () => {
       duration: 1500,
       useNativeDriver: true,
     }).start(() => {
-      const randomResult = Math.random() < 0.5 ? 'Heads' : 'Tails';
+      const randomResult = Math.random() < 0.5 ? 'Tails' : 'Heads';
       setFlipResult(randomResult);
       const didWin = choice === randomResult;
 

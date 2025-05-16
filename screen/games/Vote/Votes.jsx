@@ -34,22 +34,97 @@ const VoteColorRouletteScreen = () => {
 
     let path = '';
 
-    switch (normalizedGameName) {
-      case 'color roulette':
-        path = '/(routes)/games/category/becomethehouse/colorRoulette';
-        break;
-
+    // Navigate based on the selected game
+      switch (normalizedGameName) {
         case 'lucky number':
-         path = '/(routes)/games/category/becomethehouse/luckynumbers-category/create-game';
-        break;
-        
-      default:
+          router.push({
+            pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+            params: {
+            stake: stake?.toString(),
+            odds,
+             gameLabel,
+            GameName,
+            range, 
+            selected,
+          },
+          });
+          break;
+    
+        case 'flip the coin':
+          router.push({
+            pathname: '/games/availablegames/CoinFLip/confirmFlipCoin',
+            params: {
+            stake: stake?.toString(),
+            odds,
+            gameLabel,
+            GameName,
+            range,
+            selected,
+          },
+          });
+          break;
+    
+        case 'color roulette': 
+          router.push({
+            pathname: '/(routes)/games/category/becomethehouse/colorRoulette',
+            params: {
+            stake: stake?.toString(),
+            odds,
+             gameLabel,
+            GameName,
+            range,
+            selected,
+          },
+          });
+          break;
+  
+          case 'mystery box':
+            router.push({
+              pathname: '/games/category/becomethehouse/mysteryGame/mysterySelect',
+              params: {
+              stake: stake?.toString(),
+              odds,
+               gameLabel,
+              GameName,
+              range,
+              selected,
+            },
+            });
+            break;
+  
+            case 'goal challenge':
+              router.push({
+                pathname: '/games/category/becomethehouse/goal/selectedGoal',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,
+                selected,
+              },
+              });
+              break;
+                case 'dice roll':
+                   router.push({
+                pathname: '/games/category/becomethehouse/DiceRoll',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,
+                selected,
+              },
+              });
+              break;
+    
+        default:
           // Handle unknown game gracefully
           console.warn(`[Navigation Error]: Unknown game "${GameName}" selected.`);
           alert('An error occurred: Unknown game selected. Please try again.');
+      }
       
-    }
-
     setIsSubmitting(true);
     setTimeout(() => {
       router.push({

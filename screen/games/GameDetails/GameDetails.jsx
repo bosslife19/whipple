@@ -20,13 +20,13 @@ const GameDetails = () => {
       switch (normalizedGameName) {
         case 'lucky number':
           router.push({
-            pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+            pathname: '/games/vote',
             params: {
             stake: stake?.toString(),
             odds,
              gameLabel,
             GameName,
-            range,
+            range, 
             selected,
           },
           });
@@ -34,7 +34,7 @@ const GameDetails = () => {
     
         case 'flip the coin':
           router.push({
-            pathname: '/games/availablegames/CoinFLip/confirmFlipCoin',
+            pathname: '/games/vote',
             params: {
             stake: stake?.toString(),
             odds,
@@ -48,7 +48,7 @@ const GameDetails = () => {
     
         case 'color roulette': 
           router.push({
-            pathname: '/games/category/becomethehouse/colorRoulette/voteColorRoullete',
+            pathname: '/games/vote',
             params: {
             stake: stake?.toString(),
             odds,
@@ -62,7 +62,7 @@ const GameDetails = () => {
   
           case 'mystery box':
             router.push({
-              pathname: '/games/category/becomethehouse/mysteryGame/mysterySelect',
+            pathname: '/games/vote',
               params: {
               stake: stake?.toString(),
               odds,
@@ -76,7 +76,7 @@ const GameDetails = () => {
   
             case 'goal challenge':
               router.push({
-                pathname: '/games/category/becomethehouse/goal/selectedGoal',
+            pathname: '/games/vote',
                 params: {
                 stake: stake?.toString(),
                 odds,
@@ -88,6 +88,20 @@ const GameDetails = () => {
               });
               break;
     
+              case 'dice roll':
+              router.push({
+            pathname: '/games/vote',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,
+                selected,
+              },
+              });
+              break;
+
         default:
           // Handle unknown game gracefully
           console.warn(`[Navigation Error]: Unknown game "${GameName}" selected.`);
