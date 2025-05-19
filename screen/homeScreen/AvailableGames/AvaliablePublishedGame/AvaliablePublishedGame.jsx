@@ -24,16 +24,16 @@ const AvaliablePublishedGame = () => {
   const handlePlayNow = () => {
     setGamePlayed(true);
 
-    const gameDetails = {
-      stake: stake?.toString(),
-      odds,
-      gameLabel: GameName,
-      GameName,
-      range,
-      selected,
-    };
+    // const gameDetails = {
+    //   stake: stake?.toString(),
+    //   odds,
+    //   gameLabel: GameName,
+    //   GameName,
+    //   range,
+    //   selected,
+    // };
 
-    if (normalizedGameName === 'dice roll' || normalizedGameName === 'wheel spin') {
+    if (normalizedGameName === 'dice roll' || normalizedGameName === 'wheel spin' || normalizedGameName === 'mystery box') {
       router.push({
         pathname: '/games/vote',
         params: {

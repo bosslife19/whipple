@@ -12,9 +12,13 @@ import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
 import HeaderBet from '../../../Header/HeaderBet';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useGameContext } from '../../../../context/AppContext';
 
 const MyseterySelect = () => {
-  const { selected, GameName } = useLocalSearchParams();
+  // const { selected, GameName } = useLocalSearchParams();
+      const { gameData ,updateGameData } = useGameContext();
+      const {  odds,  gameLabel, selected, GameName , stake} = gameData || {};
+     
   const router = useRouter();
 
   const boxes = ['1', '2', '3'];
@@ -40,6 +44,7 @@ const MyseterySelect = () => {
     setModalVisibled(false);
   };
 
+  
   
      const handleLosersGame = () => {
       // to get the active colors 
@@ -86,19 +91,31 @@ const MyseterySelect = () => {
                   ))}
               </View>
 
-              {success === null ? (
+              {success === null && (
                   <TouchableOpacity
                       style={styles.revealButton} 
                       onPress={handleRevealBox}
                   >
                       <Text style={styles.revealButtonText}>Reveal Box</Text>
                   </TouchableOpacity>
-              ) : (
-                  <TouchableOpacity
+              )}
+
+               {success === false && (
+                   <TouchableOpacity
                       style={styles.backHomeButton}
                       onPress={handleLosersGame}
                   >
                       <Text style={styles.backHomeButtonText}>Back to Loser's Game</Text>
+                  </TouchableOpacity>
+              )}
+
+              
+               {success === true && (
+                   <TouchableOpacity
+                      style={styles.backHomeButton}
+                     onPress={() => router.push('/(routes)/games/availablegames')}
+                  >
+                      <Text style={styles.backHomeButtonText}>Back to Game's</Text>
                   </TouchableOpacity>
               )}
           </View>
@@ -116,7 +133,8 @@ const MyseterySelect = () => {
           {success === false && (
               <Losingmodal visible={visible} closeModal={closeModal} />
           )}
-      </ScrollView></>
+      </ScrollView>
+      </> 
   );
 };
 

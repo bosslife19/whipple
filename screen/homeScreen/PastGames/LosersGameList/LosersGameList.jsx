@@ -43,7 +43,7 @@ const LosersGames = () => {
   }
 
   return (
-    <View>
+    <View style={{height:'100%'}}>
       <Header name="Loser's Game" backgroundColor="#EEF6FF" />
       <View style={LosersGameList.container}>
         <View style={LosersGameList.rulesCard}>

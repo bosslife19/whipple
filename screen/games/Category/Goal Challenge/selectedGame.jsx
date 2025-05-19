@@ -129,21 +129,29 @@ const GoalSelected = () => {
                       </TouchableOpacity>
                   ))}
               </View>
-
-              {success !== null ? (
-  <TouchableOpacity
-    style={Goalstyles.button}
-    onPress={() => router.push('/(routes)/games/LostGames/ViewLostGames')}
-  >
-    <Feather name="target" size={16} color="#fff" style={{ marginRight: 8 }} />
-    <Text style={styles.buttonText}>Go to Loser's Games</Text>
-  </TouchableOpacity>
-) : (
-  <TouchableOpacity style={Goalstyles.button} onPress={shootBall}>
-    {/* <GoalIcon size={16} color="#fff" style={{ marginRight: 8 }} /> */}
-    <Text style={styles.buttonText}>Shoot Ball</Text>
-  </TouchableOpacity>
-)}     
+              {success === null && (
+            <TouchableOpacity style={Goalstyles.button} onPress={shootBall}>
+              <Text style={styles.buttonText}>Shoot Ball</Text>
+           </TouchableOpacity>
+          )}
+          {success === true && (
+            <TouchableOpacity
+           style={Goalstyles.button}
+          onPress={() => router.push('/(routes)/games/availablegames')}
+          >
+        <Feather name="arrow-left-circle" size={16} color="#fff" style={{ marginRight: 8 }} />
+       <Text style={styles.buttonText}>Go Back to Games</Text>
+      </TouchableOpacity>
+     )} 
+     {success === false && (
+      <TouchableOpacity
+       style={Goalstyles.button}
+       onPress={() => router.push('/(routes)/games/LostGames/ViewLostGames')}
+       >
+      <Feather name="target" size={16} color="#fff" style={{ marginRight: 8 }} />
+      <Text style={styles.buttonText}>Go to Loser's Games</Text>
+     </TouchableOpacity>
+     )}
 
        {/* How it Works */}
        <View style={[dicestyles.card,{marginTop:20}]}>
