@@ -1,4 +1,6 @@
 import {
+  ActivityIndicator,
+  Alert,
   Image,
   StyleSheet,
   Text,
@@ -9,9 +11,42 @@ import {
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
+import { useRequest } from "../../hooks/useRequest";
 
 const Signup = () => {
   const [checked, setChecked] = useState(false);
+  const { makeRequest, loading, error,  response} = useRequest();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+
+
+  const handleSignup = async()=>{
+   
+    if(!checked){
+      return Alert.alert("Required", 'Please accept our terms and conditions to continue');
+    }
+    if(!email||!name||!password||!passwordConfirm){
+      return Alert.alert('Required', 'All fields are required to continue');
+    }
+    if(password !== passwordConfirm){
+      return Alert.alert('Passwords do not match', 'Your password does not match with confirm password value')
+    }
+    try {
+      
+      const res = await makeRequest('/signup', {name, email, password})
+      if(res.error){
+        return Alert.alert('Error', res.error);
+      }
+      router.replace('/auth/login');
+
+    } catch (err) {
+      console.log(err);
+      
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ paddingHorizontal: "5%" }}>
@@ -22,25 +57,38 @@ const Signup = () => {
             style={styles.input}
             placeholder="Name"
             placeholderTextColor={"rgba(154, 154, 154, 0.6)"}
+            onChangeText={val=>setName(val)}
           />
           <TextInput
             style={styles.input}
             placeholder="Email or Phone Number"
             placeholderTextColor={"rgba(154, 154, 154, 0.6)"}
+            onChangeText={val=>setEmail(val)}
           />
           <TextInput
             style={styles.input}
             placeholder="Password"
+            secureTextEntry={true}
             placeholderTextColor={"rgba(154, 154, 154, 0.6)"}
+            onChangeText={val=>setPassword(val)}
           />
           <TextInput
             style={styles.input}
             placeholder="Confirm Password"
             placeholderTextColor={"rgba(154, 154, 154, 0.6)"}
+            onChangeText={val=>setPasswordConfirm(val)}
+            secureTextEntry={true}
           />
         </View>
 
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 3, top:'-6%' }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 3,
+            top: "-6%",
+          }}
+        >
           <TouchableOpacity
             style={styles.tick}
             onPress={() => setChecked((prev) => !prev)}
@@ -65,22 +113,31 @@ const Signup = () => {
             </Text>
           </Text>
         </View>
-        <View>
-            
-        </View>
-        <TouchableOpacity style={styles.blueButton}>
-          <Text
-            style={{
-              fontFamily: "Grotesk",
-              fontWeight: "700",
-              color: "white",
-              fontSize: 14,
-            }}
-          >
-            Register Now
-          </Text>
+        <View></View>
+        <TouchableOpacity style={styles.blueButton} onPress={handleSignup}>
+          {loading ? (
+            <ActivityIndicator size={20} color="white" />
+          ) : (
+            <Text
+              style={{
+                fontFamily: "Grotesk",
+                fontWeight: "700",
+                color: "white",
+                fontSize: 14,
+              }}
+            >
+              Register Now
+            </Text>
+          )}
         </TouchableOpacity>
-        <View style={{flexDirection:'row', marginTop:'5%', alignItems:'center', justifyContent:'center'}}>
+        <View
+          style={{
+            flexDirection: "row",
+            marginTop: "5%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <Text
             style={{
               fontFamily: "PoppinsLight",
@@ -90,8 +147,14 @@ const Signup = () => {
           >
             Already have an account?{" "}
           </Text>
-          <TouchableOpacity onPress={()=> router.push("/auth/login")}>
-            <Text style={{ color: "rgba(0, 123, 255, 1)", fontWeight: "bold" , fontSize:13}}>
+          <TouchableOpacity onPress={() => router.push("/auth/login")}>
+            <Text
+              style={{
+                color: "rgba(0, 123, 255, 1)",
+                fontWeight: "bold",
+                fontSize: 13,
+              }}
+            >
               Sign in
             </Text>
           </TouchableOpacity>

@@ -20,8 +20,12 @@ import FloatingMessage from '../../screen/homeScreen/Message/Message';
 import AvailableGamesList from '../../screen/homeScreen/AvailableGames/AvailableGamesList';
 import FeaturesSection from '../../screen/homeScreen/features/Features';
 import SlideShowBet from '../../features/slideshow/slideshowBet';
+import { useContext } from 'react';
+import {AuthContext} from '../../context/AuthContext'
 
 export default function HomeScreen() {
+  const {userDetails} = useContext(AuthContext)
+  console.log(userDetails)
   return (
     <View style={Homes.Container}>
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />

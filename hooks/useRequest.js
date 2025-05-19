@@ -25,6 +25,12 @@ export const useRequest = () => {
                 setResponse(res.data);
                 return { response: res.data };
             }
+           
+            if(res.data.error){
+               
+                setError(res.data.error);
+                return {error: res.data.error}
+            }
         } catch (error) {
             console.log(error);
             const err = error?.response?.data || 'Server Error';

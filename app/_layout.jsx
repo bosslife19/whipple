@@ -9,6 +9,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Platform } from 'react-native';
 import { GameProvider } from '../context/AppContext.js'; // adjust path
+import {AuthProvider} from '../context/AuthContext.js'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -47,10 +48,13 @@ export default function RootLayout() {
   
 
   return (
-    <GameProvider >
+    <AuthProvider>
+ <GameProvider >
  <Stack screenOptions={{headerShown:false}}>
   <Stack.Screen name="index"/>
 </Stack>
  </GameProvider>
+    </AuthProvider>
+   
   );
 } 
