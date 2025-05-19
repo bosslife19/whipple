@@ -6,7 +6,7 @@ const LosersGameList = StyleSheet.create({
     container: {
       backgroundColor: '#EEF6FF',
       paddingBottom: 100, 
-         
+
     },
     centeredContainer: {
       // flex: 1,
@@ -28,6 +28,7 @@ const LosersGameList = StyleSheet.create({
     scrollContainer: {
       alignItems: 'center',
       paddingVertical: 10,
+      marginBottom:'5%'
     },
     card: {
       width: screenWidth * 0.9,

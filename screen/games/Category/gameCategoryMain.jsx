@@ -46,7 +46,7 @@ const popularGames = [
     image: color,
     description: 'Four colors (Red, Blue, Green, Yellow); two prominent colors published.',
     variants: ['Four Colors'],
-    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/colorRoulette/voteColorRoullete'), 
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/colorRoulette'), 
 
   },
 ];
@@ -178,7 +178,7 @@ const GameCategoryMain = () => {
 
   return (
     <>
-      <HeaderBet arrow name="House Start" backgroundColor="#A8BFED" amount={200} />
+      <HeaderBet arrow name="Become The House" backgroundColor="#A8BFED" amount={200} />
       <View style={gameCates.main}>
         {/* <SlideShowBet /> */}
 

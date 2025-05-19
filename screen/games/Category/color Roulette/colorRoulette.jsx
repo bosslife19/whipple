@@ -81,7 +81,7 @@ const ColorRouletteGame = () => {
           const {  range  } = gameData || {};
           const GameName='Color Roulette' 
           const gameLabel=`${activeColors}`
-  const handlePublish = () => {
+       const handlePublish = () => {
       // Ensure there are exactly 2 selected colors (or any other valid number)
       if (activeColors.length !== 2) {
         alert('Please spin the wheel and let two colors be selected.');

@@ -66,7 +66,7 @@ const VoteColorRouletteScreen = () => {
     
         case 'color roulette': 
           router.push({
-            pathname: '/(routes)/games/category/becomethehouse/colorRoulette',
+            pathname: '/(routes)/games/category/becomethehouse/colorRoulette/selectedColor',
             params: {
             stake: stake?.toString(),
             odds,
@@ -107,7 +107,20 @@ const VoteColorRouletteScreen = () => {
               break;
                 case 'dice roll':
                    router.push({
-                pathname: '/games/category/becomethehouse/DiceRoll',
+                pathname: '/games/category/becomethehouse/DiceRoll/selectedDice',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,
+                selected,
+              },
+              });
+              break;
+               case 'wheel spin':
+                   router.push({
+                pathname: '/games/category/becomethehouse/spinwheel/selectedSpin',
                 params: {
                 stake: stake?.toString(),
                 odds,

@@ -151,13 +151,13 @@ const UserFlipCoin = () => {
                     <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Flip Coin</Text>
                   )}
                 </TouchableOpacity>
-              </>
+              </> 
             ) : success === true ? (
               <TouchableOpacity
                 style={[FLipCoin.button, { width: '90%' }]}
-                onPress={() => router.push('/home')}
+                onPress={() => router.push('/(routes)/games/availablegames')}
               >
-                <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Back to Home</Text>
+                <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Go to Games</Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
