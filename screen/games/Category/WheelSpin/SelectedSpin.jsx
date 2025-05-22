@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
-  Alert,
-  TextInput,
+  Animated,
+  Easing,
   ScrollView,
   ImageBackground,
 } from 'react-native';
@@ -12,15 +12,22 @@ import HeaderBet from '../../../Header/HeaderBet';
 import { router } from 'expo-router';
 import creategame from '../../../../styles/creategame/creategame.styles';
 import WheelSPins from '../../../../styles/spining/wheelspining.styles';
-import bgs from "../../../../assets/images/games/image_fx_ (35) 1.png";
+import bgs from '../../../../assets/images/games/image_fx_ (35) 1.png';
 import { useGameContext } from '../../../../context/AppContext';
+import Losingmodal from '../../../loseModal/LoseModal';
+import Winningmodal from '../../../winningmodal/winningmodal';
 
-const SelectedWheel = () => {
+const SpinTheWheel = () => {
+  const spinValue = useRef(new Animated.Value(0)).current;
+  const lastResultWasWin = useRef(null);
+
   const [totalInput, setTotalInput] = useState('');
-  const [selectedNumbers, setSelectedNumbers] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [winningNumbers, setWinningNumbers] = useState([]);
   const [showResult, setShowResult] = useState(false);
-  const [buttonLabel, setButtonLabel] = useState('Check Result');
+  const [success, setSuccess] = useState(null);
+  const [visible, setModalVisible] = useState(false);
+  const [selectedNumbers, setSelectedNumbers] = useState([]); // Start empty
 
   const { gameData, updateGameData } = useGameContext();
   const { odds = '3.333', gameLabel, range, GameName = 'Wheel Spin' } = gameData || {};
@@ -29,53 +36,94 @@ const SelectedWheel = () => {
   const admissionFee = totalAmount * 0.25;
   const stake = totalAmount + admissionFee;
 
-  // Generate winning numbers on mount
-  useEffect(() => {
-    const nums  = [];
-    while (nums.length < 3) {
-      const rand = Math.floor(Math.random() * 10) + 1;
-      if (!nums.includes(rand)) nums.push(rand);
-    }
-    setWinningNumbers(nums);
-  }, []);
+  const spin = spinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '1080deg'],
+  });
 
   const toggleNumber = (num) => {
     if (selectedNumbers.includes(num)) {
-      setSelectedNumbers(selectedNumbers.filter(n => n !== num));
-    } else if (selectedNumbers.length < 3) {
-      setSelectedNumbers([...selectedNumbers, num]);
+      // Deselect number
+      setSelectedNumbers(selectedNumbers.filter((n) => n !== num));
+    } else {
+      // Select number (limit to 3)
+      if (selectedNumbers.length < 3) {
+        setSelectedNumbers([...selectedNumbers, num]);
+      }
     }
   };
 
-  const checkResult = () => {
+  const spinWheel = () => {
+    if (selectedNumbers.length !== 3) {
+      alert('Please select exactly 3 numbers before spinning.');
+      return;
+    }
+
+    setShowResult(false);
+    spinValue.setValue(0);
+
+    Animated.timing(spinValue, {
+      toValue: 1,
+      duration: 3000,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start(() => {
+      const result = [];
+      while (result.length < 3) {
+        const num = Math.floor(Math.random() * 10) + 1;
+        if (!result.includes(num)) {
+          result.push(num);
+        }
+      }
+      setWinningNumbers(result);
+      checkResult(result);
+    });
+  };
+
+  const checkResult = (result) => {
     const sortedSelected = [...selectedNumbers].sort((a, b) => a - b);
-    const sortedWinning = [...winningNumbers].sort((a, b) => a - b);
+    const sortedWinning = [...result].sort((a, b) => a - b);
     const isWin = JSON.stringify(sortedSelected) === JSON.stringify(sortedWinning);
 
+    lastResultWasWin.current = isWin;
+    setSuccess(isWin);
+    setModalVisible(true);
     setShowResult(true);
-
-    if (isWin) {
-      Alert.alert("Success", "You selected the correct numbers!");
-      setButtonLabel("Go Back to Games");
-    } else {
-      Alert.alert("Not Successful", "Your selected numbers do not match.");
-      setButtonLabel("Go to Losers Game");
-    }
   };
 
-  const handleFinalAction = () => {
-    if (buttonLabel === 'Go Back to Games') {
+  const handlePublishGame = () => {
+    setLoading(true);
+    const formattedOdds = `${odds}x`;
+
+    setTimeout(() => {
       updateGameData({
         stake: stake.toFixed(2),
-        odds: `${odds}x`,
-        gameLabel: `${winningNumbers.join(', ')}`,
+        odds: formattedOdds,
+        gameLabel: winningNumbers.join(', '),
         GameName,
         range,
         result: gameLabel,
       });
+
+      setLoading(false);
       router.push('/(routes)/games/availablegames');
+    }, 2000);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSuccess(null);
+  };
+
+  const handleSpinButtonPress = () => {
+    if (showResult) {
+      if (lastResultWasWin.current) {
+        router.push('/(routes)/games/availablegames');
+      } else {
+        router.push('/(routes)/games/LostGames/ViewLostGames');
+      }
     } else {
-      router.push('/(routes)/games/losersgame');
+      spinWheel();
     }
   };
 
@@ -85,83 +133,122 @@ const SelectedWheel = () => {
       <ScrollView>
         <ImageBackground source={bgs} style={{ paddingBottom: 40 }}>
           <View style={WheelSPins.container}>
-            <Text style={[creategame.title, { fontSize: 25, color: "#212121", textAlign: "left", width: "100%" }]}>Create Your Game</Text>
-            <Text style={[creategame.subtitle, { textAlign: "left", width: "100%", marginBottom: 18, fontSize: 13 }]}>
-              Select 3 numbers between 1–10 to match the winning numbers.
-            </Text>
-
+            <Text style={[creategame.subtitle, { fontSize: 13 }]}>Spin the wheel</Text>
             <Text style={WheelSPins.header}>{GameName}</Text>
+            <View style={WheelSPins.triangle} />
 
-            {/* Number Selection Grid */}
-            <View style={WheelSPins.numberGrid}>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((number) => {
-                const isSelected = selectedNumbers.includes(number);
+            <Animated.View
+              style={[WheelSPins.outerCircle, { transform: [{ rotate: spin }] }]}
+            >
+              <View style={WheelSPins.innerCircle}>
+                {showResult ? (
+                  <View style={{ marginTop: 24, alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Winning Numbers</Text>
+                    <View style={{ flexDirection: 'row', gap: 12 }}>
+                      {winningNumbers.map((num, idx) => (
+                        <View
+                          key={idx}
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 20,
+                            backgroundColor: '#6B21A8',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginHorizontal: 5,
+                          }}
+                        >
+                          <Text style={{ color: 'white', fontWeight: 'bold' }}>{num}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  </View>
+                ) : (
+                  <View style={{ marginTop: 40 }}>
+                    <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                      Spin to reveal winning numbers
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </Animated.View>
+
+            {/* Number Selection Grid BELOW the wheel */}
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                marginTop: 20,
+                gap: 12,
+              }}
+            >
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
+                const isSelected = selectedNumbers.includes(num);
                 return (
                   <TouchableOpacity
-                    key={number}
-                    onPress={() => toggleNumber(number)}
-                    style={[
-                      WheelSPins.numberBox,
-                      {
-                        backgroundColor: isSelected ? '#6B21A8' : '#e0e0e0',
-                        borderWidth: isSelected ? 2 : 0,
-                        borderColor: '#6B21A8',
-                      },
-                    ]}
+                    key={num}
+                    onPress={() => toggleNumber(num)}
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 25,
+                      backgroundColor: isSelected ? '#6B21A8' : '#ddd',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: isSelected ? 2 : 1,
+                      borderColor: isSelected ? '#4ADE80' : '#999',
+                    }}
                   >
-                    <Text style={{ color: isSelected ? 'white' : '#212121', fontWeight: 'bold' }}>
-                      {number}
+                    <Text
+                      style={{
+                        color: isSelected ? 'white' : '#333',
+                        fontWeight: 'bold',
+                        fontSize: 18,
+                      }}
+                    >
+                      {num}
                     </Text>
                   </TouchableOpacity>
                 );
               })}
             </View>
 
-            <Text style={[WheelSPins.spinButtonText, { marginTop: 10 }]}>
-              Winning Numbers: {showResult ? winningNumbers.join(', ') : '???'}
-            </Text>
-            <Text style={WheelSPins.spinButtonText}>Odds: {odds}</Text>
+            <TouchableOpacity
+              onPress={handleSpinButtonPress}
+              style={[
+                WheelSPins.spinButton,
+                selectedNumbers.length !== 3 && !showResult
+                  ? { backgroundColor: '#bbb' }
+                  : null,
+              ]}
+              disabled={selectedNumbers.length !== 3 && !showResult}
+            >
+              <Text style={WheelSPins.spinButtonText}>
+                {showResult
+                  ? lastResultWasWin.current
+                    ? 'Go to Games'
+                    : "Go to Loser's Game"
+                  : 'Spin Wheel'}
+              </Text>
+            </TouchableOpacity>
 
-            {/* Action Button */}
-            {selectedNumbers.length === 3 && (
-              <TouchableOpacity
-                onPress={showResult ? handleFinalAction : checkResult}
-                style={[WheelSPins.spinButton, { marginTop: 20 }]}
-              >
-                <Text style={WheelSPins.spinButtonText}>{buttonLabel}</Text>
-              </TouchableOpacity>
-            )}
-
-            {/* Total Amount Input */}
-            <View style={WheelSPins.fullWidth}>
-              <Text style={WheelSPins.sectionTitle}>Enter Total Amount</Text>
-              <View style={WheelSPins.inputGroup}>
-                <Text style={WheelSPins.inputLabel}>Total Amount (₦)</Text>
-                <TextInput
-                  style={WheelSPins.input}
-                  placeholder="Enter total amount"
-                  keyboardType="numeric"
-                  value={totalInput}
-                  placeholderTextColor={'gray'}
-                  onChangeText={setTotalInput}
-                />
-              </View>
-            </View>
-
-            {/* How It Works */}
-            <View style={WheelSPins.infoCard}>
-              <View style={WheelSPins.cardContent}>
-                <Text style={WheelSPins.cardTitle}>How It Works</Text>
-                <Text style={WheelSPins.cardText}>
-                  Select 3 numbers between 1–10. If they match the winning numbers exactly, you win. If not, you're redirected to the Losers Game.
-                </Text>
-              </View>
+            <View style={[WheelSPins.infoCard, { padding: 10 }]}>
+              <Text style={WheelSPins.cardTitle}>How It Works</Text>
+              <Text style={WheelSPins.cardText}>
+                Spin the wheel to randomly select three winning numbers from 1–10. Players bet
+                against your result with odds of 3.333. If they guess any of the numbers, they win.
+                If not, you win.
+              </Text>
             </View>
           </View>
         </ImageBackground>
       </ScrollView>
+
+      {success === true && <Winningmodal visible={visible} closeModal={closeModal} />}
+      {success === false && <Losingmodal visible={visible} closeModal={closeModal} />}
     </View>
   );
 };
 
-export default SelectedWheel;
+export default SpinTheWheel;

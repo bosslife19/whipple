@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react'; 
 import {
   View,
   Text,
@@ -6,80 +6,166 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  Animated,
+  Easing,
 } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
 import Header from '../../../Header/Header';
 import { router } from 'expo-router';
 import { useGameContext } from '../../../../context/AppContext';
 import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
+import dicestyles from '../../../../styles/diceGame/dice.styles';
 
 const SelectedDiceRoll = () => {
-   const {updateGameData, gameData } = useGameContext();
-    const {stake,odds,gameLabel, GameName = 'Dice Roll'} = gameData || {};
+  const { updateGameData, gameData } = useGameContext();
+  const { stake, odds, gameLabel, GameName = 'Dice Roll' } = gameData || {};
 
-  const [rolling, setRolling] = useState(false);
-  const [userRoll, setUserRoll] = useState(null);
+  const [diceType, setDiceType] = useState('single');
+  const [diceRolled, setDiceRolled] = useState(false);
+  const [face1, setFace1] = useState(1);
+  const [face2, setFace2] = useState(1);
   const [houseRoll, setHouseRoll] = useState(null);
+  const [userRoll, setUserRoll] = useState(null);
+  const [rolling, setRolling] = useState(false);
   const [result, setResult] = useState(null);
+  const [visible, setModalVisibled] = useState(false);
+ 
+  const spinValue1 = useRef(new Animated.Value(0)).current;
+  const spinValue2 = useRef(new Animated.Value(0)).current;
 
-    const [success, setSuccess] = useState(null); // null initially, true/false after check
-      
-    const [visible, setModalVisibled] = useState(false);
-       
-     const closeModal =()=>{
-        setModalVisibled(false)
-    
-      }
+  const closeModal = () => {
+    setModalVisibled(false);
+  };
 
-const handleRollDice = () => {
-  setRolling(true);
-  setResult(null);
-  setUserRoll(null);
-  setHouseRoll(null);
+  const rollDice = () => {
+    setRolling(true);
+    setDiceRolled(false);
 
-  setTimeout(() => {
-    const user = Math.ceil(Math.random() * 3);
-    const house = Math.ceil(Math.random() * 6);
-    setUserRoll(user);
-    setHouseRoll(house);
+    const newFace1 = Math.floor(Math.random() * 6) + 1;
+    const newFace2 = Math.floor(Math.random() * 6) + 1;
+    const houseFace1 = Math.floor(Math.random() * 6) + 1;
+    const houseFace2 = Math.floor(Math.random() * 6) + 1;
 
-    const isWin = user === house;
-    setResult(isWin ? 'win' : 'lose');
+    spinValue1.setValue(0);
+    spinValue2.setValue(0);
 
-    setSuccess(isWin); // update success status
-    setModalVisibled(true); // open modal
+    Animated.parallel([
+      Animated.timing(spinValue1, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.out(Easing.exp),
+        useNativeDriver: true,
+      }),
+      Animated.timing(spinValue2, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.out(Easing.exp),
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setFace1(newFace1);
+      setFace2(newFace2);
 
-    setRolling(false);
-  }, 1500);
-};
+      const userTotal = diceType === 'single' ? newFace1 : newFace1 + newFace2;
+      const houseTotal = diceType === 'single' ? houseFace1 : houseFace1 + houseFace2;
 
+      setHouseRoll(houseTotal);
+      setUserRoll(userTotal);
 
-   // ✅ Win
-   // User rolls: 4
+      setDiceRolled(true);
+      const gameResult = userTotal === houseTotal ? 'win' : 'lose';
+      setResult(gameResult);
+      setModalVisibled(true);
+      setRolling(false);
+    });
+  };
 
-    // House rolls: 4
+  const spin1 = spinValue1.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '1080deg'],
+  });
 
-    // Result: user === house → win
+  const spin2 = spinValue2.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '1080deg'],
+  });
 
-    // ❌ Lose
-    // User rolls: 2
+  const dotLayouts = {
+    1: [[1, 1]],
+    2: [[0, 0], [2, 2]],
+    3: [[0, 0], [1, 1], [2, 2]],
+    4: [[0, 0], [0, 2], [2, 0], [2, 2]],
+    5: [[0, 0], [0, 2], [1, 1], [2, 0], [2, 2]],
+    6: [[0, 0], [1, 0], [2, 0], [0, 2], [1, 2], [2, 2]],
+  };
 
-    // House rolls: 5
-
-     // Result: user !== house → lose
-
-     const handleGoGames = () =>{
-          updateGameData({
-      stake: stake.toString(),
-      odds ,
-      gameLabel,
-      GameName, 
-      isGameLost: true, // Flag indicating if the game is lost
-     });
-        router.push('/(routes)/games/LostGames/ViewLostGames')
+  const getDots = (face) => {
+    if (!diceRolled) {
+      return (
+        <View style={[dicestyles.diceFace, styles.center]}>
+          <Text style={styles.questionMark}>?</Text>
+        </View>
+      );
     }
-    
-      
+
+    const size = 3;
+    const grid = Array(size)
+      .fill(null)
+      .map((_, row) =>
+        Array(size)
+          .fill(null)
+          .map((_, col) => {
+            const shouldRenderDot = dotLayouts[face].some(
+              (dot) => dot[0] === row && dot[1] === col
+            );
+            return (
+              <View
+                key={`${row}-${col}`}
+                style={[dicestyles.dotCell, shouldRenderDot && dicestyles.dot]}
+              />
+            );
+          })
+      );
+
+    return grid.map((row, i) => (
+      <View key={i} style={dicestyles.dotRow}>
+        {row}
+      </View>
+    ));
+  };
+
+  const getOdds = () => {
+    if (!diceRolled) return null;
+    if (diceType === 'single') return 5.988;
+    const sum = face1 + face2;
+    switch (sum) {
+      case 12: return 35.714;
+      case 11: return 17.857;
+      case 10: return 12.048;
+      case 9: return 9.009;
+      case 8: return 7.194;
+      case 7: return 5.988;
+      case 6: return 7.194;
+      case 5: return 9.009;
+      case 4: return 12.048;
+      case 3: return 17.857;
+      case 2: return 35.714;
+      default: return 0;
+    }
+  };
+
+  const handleGoGames = () => {
+    updateGameData({
+      stake: stake.toString(),
+      odds,
+      gameLabel,
+      GameName,
+      isGameLost: true,
+    });
+    router.push('/(routes)/games/LostGames/ViewLostGames');
+  };
+
   const renderButton = () => {
     if (rolling) {
       return (
@@ -92,7 +178,7 @@ const handleRollDice = () => {
     if (result === 'win') {
       return (
         <TouchableOpacity
-          style={[styles.rollButton, { backgroundColor: '#0A1931' }]}
+          style={[styles.rollButton]}
           onPress={() => router.push('/(routes)/games/availablegames')}
         >
           <Text style={styles.rollButtonText}>Go Back to Games</Text>
@@ -103,19 +189,16 @@ const handleRollDice = () => {
     if (result === 'lose') {
       return (
         <TouchableOpacity
-          style={[styles.rollButton, { backgroundColor: '#0A1931' }]}
+          style={[styles.rollButton]}
           onPress={handleGoGames}
         >
-          <Text style={styles.rollButtonText}>Go to Loser’s Game </Text>
+          <Text style={styles.rollButtonText}>Go to Loser’s Game</Text>
         </TouchableOpacity>
       );
     }
 
     return (
-      <TouchableOpacity
-        style={styles.rollButton}
-        onPress={handleRollDice}
-      >
+      <TouchableOpacity style={styles.rollButton} onPress={rollDice}>
         <Text style={styles.rollButtonText}>Roll Dice</Text>
       </TouchableOpacity>
     );
@@ -123,148 +206,156 @@ const handleRollDice = () => {
 
   return (
     <>
-      <Header  name={'Back to Game Selection'} backgroundColor="#A8BFED" />
-      <ScrollView contentContainerStyle={styles.container}>
+      <Header name={'Back to Game Selection'} backgroundColor="#4a69bd" />
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>{GameName} Game</Text>
         <Text style={styles.subtitle}>Roll the dice and try to match the House's outcome</Text>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Roll The Dice</Text>
-          <Text style={styles.cardSubtitle}>House: @user</Text>
+        <View style={dicestyles.card}>
+          <Text style={dicestyles.title}>Roll The Dice</Text>
 
-          <View style={styles.diceBox}>
-            <View style={styles.dice}>
-              <Text style={styles.diceText}>
-                ? 
-              </Text>
-            </View>
+          <View style={dicestyles.radioGroup}>
+            <TouchableOpacity style={dicestyles.radio} onPress={() => setDiceType('single')}>
+              <View style={[dicestyles.radioDot, diceType === 'single' && dicestyles.radioDotSelected]}>
+                {diceType === 'single' && (
+                  <Svg width={10} height={10}><Circle cx={5} cy={5} r={5} fill="#0a1931" /></Svg>
+                )}
+              </View>
+              <Text style={styles.radioLabel}>Single Dice</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={dicestyles.radio} onPress={() => setDiceType('double')}>
+              <View style={[dicestyles.radioDot, diceType === 'double' && dicestyles.radioDotSelected]}>
+                {diceType === 'double' && (
+                  <Svg width={10} height={10}><Circle cx={5} cy={5} r={5} fill="#0a1931" /></Svg>
+                )}
+              </View>
+              <Text style={styles.radioLabel}>Double Dice</Text>
+            </TouchableOpacity>
           </View>
 
-          {renderButton()}
+          <View style={styles.diceRow}>
+            <Animated.View style={[dicestyles.diceBox, styles.diceShadow, { transform: [{ rotate: spin1 }] }]}>
+              {getDots(face1)}
+            </Animated.View>
+            {diceType === 'double' && (
+              <Animated.View style={[dicestyles.diceBox, styles.diceShadow, { transform: [{ rotate: spin2 }] }]}>
+                {getDots(face2)}
+              </Animated.View>
+            )}
+          </View>
 
-          {userRoll !== null && houseRoll !== null && (
-            <View style={styles.resultBox}>
-              <Text style={styles.resultText}>Your roll: {userRoll}</Text>
-              <Text style={styles.resultText}>House's roll: {houseRoll}</Text>
+          {diceRolled && userRoll !== null && houseRoll !== null && (
+            <View style={dicestyles.resultInfo}>
+              <Text style={dicestyles.result}>
+                Result: {face1} {diceType === 'double' && `and ${face2}`}
+              </Text>
+              <Text style={[dicestyles.odds, styles.totalText]}>
+                Total: {diceType === 'double' ? face1 + face2 : face1}
+              </Text>
+              <Text style={dicestyles.odds}>Odds: {getOdds()}</Text>
             </View>
           )}
+
+          {renderButton()}
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.howToTitle}>How To Win</Text>
-          <Text style={styles.howToText}>
-            Roll the dice and try to get the exact same outcome as The House. If your roll matches the House's roll exactly, you win!
-          </Text>
-        </View>
+ 
+        {/* Winning and Losing Modals */}
+        <Winningmodal visible={visible && result === 'win'} closeModal={closeModal} />
+        <Losingmodal visible={visible && result === 'lose'} closeModal={closeModal} />
       </ScrollView>
-
-       {success === true && (
-             <Winningmodal
-             visible={visible}
-             closeModal={closeModal}
-            />
-           )}
-          {success === false && (
-          <Losingmodal
-          visible={visible}
-          closeModal={closeModal}
-          />
-          )}
     </>
   );
 };
 
-export default SelectedDiceRoll;
-
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 40,
-    // backgroundColor: '#fff',
+    padding: 24,
+    backgroundColor: '#e9f0fb',
     flexGrow: 1,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 4,
+    fontSize: 26,
+    fontWeight: '700',
+    color: '#0a1931',
+    textAlign: 'center',
+    marginBottom: 8,
   },
   subtitle: {
-    color: '#6b7280',
-    marginBottom: 24,
+    fontSize: 16,
+    color: '#4a69bd',
+    textAlign: 'center',
+    marginBottom: 20,
   },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    padding: 16,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 1,
-  },
-  cardTitle: {
-    fontSize: 20,
+  radioLabel: {
+    fontSize: 16,
+    color: '#0a1931',
+    marginLeft: 8,
     fontWeight: '600',
-    marginBottom: 4,
   },
-  cardSubtitle: {
-    fontSize: 14,
-    color: '#6b7280',
-    marginBottom: 16,
-  },
-  diceBox: {
+  diceRow: {
+    flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
-    height: 80,
+    marginVertical: 24,
+    gap: 16,
   },
-  dice: {
-    width: 64,
-    height: 64,
+  diceShadow: {
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 6,
+    elevation: 5,
     borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#d1d5db',
-    backgroundColor: '#f3f4f6',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  diceText: {
-    fontSize: 24,
-    color: '#4b5563',
   },
   rollButton: {
     backgroundColor: '#0A1931',
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    alignSelf: 'center',
-  },
-  disabledButton: {
-    opacity: 0.7,
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 16,
+    
   },
   rollButtonText: {
     color: '#fff',
+    fontWeight: '700',
     fontSize: 18,
-    fontWeight: '600',
   },
-  howToTitle: {
-    fontWeight: '600',
-    marginBottom: 8,
-    fontSize: 16,
+ 
+  questionMark: {
+    fontSize: 48,
+    color: '#777',
+    fontWeight: 'bold',
   },
-  howToText: {
-    fontSize: 14,
-    color: '#6b7280',
-  },
-  resultBox: {
-    marginTop: 16,
+  resultTextBox: {
+    marginTop: 24,
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: '#f7f9fc',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#d0d7e6',
   },
   resultText: {
-    fontSize: 16,
-    color: '#374151',
+    fontSize: 28,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  winText: {
+    color: '#27ae60',
+  },
+  loseText: {
+    color: '#c0392b',
+  },
+  rollsText: {
+    fontSize: 18,
+    color: '#34495e',
+    marginTop: 4,
+  },
+  totalText: {
+    marginTop: 4,
+    fontWeight: '700',
   },
 });
+
+export default SelectedDiceRoll;
