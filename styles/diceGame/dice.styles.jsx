@@ -100,6 +100,10 @@ const dicestyles = StyleSheet.create({
      
       marginHorizontal:"auto"
     },
+    center:{
+      textAlign:"center",
+      marginHorizontal:'auto'
+    },
     result: {
       fontSize: 16,
       fontWeight: 'bold',

@@ -16,9 +16,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-
       "package": "com.whipple.whipple"
-
     },
     "web": {
       "bundler": "metro",
@@ -41,12 +39,8 @@
       "typedRoutes": true
     },
     "extra": {
-      "router": {},
-      "eas": {
-
-        "projectId": "b987a903-6475-4eaf-887f-e5c3b37d725f"
-
-      }
+      "router": {}
+     
     }
   }
 }
