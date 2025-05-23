@@ -21,6 +21,7 @@ const Login = () => {
   const { loading, makeRequest } = useRequest();
 
   const handleLogin = async () => {
+    router.replace("/(tabs)/home");
     if (!email || !password) {
       return Alert.alert("Required", "All the fields are required");
     }

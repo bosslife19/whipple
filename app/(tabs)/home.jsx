@@ -24,8 +24,7 @@ import { useContext } from 'react';
 import {AuthContext} from '../../context/AuthContext'
 
 export default function HomeScreen() {
-  const {userDetails} = useContext(AuthContext)
-  console.log(userDetails)
+  
   return (
     <View style={Homes.Container}>
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
