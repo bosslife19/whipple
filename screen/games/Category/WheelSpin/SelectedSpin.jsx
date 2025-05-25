@@ -47,14 +47,14 @@ const SpinTheWheel = () => {
       setSelectedNumbers(selectedNumbers.filter((n) => n !== num));
     } else {
       // Select number (limit to 3)
-      if (selectedNumbers.length < 3) {
+      if (selectedNumbers.length < 1) {
         setSelectedNumbers([...selectedNumbers, num]);
       }
     }
   };
 
   const spinWheel = () => {
-    if (selectedNumbers.length !== 3) {
+    if (selectedNumbers.length !== 1) {
       alert('Please select exactly 3 numbers before spinning.');
       return;
     }
@@ -69,7 +69,7 @@ const SpinTheWheel = () => {
       useNativeDriver: true,
     }).start(() => {
       const result = [];
-      while (result.length < 3) {
+      while (result.length < 1) {
         const num = Math.floor(Math.random() * 10) + 1;
         if (!result.includes(num)) {
           result.push(num);
@@ -98,11 +98,10 @@ const SpinTheWheel = () => {
     setTimeout(() => {
       updateGameData({
         stake: stake.toFixed(2),
-        odds: formattedOdds,
-        gameLabel: winningNumbers.join(', '),
+        odds,
+        gameLabel ,
         GameName,
-        range,
-        result: gameLabel,
+       isGameLost: true,
       });
 
       setLoading(false);
@@ -120,9 +119,16 @@ const SpinTheWheel = () => {
       if (lastResultWasWin.current) {
         router.push('/(routes)/games/availablegames');
       } else {
+         updateGameData({
+        stake: stake.toFixed(2),
+        odds,
+        gameLabel: winningNumbers.join(', '),
+        GameName,
+       isGameLost: true,
+      });
         router.push('/(routes)/games/LostGames/ViewLostGames');
       }
-    } else {
+    } else { 
       spinWheel();
     }
   };
@@ -218,11 +224,11 @@ const SpinTheWheel = () => {
               onPress={handleSpinButtonPress}
               style={[
                 WheelSPins.spinButton,
-                selectedNumbers.length !== 3 && !showResult
+                selectedNumbers.length !== 1 && !showResult
                   ? { backgroundColor: '#bbb' }
                   : null,
               ]}
-              disabled={selectedNumbers.length !== 3 && !showResult}
+              disabled={selectedNumbers.length !== 1 && !showResult}
             >
               <Text style={WheelSPins.spinButtonText}>
                 {showResult

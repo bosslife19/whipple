@@ -102,6 +102,20 @@ const GameDetails = () => {
               });
               break;
 
+               case 'wheel spin':
+              router.push({
+            pathname: '/games/vote',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,
+                selected,
+              },
+              });
+              break;
+
         default:
           // Handle unknown game gracefully
           console.warn(`[Navigation Error]: Unknown game "${GameName}" selected.`);
