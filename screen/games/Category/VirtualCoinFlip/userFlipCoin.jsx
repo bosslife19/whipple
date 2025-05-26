@@ -155,7 +155,7 @@ const UserFlipCoin = () => {
             ) : success === true ? (
               <TouchableOpacity
                 style={[FLipCoin.button, { width: '90%' }]}
-                onPress={() => router.push('/(routes)/games/availablegames')}
+               onPress={() => router.push('/(routes)/games/category/category-main')}
               >
                 <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Go to Games</Text>
               </TouchableOpacity>

@@ -113,7 +113,7 @@ const MyseterySelect = () => {
                {success === true && (
                    <TouchableOpacity
                       style={styles.backHomeButton}
-                     onPress={() => router.push('/(routes)/games/availablegames')}
+                   onPress={() => router.push('/(routes)/games/category/category-main')}
                   >
                       <Text style={styles.backHomeButtonText}>Back to Game's</Text>
                   </TouchableOpacity>

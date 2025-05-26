@@ -179,7 +179,7 @@ const SelectedDiceRoll = () => {
       return (
         <TouchableOpacity
           style={[styles.rollButton]}
-          onPress={() => router.push('/(routes)/games/availablegames')}
+        onPress={() => router.push('/(routes)/games/category/category-main')}
         >
           <Text style={styles.rollButtonText}>Go Back to Games</Text>
         </TouchableOpacity>

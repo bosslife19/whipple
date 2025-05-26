@@ -17,7 +17,7 @@ import { useGameContext } from '../../../../context/AppContext';
 import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
 
-const SpinTheWheel = () => {
+const SelectedNumberSpinWheel = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
   const lastResultWasWin = useRef(null);
 
@@ -30,7 +30,7 @@ const SpinTheWheel = () => {
   const [selectedNumbers, setSelectedNumbers] = useState([]); // Start empty
 
   const { gameData, updateGameData } = useGameContext();
-  const { odds = '3.333', gameLabel, range, GameName = 'Wheel Spin' } = gameData || {};
+  const { odds = '10', gameLabel, range, GameName = 'One Number Spin'} = gameData || {};
 
   const totalAmount = parseFloat(totalInput) || 0;
   const admissionFee = totalAmount * 0.25;
@@ -55,7 +55,7 @@ const SpinTheWheel = () => {
 
   const spinWheel = () => {
     if (selectedNumbers.length !== 1) {
-      alert('Please select exactly 3 numbers before spinning.');
+      alert('Please select exactly one number before spinning.');
       return;
     }
 
@@ -91,23 +91,7 @@ const SpinTheWheel = () => {
     setShowResult(true);
   };
 
-  const handlePublishGame = () => {
-    setLoading(true);
-    const formattedOdds = `${odds}x`;
 
-    setTimeout(() => {
-      updateGameData({
-        stake: stake.toFixed(2),
-        odds,
-        gameLabel ,
-        GameName,
-       isGameLost: true,
-      });
-
-      setLoading(false);
-      router.push('/(routes)/games/availablegames');
-    }, 2000);
-  };
 
   const closeModal = () => {
     setModalVisible(false);
@@ -117,7 +101,7 @@ const SpinTheWheel = () => {
   const handleSpinButtonPress = () => {
     if (showResult) {
       if (lastResultWasWin.current) {
-       router.push('/(routes)/games/category/category-main')
+         router.push('/(routes)/games/category/category-main')
       } else {
          updateGameData({
         stake: stake.toFixed(2),
@@ -137,19 +121,19 @@ const SpinTheWheel = () => {
     <View style={{ height: '100%' }}>
       <HeaderBet amount={'200'} arrow name={GameName} />
       <ScrollView>
-        <ImageBackground source={bgs} style={{ paddingBottom: 40 }}>
+        {/* <ImageBackground source={bgs} style={{ paddingBottom: 40 }}> */}
           <View style={WheelSPins.container}>
             <Text style={[creategame.subtitle, { fontSize: 13 }]}>Spin the wheel</Text>
             <Text style={WheelSPins.header}>{GameName}</Text>
             <View style={WheelSPins.triangle} />
 
             <Animated.View
-              style={[WheelSPins.outerCircle, { transform: [{ rotate: spin }] }]}
+              style={[WheelSPins.outerCircles, { transform: [{ rotate: spin }] }]}
             >
               <View style={WheelSPins.innerCircle}>
                 {showResult ? (
                   <View style={{ marginTop: 24, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Winning Numbers</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Winning Number</Text>
                     <View style={{ flexDirection: 'row', gap: 12 }}>
                       {winningNumbers.map((num, idx) => (
                         <View
@@ -158,7 +142,7 @@ const SpinTheWheel = () => {
                             width: 40,
                             height: 40,
                             borderRadius: 20,
-                            backgroundColor: '#6B21A8',
+                            backgroundColor: '#000',
                             alignItems: 'center',
                             justifyContent: 'center',
                             marginHorizontal: 5,
@@ -172,7 +156,7 @@ const SpinTheWheel = () => {
                 ) : (
                   <View style={{ marginTop: 40 }}>
                     <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
-                      Spin to reveal winning numbers
+                      click on spin button
                     </Text>
                   </View>
                 )}
@@ -198,12 +182,12 @@ const SpinTheWheel = () => {
                     style={{
                       width: 50,
                       height: 50,
-                      borderRadius: 25,
-                      backgroundColor: isSelected ? '#6B21A8' : '#ddd',
+                      borderRadius: 5,
+                      backgroundColor: isSelected ? '#000' : '#ddd',
                       alignItems: 'center',
                       justifyContent: 'center',
                       borderWidth: isSelected ? 2 : 1,
-                      borderColor: isSelected ? '#4ADE80' : '#999',
+                      borderColor: isSelected ? 'gray' : '#999',
                     }}
                   >
                     <Text
@@ -243,12 +227,12 @@ const SpinTheWheel = () => {
               <Text style={WheelSPins.cardTitle}>How It Works</Text>
               <Text style={WheelSPins.cardText}>
                 Spin the wheel to randomly select three winning numbers from 1–10. Players bet
-                against your result with odds of 3.333. If they guess any of the numbers, they win.
+                against your result with odds of 10. If they guess any of the numbers, they win.
                 If not, you win.
               </Text>
             </View>
           </View>
-        </ImageBackground>
+        {/* </ImageBackground> */}
       </ScrollView>
 
       {success === true && <Winningmodal visible={visible} closeModal={closeModal} />}
@@ -257,4 +241,4 @@ const SpinTheWheel = () => {
   );
 };
 
-export default SpinTheWheel;
+export default SelectedNumberSpinWheel;

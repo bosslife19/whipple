@@ -33,6 +33,16 @@ const WheelSPins = StyleSheet.create({
       alignItems: 'center',
       marginBottom: 24,
     },
+     outerCircles: {
+      width: 266,
+      height: 266,
+      backgroundColor: '#000000CC',
+      borderRadius: 128,
+      justifyContent: 'center',
+     
+      alignItems: 'center',
+      marginBottom: 24,
+    },
     innerCircle: {
       width: 250,
       height: 250,
@@ -47,6 +57,13 @@ const WheelSPins = StyleSheet.create({
       justifyContent: 'center',
       gap: 8,
       width: 128,
+    },
+     numberGrids: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+      gap: 8,
+      // width: "78%",
     },
     numberBox: {
       width: 32,

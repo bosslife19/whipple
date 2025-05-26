@@ -130,8 +130,35 @@ const VoteColorRouletteScreen = () => {
                 selected,
               },
               });
+              break; 
+
+              case 'one number spin':
+              router.push({
+               pathname: '/games/category/becomethehouse/one-number-spin/number-spin-selected',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,
+                selected,
+              },
+              });
               break;
-    
+
+               case 'color roulette2':
+              router.push({
+               pathname: '/games/category/becomethehouse/colorRoulette2/selectedColor2',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,
+                selected,
+              },
+              });
+              break;
         default:
           // Handle unknown game gracefully
           console.warn(`[Navigation Error]: Unknown game "${GameName}" selected.`);
