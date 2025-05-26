@@ -24,18 +24,23 @@ const AvaliablePublishedGame = () => {
   const handlePlayNow = () => {
     setGamePlayed(true);
 
-    // const gameDetails = {
-    //   stake: stake?.toString(),
-    //   odds,
-    //   gameLabel: GameName,
-    //   GameName,
-    //   range,
-    //   selected,
-    // };
+ 
 
     if (normalizedGameName === 'dice roll' || normalizedGameName === 'wheel spin' || normalizedGameName === 'mystery box') {
       router.push({
         pathname: '/games/vote',
+        params: {
+          stake,
+          odds,
+          gameLabel,
+          GameName,
+          range,
+          result: gameLabel,
+        },
+      });
+      } else if (normalizedGameName === 'one number spin' || normalizedGameName === 'color roulette2') {
+         router.push({
+        pathname: '/games/details/gamedetails-without-vote',
         params: {
           stake,
           odds,

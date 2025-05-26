@@ -4,7 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useGameContext } from '../../../context/AppContext';
 import HeaderBet from '../../Header/HeaderBet';
 
-const GameDetails = () => {
+const GameDetailsWithOutVote = () => {
     const router = useRouter();
          const { gameData,updateGameData } = useGameContext();
       const { stake, odds, gameLabel, range, selected, GameName } = gameData || {};
@@ -18,37 +18,10 @@ const GameDetails = () => {
     
       // Navigate based on the selected game
       switch (normalizedGameName) {
-        case 'lucky number':
+           
+        case 'color roulette2': 
           router.push({
-            pathname: '/games/vote',
-            params: {
-            stake: stake?.toString(),
-            odds,
-             gameLabel,
-            GameName,
-            range, 
-            selected,
-          },
-          });
-          break;
-    
-        case 'flip the coin':
-          router.push({
-            pathname: '/games/vote',
-            params: {
-            stake: stake?.toString(),
-            odds,
-            gameLabel,
-            GameName,
-            range,
-            selected,
-          },
-          });
-          break;
-    
-        case 'color roulette': 
-          router.push({
-            pathname: '/games/vote',
+               pathname: '/games/category/becomethehouse/colorRoulette2/selectedColor2',
             params: {
             stake: stake?.toString(),
             odds,
@@ -60,80 +33,10 @@ const GameDetails = () => {
           });
           break;
   
-          case 'mystery box':
-            router.push({
-            pathname: '/games/vote',
-              params: {
-              stake: stake?.toString(),
-              odds,
-               gameLabel,
-              GameName,
-              range,
-              selected,
-            },
-            });
-            break;
-  
-            case 'goal challenge':
-              router.push({
-            pathname: '/games/vote',
-                params: {
-                stake: stake?.toString(),
-                odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
-              },
-              });
-              break;
-    
-              case 'dice roll':
-              router.push({
-            pathname: '/games/vote',
-                params: {
-                stake: stake?.toString(),
-                odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
-              },
-              });
-              break;
-
-               case 'wheel spin':
-              router.push({
-                pathname: '/games/vote',
-                params: {
-                stake: stake?.toString(),
-                odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
-              },
-              });
-              break;
-
-               case 'one number spin':
-              router.push({
-                pathname: '/games/vote',
-                params: {
-                stake: stake?.toString(),
-                odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
-                },
-               });
-            
-              break;
-
-               case 'color roulette2':
-              router.push({
-                pathname: '/games/vote',
+        case 'one number spin':
+              
+               router.push({
+               pathname: '/games/category/becomethehouse/one-number-spin/number-spin-selected',
                 params: {
                 stake: stake?.toString(),
                 odds,
@@ -289,4 +192,4 @@ const styles = StyleSheet.create({
       fontWeight: '600',
     },
   }); 
-export default GameDetails;
+export default GameDetailsWithOutVote;

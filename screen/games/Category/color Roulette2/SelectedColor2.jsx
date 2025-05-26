@@ -9,7 +9,7 @@ import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
 import { useGameContext } from '../../../../context/AppContext';
 
-const ColorRouletteSelect = () => {
+const ColorRouletteSelect2 = () => {
     const [selectedColor, setSelectedColor] = useState(null);
     const [activeColors, setActiveColors] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -23,10 +23,10 @@ const ColorRouletteSelect = () => {
       setModalVisibled(false)
   
     }
-    // const { stake,gameLabel,  odds,  GameName = 'Color Roulette' } = useLocalSearchParams();
+    // const { stake,gameLabel,  odds,  GameName = 'Color Roulette2' } = useLocalSearchParams();
    
     const { gameData ,updateGameData } = useGameContext();
-       const {selected,  stake,  odds,  GameName='Color Roulette'} = gameData || {};
+       const {selected,  stake,  odds,  GameName='Color Roulette2'} = gameData || {};
    
     const router = useRouter();
     const spinValue = useRef(new Animated.Value(0)).current;
@@ -52,21 +52,19 @@ const ColorRouletteSelect = () => {
     };
   
     const spinWheel = () => {
-      setLoading(true);
-      Animated.timing(spinValue, {
-        toValue: 360 * 4,
-        duration: 2000,
-        useNativeDriver: true,
-      }).start(() => {
-        spinValue.setValue(0);
-        const shuffled = colors.sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 2).map(c => c.id);
-        setActiveColors(selected);
-        
-        setLoading(false);
-        setHasSpun(true);
-      });
-    };
+     setLoading(true);
+     Animated.timing(spinValue, {
+       toValue: 360 * 4,
+       duration: 2000,
+       useNativeDriver: true,
+     }).start(() => {
+       spinValue.setValue(0);
+       const randomIndex = Math.floor(Math.random() * colors.length);
+       const selected = [colors[randomIndex].id];
+       setActiveColors(selected);
+       setLoading(false);
+     });
+   };
 
        
 
@@ -131,7 +129,11 @@ const ColorRouletteSelect = () => {
               </Animated.View>
             </View>
   
-            <View style={Slectedcol.colorOptions}>
+            <View style={[Slectedcol.colorOptions,
+              {
+                width:'70%'
+              }
+            ]}>
               {colors.map((color) => (
                 <TouchableOpacity
                   key={color.id}
@@ -163,28 +165,27 @@ const ColorRouletteSelect = () => {
                 );
               })}
             </View>
-
-             {success === false && (
-               <TouchableOpacity style={Slectedcol.spinButton} onPress={handleLosersGame}>
-                      <Text style={Slectedcol.spinButtonText}>Play Losers Game</Text>
-                          </TouchableOpacity>
-                      )}
-                       {success === true && ( 
-                        <TouchableOpacity
-                         style={Goalstyles.button}
-                         onPress={() => router.push('/(routes)/games/category/category-main')}  >
-                         <Text style={styles.buttonText}>Go Back to Games</Text>
-                        </TouchableOpacity>  )} 
-                        {success === null && (
-                          <TouchableOpacity
-                            style={[Slectedcol.spinButton, ]}
-                            // disabled={selectedColor === null || loading}
-                            onPress={spinWheel}
-                          >
-                            <Text style={Slectedcol.spinButtonText}>{loading ? 'Spinning...' : 'Spin Wheel'}</Text>
-                          </TouchableOpacity>
-                        )}
-            
+  
+          {success === false && (
+              <TouchableOpacity style={Slectedcol.spinButton} onPress={handleLosersGame}>
+                <Text style={Slectedcol.spinButtonText}>Play Losers Game</Text>
+              </TouchableOpacity>
+          )}
+           {success === true && ( 
+            <TouchableOpacity
+             style={Goalstyles.button}
+             onPress={() => router.push('/(routes)/games/category/category-main')}  >
+             <Text style={styles.buttonText}>Go Back to Games</Text>
+            </TouchableOpacity>  )} 
+            {success === null && (
+              <TouchableOpacity
+                style={[Slectedcol.spinButton, ]}
+                // disabled={selectedColor === null || loading}
+                onPress={spinWheel}
+              >
+                <Text style={Slectedcol.spinButtonText}>{loading ? 'Spinning...' : 'Spin Wheel'}</Text>
+              </TouchableOpacity>
+            )}
           </View>
   
           <View style={Slectedcol.card}>
@@ -213,4 +214,4 @@ const ColorRouletteSelect = () => {
 
 
 
-export default ColorRouletteSelect;
+export default ColorRouletteSelect2;

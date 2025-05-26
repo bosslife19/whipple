@@ -15,6 +15,7 @@ import { router } from 'expo-router';
 // Components
 import HeaderBet from '../../Header/HeaderBet';
 import SlideShowBet from '../../../features/slideshow/slideshowBet';
+import gameCates from '../../../styles/gameCate.styles';
 
 // Assets
 import number1 from '../../../assets/images/games/dfd0983d-43cb-479f-bd09-6da48a29a8dd.webp';
@@ -24,7 +25,8 @@ import spin from '../../../assets/images/games/spin2win.png';
 import color from '../../../assets/images/games/spinningcolo.avif';
 import choose from '../../../assets/images/games/soccerbg.avif';
 import mystry from '../../../assets/images/games/mys.jpg';
-import gameCates from '../../../styles/gameCate.styles';
+import spins from  '../../../assets/images/games/Rectangle 98.png';
+import colors from  '../../../assets/images/games/colod.png';
 
 
  
@@ -49,6 +51,16 @@ const popularGames = [
     handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/colorRoulette'), 
 
   },
+  {
+    title: 'One Number Spin',
+    image: spins,
+    description: 'Spin a wheel with numbers 1-10, one prominent number published.',
+    variants: ['One Number Wheel'],
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/one-number-spin'), 
+
+  },
+
+  
 ];
 
 const topGames = [ 
@@ -93,6 +105,14 @@ const quickGames = [
     description: 'Three boxes; one chosen as the winning box.',
     variants: ['Three Boxes'],
     handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/mysteryGame'),
+
+  },
+   {
+    title: 'Color Roulette2',
+    image: colors,
+    description: 'Four colors (Red, Blue, Green, Yellow); one prominent color published.',
+    variants: ['Four Colors'],
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/colorRoulette2'), 
 
   },
 ];

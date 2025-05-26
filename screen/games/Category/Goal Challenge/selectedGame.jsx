@@ -134,10 +134,10 @@ const GoalSelected = () => {
               <Text style={styles.buttonText}>Shoot Ball</Text>
            </TouchableOpacity>
           )}
-          {success === true && (
+          {success === true && ( 
             <TouchableOpacity
            style={Goalstyles.button}
-          onPress={() => router.push('/(routes)/games/availablegames')}
+          onPress={() => router.push('/(routes)/games/category/category-main')}
           >
         <Feather name="arrow-left-circle" size={16} color="#fff" style={{ marginRight: 8 }} />
        <Text style={styles.buttonText}>Go Back to Games</Text>
