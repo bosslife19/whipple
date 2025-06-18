@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, Animated, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, Animated, ActivityIndicator, TextInput, StyleSheet } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import diceColorRou from '../../../../styles/diceGame/dice.styles';
 import ColorRou from '../../../../styles/colorRoulete.styles';
@@ -196,5 +196,18 @@ const ColorRouletteGame2 = () => {
     </> 
   );
 };
-
+const styles = StyleSheet.create({
+  backHomeButton: {
+    marginTop: 16,
+    backgroundColor: '#0A1931',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  backHomeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+});
 export default ColorRouletteGame2;

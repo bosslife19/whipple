@@ -87,7 +87,7 @@ const GoalSelected = () => {
 
   const lostGame = () =>{
       updateGameData({
-            stake: stake.toFixed(2),
+            stake ,
             odds,
             gameLabel ,
             GameName,

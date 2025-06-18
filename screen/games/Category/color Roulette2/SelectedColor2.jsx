@@ -8,6 +8,7 @@ import Slectedcol from '../../../../styles/selectedColorsstyles';
 import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
 import { useGameContext } from '../../../../context/AppContext';
+import Goalstyles from '../../../../styles/Goal.styles';
 
 const ColorRouletteSelect2 = () => {
     const [selectedColor, setSelectedColor] = useState(null);

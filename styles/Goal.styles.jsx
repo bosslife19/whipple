@@ -9,7 +9,7 @@ const Goalstyles = StyleSheet.create({
     },
     header: {
       fontSize: 22,
-      fontWeight: '700',
+      fontWeight: '700', 
       marginBottom: 20,
       color: '#333',
       fontFamily: "PoppinsMed",
