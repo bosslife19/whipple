@@ -29,7 +29,7 @@ const GoalSelected = () => {
   const ballBottom = useRef(new Animated.Value(24)).current;
   const ballLeft = useRef(new Animated.Value(segmentWidth / 2 - 0)).current;
 
-  const { gameData } = useGameContext();
+  const {updateGameData, gameData } = useGameContext();
   const { GameName} = gameData || {};
   const [selectedGuess, setSelectedGuess] = useState(null);
   const [isBallUp, setIsBallUp] = useState(false);
@@ -84,6 +84,18 @@ const GoalSelected = () => {
       setModalVisibled(true);
     });
   };
+
+  const lostGame = () =>{
+      updateGameData({
+            stake: stake.toFixed(2),
+            odds,
+            gameLabel ,
+            GameName,
+           isGameLost: true,
+          });
+            router.push('/(routes)/games/LostGames/ViewLostGames');
+          }
+  }
 
   return (
     <View style={{height:"100%"}}>
@@ -146,7 +158,7 @@ const GoalSelected = () => {
      {success === false && (
       <TouchableOpacity
        style={Goalstyles.button}
-       onPress={() => router.push('/(routes)/games/LostGames/ViewLostGames')}
+       onPress={lostGame}
        >
       <Feather name="target" size={16} color="#fff" style={{ marginRight: 8 }} />
       <Text style={styles.buttonText}>Go to Loser's Games</Text>
