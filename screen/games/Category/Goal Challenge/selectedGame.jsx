@@ -95,7 +95,7 @@ const GoalSelected = () => {
           });
             router.push('/(routes)/games/LostGames/ViewLostGames');
           }
-  }
+  
 
   return (
     <View style={{height:"100%"}}>

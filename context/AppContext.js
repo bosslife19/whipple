@@ -4,9 +4,9 @@ const GameContext = createContext();
 
 export const GameProvider = ({ children }) => {
   const [gameData, setGameData] = useState({
-    // stake: '',
+    stake: '',
     // odds: '',
-    // gameName: '', 
+    gameName: '', 
     // gameLabel: '',  
     // selectedBox: '',     
   });

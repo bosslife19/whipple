@@ -51,7 +51,7 @@ export default function RootLayout() {
     <AuthProvider>
  <GameProvider >
  <Stack screenOptions={{headerShown:false}}>
-  <Stack.Screen name="index"/>
+  <Stack.Screen name="index" />
 </Stack>
  </GameProvider>
     </AuthProvider>

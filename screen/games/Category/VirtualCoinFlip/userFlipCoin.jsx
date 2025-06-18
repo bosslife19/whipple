@@ -35,7 +35,7 @@ const UserFlipCoin = () => {
   const [selected, setSelected] = useState('');
   const [flippingButton, setFlippingButton] = useState(null);
   const [result, setResult] = useState(passedResult);
-  const [success, setSuccess] = useState(null);
+  const [success, setSuccess] = useState(null); 
   const [visible, setModalVisibled] = useState(false);
 
   const correctSide = typeof passedResult === 'string' ? passedResult : 'Heads';

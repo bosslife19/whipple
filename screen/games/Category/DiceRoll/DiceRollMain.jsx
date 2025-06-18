@@ -3,7 +3,7 @@ import {
   View,
   Text,
   TouchableOpacity,
-  TextInput,
+  TextInput, 
   ScrollView,
   StyleSheet,
   Animated,
@@ -15,6 +15,7 @@ import FLipCoin from '../../../../styles/flipcoin/flipCoin';
 import dicestyles from '../../../../styles/diceGame/dice.styles';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useGameContext } from '../../../../context/AppContext';
+import CustomInput from '../../../../components/Input/TextInput';
 
 export default function DiceGameScreen() {
   const [diceType, setDiceType] = useState('single');
@@ -238,12 +239,15 @@ export default function DiceGameScreen() {
               <View style={dicestyles.card}>
                   <Text style={dicestyles.title}>Set Your Stake</Text>
                   <Text style={dicestyles.label}>Your Stake (₦)</Text>
-                  <TextInput
-                      style={dicestyles.input}
-                      placeholder="Enter stake amount"
-                      value={stake}
+                 
+                 <CustomInput
+                  style={dicestyles.input}
+                  placeholder="Enter total amount"
+                  keyboardType="numeric"
+                  value={stake}
                       onChangeText={setStake}
-                      keyboardType="numeric" />
+                />
+                 
                   <View style={dicestyles.feeRow}>
                       <Text>Admission Fee (25%)</Text>
                       <Text>₦{admissionFee.toLocaleString(undefined, { maximumFractionDigits: 2 })}</Text>

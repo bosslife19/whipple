@@ -131,6 +131,19 @@ const VoteColorRouletteScreen = () => {
               },
               });
               break; 
+               case 'spin da bottle':
+                   router.push({
+                pathname: '/games/category/becomethehouse/spindabottle/selectedSpins',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,
+                selected,
+              },
+              });
+              break; 
 
               case 'one number spin':
               router.push({

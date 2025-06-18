@@ -67,7 +67,7 @@ const gameCates = StyleSheet.create({
       gap: 10,
       justifyContent:"center",
       marginHorizontal:"auto"
-    },
+    }, 
     card: {
       width: (screenWidth - 48) / 1,
       backgroundColor: '#fff',

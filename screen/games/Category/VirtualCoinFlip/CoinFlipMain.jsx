@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import HeaderBet from '../../../Header/HeaderBet';
 import FLipCoin from '../../../../styles/flipcoin/flipCoin';
 import { useGameContext } from '../../../../context/AppContext';
+import CustomInput from '../../../../components/Input/TextInput';
 // import { useGameContext } from '../../../../context/AppContext';
 // import { useGameContext } from '../../../../context/AppContext';
 
@@ -158,14 +159,14 @@ const FlipTheCoin = () => {
                 </TouchableOpacity>
               ))}
             </View>
-
-            <TextInput
-              keyboardType="numeric"
-              placeholder="Enter stake amount"
-              style={FLipCoin.input}
-              value={stake}
+            <CustomInput
+             style={[FLipCoin.input ]}
+               placeholder="Enter stake amount"
+               keyboardType="numeric"
+                value={stake}
               onChangeText={setStake}
-            />
+              />
+            
 
             <TouchableOpacity
               style={[FLipCoin.button, { marginTop: 16 }]}

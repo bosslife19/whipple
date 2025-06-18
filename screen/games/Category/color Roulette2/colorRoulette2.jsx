@@ -10,6 +10,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useGameContext } from '../../../../context/AppContext';
 import { ImageBackground } from 'react-native';
 import bgs from '../../../../assets/images/games/bluur.jpeg'
+import CustomInput from '../../../../components/Input/TextInput';
 const colors = [
   { id: 'red', hex: '#EA384C', label: 'Red' },
   { id: 'blue', hex: '#0EA5E9', label: 'Blue' },
@@ -149,12 +150,16 @@ const ColorRouletteGame2 = () => {
         <View style={[dicestyles.card, { marginTop: 20, width: "100%" }]}>
           <Text style={dicestyles.title}>Set Your Stake</Text>
           <Text style={dicestyles.label}>Your Stake (₦)</Text>
-          <TextInput
+          
+          <CustomInput
             style={dicestyles.input}
-            placeholder="Enter stake amount"
+            placeholder="Enter total amount"
+            keyboardType="numeric"
             value={stake}
             onChangeText={handleStakeChange}
-            keyboardType="numeric" />
+
+            />
+          
           <View style={dicestyles.feeRow}>
             <Text>Admission Fee (25%)</Text>
             <Text>₦{admissionFee.toLocaleString(undefined, { maximumFractionDigits: 2 })}</Text>

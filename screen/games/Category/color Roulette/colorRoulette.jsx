@@ -8,6 +8,7 @@ import dicestyles from '../../../../styles/diceGame/dice.styles';
 import Header from '../../../Header/Header';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useGameContext } from '../../../../context/AppContext';
+import CustomInput from '../../../../components/Input/TextInput';
 
 const colors = [
   { id: 'red', hex: '#EA384C', label: 'Red' },
@@ -150,12 +151,15 @@ const ColorRouletteGame = () => {
         <View style={[dicestyles.card, { marginTop: 20, width: "100%" }]}>
           <Text style={dicestyles.title}>Set Your Stake</Text>
           <Text style={dicestyles.label}>Your Stake (₦)</Text>
-          <TextInput
-            style={dicestyles.input}
-            placeholder="Enter stake amount"
+         
+         <CustomInput
+           style={dicestyles.input}
+           placeholder="Enter total amount"
+            keyboardType="numeric"
             value={stake}
             onChangeText={handleStakeChange}
-            keyboardType="numeric" />
+           />
+          
           <View style={dicestyles.feeRow}>
             <Text>Admission Fee (25%)</Text>
             <Text>₦{admissionFee.toLocaleString(undefined, { maximumFractionDigits: 2 })}</Text>

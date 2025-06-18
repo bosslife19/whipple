@@ -26,7 +26,7 @@ const AvaliablePublishedGame = () => {
 
  
 
-    if (normalizedGameName === 'dice roll' || normalizedGameName === 'wheel spin' || normalizedGameName === 'mystery box') {
+    if (normalizedGameName === 'dice roll' || normalizedGameName === 'wheel spin' || normalizedGameName === 'mystery box'|| normalizedGameName === 'spin da bottle') {
       router.push({
         pathname: '/games/vote',
         params: {

@@ -17,6 +17,7 @@ import WheelSPins from '../../../../styles/spining/wheelspining.styles';
 import bgs from "../../../../assets/images/games/image_fx_ (35) 1.png";
 import FLipCoin from '../../../../styles/flipcoin/flipCoin';
 import { useGameContext } from '../../../../context/AppContext';
+import CustomInput from '../../../../components/Input/TextInput';
 
 const SpinTheWheel = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
@@ -149,17 +150,19 @@ const SpinTheWheel = () => {
               <Text style={WheelSPins.sectionTitle}>Enter Total Amount</Text>
               <View style={WheelSPins.inputGroup}>
                 <Text style={WheelSPins.inputLabel}>Total Amount (₦)</Text>
-                <TextInput
+               <CustomInput
                   style={WheelSPins.input}
                   placeholder="Enter total amount"
                   keyboardType="numeric"
-                  value={totalInput}
+                   value={totalInput}
                   placeholderTextColor={'gray'}
                   onChangeText={(text) => {
                     setTotalInput(text);
                     setIsButtonDisabled(!text || !showResult || isNaN(Number(text)));
                   }}
                 />
+               
+               
               </View>
 
               <View style={creategame.summary}>
