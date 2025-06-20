@@ -10,6 +10,7 @@ const tabs = [
   'Color Roulette',
   'Mystery Box',
   'Goal Challenge',
+  'Spin da Bottle',
 ];
 
 const FilterTabPanel = ({ onTabChange }) => {

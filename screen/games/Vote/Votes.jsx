@@ -131,7 +131,7 @@ const VoteColorRouletteScreen = () => {
               },
               });
               break; 
-               case 'spin da bottle':
+               case 'spin the bottle':
                    router.push({
                 pathname: '/games/category/becomethehouse/spindabottle/selectedSpins',
                 params: {

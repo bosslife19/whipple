@@ -95,7 +95,7 @@ const SpinBottleMain = () => {
     }
   };
 
-    const {  odds= '2',  gameLabel, range, GameName  = 'Spin da Bottle' } = gameData || {};
+    const {  odds= '2',  gameLabel, range, GameName  = 'Spin the Bottle' } = gameData || {};
           const {gameData, updateGameData } = useGameContext();
           // const GameName = 'Wheel Spin' 
           // const odds = '3.333';
@@ -105,7 +105,6 @@ const SpinBottleMain = () => {
       const formattedOdds = `${odds}x`;
   
       setTimeout(() => {
-        router.push( '/(routes)/games/availablegames')
         updateGameData({
           stake: stake.toFixed(2),
             odds: formattedOdds,
@@ -114,6 +113,8 @@ const SpinBottleMain = () => {
            
             result: gameLabel,
         });
+        router.push('/(routes)/games/availablegames')
+
         setLoading(false);
       }, 2000);
     };

@@ -45,10 +45,10 @@ const GameDetails = () => {
           },
           });
           break;
-           case 'spin da bottle':
+           case 'spin the bottle':
              router.push({
-             pathname: '/games/category/becomethehouse/spindabottle/selectedSpins',
-             params: {
+               pathname: '/games/vote',
+              params: {
              stake: stake?.toString(),
             odds,
             gameLabel,
