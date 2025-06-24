@@ -147,6 +147,9 @@ const GameCategoryMain = () => {
     setFilteredGames(games);
   };
 
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
 
   const renderGameSection = (title, games) => (
     <View key={title} style={gameCates.section}>

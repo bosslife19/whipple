@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, Animated, ActivityIndicator, TextInput, S
 import Svg, { Path } from 'react-native-svg';
 import diceColorRou from '../../../../styles/diceGame/dice.styles';
 import ColorRou from '../../../../styles/colorRoulete.styles';
-import { ScrollView } from 'react-native';
+import { ScrollView } from 'react-native'; 
 import dicestyles from '../../../../styles/diceGame/dice.styles';
 import Header from '../../../Header/Header';
 import { router, useLocalSearchParams } from 'expo-router';

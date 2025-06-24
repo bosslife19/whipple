@@ -17,7 +17,7 @@ const Goalstyles = StyleSheet.create({
     },
     field: {
       width: '100%',
-      height: 260,
+      height: 260, 
       objectFit:"cover",
       backgroundColor: '#6AAC4B',
       borderRadius: 12,

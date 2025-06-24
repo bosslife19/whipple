@@ -9,7 +9,7 @@ import { FontAwesome } from '@expo/vector-icons';
 const banks = [
   { id: '1', name: 'Access Bank', logo: require('../../assets/images/access-bank-plc-logo-png_seeklogo-492413.png'), customerId: '1234567890' },
   { id: '2', name: 'FirstBank', logo: require('../../assets/images/first-bank.png'), customerId: '9876543210' },
-];
+]; 
 
 export default function DepositPage() {
   const [activeTab, setActiveTab] = useState('normal');

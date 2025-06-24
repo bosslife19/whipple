@@ -8,7 +8,7 @@ const PreBetActivities = () => {
     const bounceAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.loop(
+    Animated.loop( 
       Animated.sequence([
         Animated.timing(bounceAnim, {
           toValue: -10,

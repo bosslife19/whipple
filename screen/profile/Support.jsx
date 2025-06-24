@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import Header from '../Header/Header';
-
+ 
 const Support = () => {
   const [activeFAQ, setActiveFAQ] = useState(null);
   const [subject, setSubject] = useState('');

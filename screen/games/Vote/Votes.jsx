@@ -44,7 +44,7 @@ const VoteColorRouletteScreen = () => {
             odds,
              gameLabel,
             GameName,
-            range, 
+            range,  
             selected,
           },
           });
