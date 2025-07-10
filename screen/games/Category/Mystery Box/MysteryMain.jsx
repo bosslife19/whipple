@@ -9,6 +9,7 @@ import WheelSPins from '../../../../styles/spining/wheelspining.styles';
 import { router } from 'expo-router';
 import { useGameContext } from '../../../../context/AppContext';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import CustomInput from '../../../../components/Input/TextInput';
 
 const MysteryMain = () => {
   const boxes = ['Box 1', 'Box 2', 'Box 3'];
@@ -112,14 +113,15 @@ useEffect(() => {
               <Text style={dicestyles.title}>Set Your Stake</Text>
               <Text style={dicestyles.label}>Your Stake (₦)</Text>
 
-              <TextInput
+              <CustomInput
                 style={[dicestyles.input, { borderColor: "#0A1931", borderWidth: 1 }]}
-                placeholder="Enter stake amount"
+                placeholder="Enter total amount"
+                keyboardType="numeric"
                 value={stake}
                 onChangeText={handleStakeChange}
-                keyboardType="numeric"
-              />
+                />
 
+              
               <View style={dicestyles.feeRow}>
                 <Text>Admission Fee (25%)</Text>
                 <Text>₦{admissionFee.toLocaleString(undefined, { maximumFractionDigits: 2 })}</Text>

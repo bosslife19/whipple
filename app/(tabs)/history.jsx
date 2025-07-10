@@ -39,7 +39,7 @@ export default function History() {
       status: 'won',
      
     },
-    {
+    { 
       id: '4',
       gameName: 'POST321',
       players: '6/7 Players',

@@ -18,6 +18,7 @@ import bgs from '../../../../assets/images/games/image_fx_ (35) 1.png';
 import CreateGames2 from '../../../../styles/creategames/creategames.styles';
 import creategame from '../../../../styles/creategame/creategame.styles';
 import { useGameContext } from '../../../../context/AppContext';
+import CustomInput from '../../../../components/Input/TextInput';
 
 const formatCurrency = (value) => {
   if (!value) return '';
@@ -140,11 +141,12 @@ const CreateLuckyNumbers = () => {
                   </View>
                   <View style={CreateGames2.cardBody}>
                     <Text style={CreateGames2.label}>Stake Amount (₦)</Text>
-                    <TextInput
-                      style={CreateGames2.input}
-                      keyboardType="numeric"
-                      placeholder="Enter amount"
-                      value={stakeAmount === '' ? '' : formatCurrency(stakeAmount)}
+                    
+                  <CustomInput
+                  style={CreateGames2.input}                
+                  placeholder="Enter total amount"
+                keyboardType="numeric"
+                value={stakeAmount === '' ? '' : formatCurrency(stakeAmount)}
                       onFocus={() => setIsInputFocused(true)}
                       onBlur={() => setIsInputFocused(false)}
                       onChangeText={(text) => {
@@ -153,7 +155,8 @@ const CreateLuckyNumbers = () => {
                           setStakeAmount(raw);
                         }
                       }}
-                    />
+                />
+                     
 
                     {(isInputFocused || stakeAmount !== '') && (
                       <View style={CreateGames2.breakdownCard}>

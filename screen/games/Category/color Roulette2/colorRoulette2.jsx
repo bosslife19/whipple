@@ -1,15 +1,16 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, Animated, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, Animated, ActivityIndicator, TextInput, StyleSheet } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import diceColorRou from '../../../../styles/diceGame/dice.styles';
 import ColorRou from '../../../../styles/colorRoulete.styles';
-import { ScrollView } from 'react-native';
+import { ScrollView } from 'react-native'; 
 import dicestyles from '../../../../styles/diceGame/dice.styles';
 import Header from '../../../Header/Header';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useGameContext } from '../../../../context/AppContext';
 import { ImageBackground } from 'react-native';
 import bgs from '../../../../assets/images/games/bluur.jpeg'
+import CustomInput from '../../../../components/Input/TextInput';
 const colors = [
   { id: 'red', hex: '#EA384C', label: 'Red' },
   { id: 'blue', hex: '#0EA5E9', label: 'Blue' },
@@ -149,12 +150,16 @@ const ColorRouletteGame2 = () => {
         <View style={[dicestyles.card, { marginTop: 20, width: "100%" }]}>
           <Text style={dicestyles.title}>Set Your Stake</Text>
           <Text style={dicestyles.label}>Your Stake (₦)</Text>
-          <TextInput
+          
+          <CustomInput
             style={dicestyles.input}
-            placeholder="Enter stake amount"
+            placeholder="Enter total amount"
+            keyboardType="numeric"
             value={stake}
             onChangeText={handleStakeChange}
-            keyboardType="numeric" />
+
+            />
+          
           <View style={dicestyles.feeRow}>
             <Text>Admission Fee (25%)</Text>
             <Text>₦{admissionFee.toLocaleString(undefined, { maximumFractionDigits: 2 })}</Text>
@@ -191,5 +196,18 @@ const ColorRouletteGame2 = () => {
     </> 
   );
 };
-
+const styles = StyleSheet.create({
+  backHomeButton: {
+    marginTop: 16,
+    backgroundColor: '#0A1931',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  backHomeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+});
 export default ColorRouletteGame2;

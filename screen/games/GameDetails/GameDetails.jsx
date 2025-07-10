@@ -40,11 +40,24 @@ const GameDetails = () => {
             odds,
             gameLabel,
             GameName,
-            range,
+            range, 
             selected,
           },
           });
           break;
+           case 'spin the bottle':
+             router.push({
+               pathname: '/games/vote',
+              params: {
+             stake: stake?.toString(),
+            odds,
+            gameLabel,
+            GameName,
+            range,
+            selected,
+             },
+            });
+            break; 
     
         case 'color roulette': 
           router.push({

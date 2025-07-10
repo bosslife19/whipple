@@ -24,6 +24,7 @@ import creategame from '../../../../styles/creategame/creategame.styles';
 import FLipCoin from '../../../../styles/flipcoin/flipCoin';
 import Goalstyles from '../../../../styles/Goal.styles';
 import { router } from 'expo-router';
+import CustomInput from '../../../../components/Input/TextInput';
 
 const { width } = Dimensions.get('window');
 const segmentWidth = width - 20;
@@ -199,14 +200,17 @@ const GoalMain = () => {
               <Text style={[WheelSPins.cardTitle, { color: '#212121' }]}>
                 Enter Total Amount
               </Text>
-              <TextInput
-                style={creategame.input}
-                placeholder="Enter total amount"
-                keyboardType="numeric"
-                value={totalInput}
+              <CustomInput
+              style={creategame.input}                  
+              placeholder="Enter total amount"
+                  keyboardType="numeric"
+                  value={totalInput}
                 placeholderTextColor={'gray'}
                 onChangeText={handleTotalInputChange}
-              />
+            
+                />
+
+              
             </View>
 
             <View style={[creategame.summary,{marginTop:0}]}>

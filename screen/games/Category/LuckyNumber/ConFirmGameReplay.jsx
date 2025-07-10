@@ -3,14 +3,14 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'rea
 import { useRouter, useLocalSearchParams } from 'expo-router';
 // import HeaderBet from '../../../../../../screen/Header/HeaderBet';
 // import SuccessModal from '../../../../../../screen/sucessModal/successpopup';
-import Winningmodal from '../../../screen/winningmodal/winningmodal';
-import Losingmodal from '../../../screen/loseModal/LoseModal';
-import ConfirmsSTy from '../../../styles/confirmGame/confirmGame.styles';
-import HeaderBet from '../../Header/HeaderBet';
-import { useGameContext } from '../../../context/AppContext';
+import Winningmodal from '../../../winningmodal/winningmodal';
+import Losingmodal from '../../../loseModal/LoseModal';
+import ConfirmsSTy from '../../../../styles/confirmGame/confirmGame.styles';
+import HeaderBet from '../../../Header/HeaderBet';
+import { useGameContext } from '../../../../context/AppContext';
 // import HeaderBet from '../../../../../screen/Header/HeaderBet';
 
-const ConFirmGameReplay = () => {
+const ConFirmSelectedLuckyNumbers = () => {
   const router = useRouter();
   // const { stake, odds, gameLabel, GameName, range, selected, selectionCount,totalOdds } = useLocalSearchParams();
 
@@ -183,5 +183,5 @@ const ConFirmGameReplay = () => {
   );
 };
 
-export default ConFirmGameReplay;
+export default ConFirmSelectedLuckyNumbers;
 

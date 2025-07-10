@@ -1,11 +1,9 @@
 import { View, Text } from 'react-native'
-import React from 'react'
-import ConFirmGameReplay from '../../../../../../screen/games/ConFirmGameReplay/ConFirmGameReplay'
-
-export default function ConfirmGameDetailPage() {
+ import ConFirmSelectedLuckyNumbers from '../../../../../../screen/games/Category/LuckyNumber/ConFirmGameReplay'
+ export default function ConfirmGameDetailPage() {
   return (
     <View>
-      <ConFirmGameReplay/>
+      <ConFirmSelectedLuckyNumbers/>
      </View>
   )
 }

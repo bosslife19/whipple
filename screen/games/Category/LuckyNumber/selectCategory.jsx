@@ -65,7 +65,7 @@ const gameOptions = {
       route: '/(routes)/games/category/becomethehouse/luckynumbers-category/create-game',
     },
   ],
-};
+}; 
 
 const categories = [
   {

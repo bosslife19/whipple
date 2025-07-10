@@ -44,7 +44,7 @@ const VoteColorRouletteScreen = () => {
             odds,
              gameLabel,
             GameName,
-            range, 
+            range,  
             selected,
           },
           });
@@ -121,6 +121,19 @@ const VoteColorRouletteScreen = () => {
                case 'wheel spin':
                    router.push({
                 pathname: '/games/category/becomethehouse/spinwheel/selectedSpin',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,
+                selected,
+              },
+              });
+              break; 
+               case 'spin the bottle':
+                   router.push({
+                pathname: '/games/category/becomethehouse/spindabottle/selectedSpins',
                 params: {
                 stake: stake?.toString(),
                 odds,

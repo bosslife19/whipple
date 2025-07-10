@@ -1,21 +1,12 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const GameContext = createContext();
 
 export const GameProvider = ({ children }) => {
-  const [gameData, setGameData] = useState({
-    // stake: '',
-    // odds: '',
-    // gameName: '', 
-    // gameLabel: '',  
-    // selectedBox: '',     
-  });
+  const [gameData, updateGameData] = useState(null);
+
  
-
-
-  const updateGameData = (newData) => {
-    setGameData((prev) => ({ ...prev, ...newData }));
-  };
 
   return (
     <GameContext.Provider value={{ gameData, updateGameData }}>

@@ -27,21 +27,18 @@ import choose from '../../../assets/images/games/soccerbg.avif';
 import mystry from '../../../assets/images/games/mys.jpg';
 import spins from  '../../../assets/images/games/Rectangle 98.png';
 import colors from  '../../../assets/images/games/colod.png';
+import SpinDaWheel from  '../../../assets/images/games/spinDaWheel.png';
 
-
- 
 
 // Game Data
 const popularGames = [
- 
- 
+
   {
     title: 'Dice Roll',
     image: cube,
     description: 'Roll dice and bet on outcomes.',
     variants: ['Single Die', 'Double Die'],
     handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/DiceRoll'),
-
   },
   {
     title: 'Color Roulette',
@@ -49,7 +46,6 @@ const popularGames = [
     description: 'Four colors (Red, Blue, Green, Yellow); two prominent colors published.',
     variants: ['Four Colors'],
     handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/colorRoulette'), 
-
   },
   {
     title: 'One Number Spin',
@@ -57,10 +53,7 @@ const popularGames = [
     description: 'Spin a wheel with numbers 1-10, one prominent number published.',
     variants: ['One Number Wheel'],
     handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/one-number-spin'), 
-
   },
-
-  
 ];
 
 const topGames = [ 
@@ -115,6 +108,14 @@ const quickGames = [
     handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/colorRoulette2'), 
 
   },
+   {
+    title: 'Spin da Bottle',
+    image: SpinDaWheel,
+    description: 'Spin the bottle.  choose either up or down',
+    variants: ['two sections','up or down'],
+    handleNavigate: () => router.push('/(routes)/games/category/becomethehouse/spindabottle'), 
+
+  },
 ];
 
 const allGames = [...popularGames, ...topGames, ...quickGames];
@@ -146,11 +147,14 @@ const GameCategoryMain = () => {
     setFilteredGames(games);
   };
 
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
 
   const renderGameSection = (title, games) => (
     <View key={title} style={gameCates.section}>
       <Text style={gameCates.sectionTitle}>{title}</Text>
-      <View style={gameCates.row}>
+      <View style={gameCates.row}> 
         {games.map((game, index) => (
           <View key={index} style={gameCates.card} >
             <View style={gameCates.imageWrapper}>
@@ -159,6 +163,7 @@ const GameCategoryMain = () => {
               )}
               <Image source={game.image} style={gameCates.image} />
             </View>
+            
             <Text style={gameCates.gameTitle}>{game.title}</Text>
             <Text style={gameCates.description}>{game.description}</Text>
             <Text style={gameCates.variantLabel}>Variants:</Text>
