@@ -20,11 +20,25 @@ import FloatingMessage from '../../screen/homeScreen/Message/Message';
 import AvailableGamesList from '../../screen/homeScreen/AvailableGames/AvailableGamesList';
 import FeaturesSection from '../../screen/homeScreen/features/Features';
 import SlideShowBet from '../../features/slideshow/slideshowBet';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {AuthContext} from '../../context/AuthContext'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
-  
+  const {userDetails, setUserDetails} = useContext(AuthContext)
+ 
+
+  useEffect(()=>{
+    const getUser = async ()=>{
+      if(!userDetails){
+ const userDets = await AsyncStorage.getItem('userDetails');
+      setUserDetails(userDets);
+      }
+     
+    }
+
+    getUser();
+  }, [])
   return (
     <View style={Homes.Container}>
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
@@ -36,7 +50,7 @@ export default function HomeScreen() {
             {/* Greeting Text */}
             <View>
               <Text style={Homes.greetingText}>Hello</Text>
-              <Text style={Homes.usernameText}>Olivia Presh</Text>
+              <Text style={Homes.usernameText}>{userDetails?.name}</Text>
             </View>
           </View>
 

@@ -9,19 +9,20 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useRequest } from "../../hooks/useRequest";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AuthContext } from "../../context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { loading, makeRequest } = useRequest();
-
+const {setUserDetails} = useContext(AuthContext);
   const handleLogin = async () => {
-    router.replace("/(tabs)/home");
+    
     if (!email || !password) {
       return Alert.alert("Required", "All the fields are required");
     }
@@ -34,8 +35,11 @@ const Login = () => {
     if(error){
       return Alert.alert('Error', error)
     }
-    await AsyncStorage.setItem('userDetails', JSON.stringify(response));
+    await AsyncStorage.setItem('userDetails', JSON.stringify(response.user));
     await AsyncStorage.setItem('authToken', response.token);
+
+    setUserDetails({...response.user})
+
     router.replace("/(tabs)/home");
   };
   return (
@@ -47,7 +51,7 @@ const Login = () => {
         <View style={styles.inputsContainer}>
           <TextInput
             style={styles.input}
-            placeholder="Email or Phone Number"
+            placeholder="Email"
             placeholderTextColor={"rgba(154, 154, 154, 0.6)"}
             onChangeText={(val) => setEmail(val)}
           />

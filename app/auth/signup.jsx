@@ -12,12 +12,14 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useRequest } from "../../hooks/useRequest";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Signup = () => {
   const [checked, setChecked] = useState(false);
   const { makeRequest, loading, error,  response} = useRequest();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
@@ -27,7 +29,7 @@ const Signup = () => {
     if(!checked){
       return Alert.alert("Required", 'Please accept our terms and conditions to continue');
     }
-    if(!email||!name||!password||!passwordConfirm){
+    if(!email||!name||!password||!passwordConfirm ||!phoneNumber){
       return Alert.alert('Required', 'All fields are required to continue');
     }
     if(password !== passwordConfirm){
@@ -35,10 +37,12 @@ const Signup = () => {
     }
     try {
       
-      const res = await makeRequest('/signup', {name, email, password})
+      const res = await makeRequest('/signup', {name, email, password, phoneNumber})
       if(res.error){
         return Alert.alert('Error', res.error);
       }
+      
+      
       router.replace('/auth/login');
 
     } catch (err) {
@@ -61,9 +65,16 @@ const Signup = () => {
           />
           <TextInput
             style={styles.input}
-            placeholder="Email or Phone Number"
+            placeholder="Email"
             placeholderTextColor={"rgba(154, 154, 154, 0.6)"}
             onChangeText={val=>setEmail(val)}
+          />
+            <TextInput
+            style={styles.input}
+            placeholder="Phone Number"
+            placeholderTextColor={"rgba(154, 154, 154, 0.6)"}
+            
+            onChangeText={val=>setPhoneNumber(val)}
           />
           <TextInput
             style={styles.input}
