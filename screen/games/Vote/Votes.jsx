@@ -11,6 +11,7 @@ import HeaderBet from '../../Header/HeaderBet';
 import { router, useLocalSearchParams } from 'expo-router';
 import Votes from '../../../styles/voteDistri.styles';
 import { useGameContext } from '../../../context/AppContext';
+import {useRequest} from '../../../hooks/useRequest'
 
 const PRIMARY_COLOR = '#1A4ED8'; // Deep Blue
 
@@ -19,18 +20,28 @@ const VoteColorRouletteScreen = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
 
+  const {makeRequest, loading} = useRequest()
+
   // const { stake, odds, gameLabel, range, selected, GameName } = useLocalSearchParams();
 
     const { gameData } = useGameContext();
         const { stake, odds, gameLabel, range, selected, GameName } = gameData || {};
+        const {id, name} = useLocalSearchParams()
+
+        
   
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     if (!value) {
       alert('Please select an option.');
       return;
     }
 
-    const normalizedGameName = GameName?.toLowerCase?.();
+    const res = await makeRequest('/submit-vote', {gameId: id, vote: value})
+
+   
+
+
+    const normalizedGameName = name?.toLowerCase?.();
 
     let path = '';
 
@@ -46,6 +57,7 @@ const VoteColorRouletteScreen = () => {
             GameName,
             range,  
             selected,
+            id,
           },
           });
           break;
@@ -258,7 +270,7 @@ const VoteColorRouletteScreen = () => {
             onPress={handleSubmit}
             disabled={isSubmitting}
           >
-            {isSubmitting ? (
+            {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
               <Text style={[Votes.buttonText, { color: '#fff' }]}>Submit Vote</Text>

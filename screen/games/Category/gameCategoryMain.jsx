@@ -147,9 +147,9 @@ const GameCategoryMain = () => {
     setFilteredGames(games);
   };
 
-    useEffect(() => {
-      window.scrollTo(0, 0);
-    }, []);
+    // useEffect(() => {
+    //   window.scrollTo(0, 0);
+    // }, []);
 
   const renderGameSection = (title, games) => (
     <View key={title} style={gameCates.section}>
@@ -171,7 +171,7 @@ const GameCategoryMain = () => {
               <Text key={idx} style={gameCates.variantText}>• {variant}</Text>
             ))}
             <TouchableOpacity style={gameCates.btn} onPress={game.handleNavigate}>
-              <Text style={[gameCates.gameTitle,{textAlign:"center",color:"#fff"}]}>Create Games</Text>
+              <Text style={[gameCates.gameTitle,{textAlign:"center",color:"#fff"}]}>Create Game</Text>
             </TouchableOpacity>
           </View>
         ))}

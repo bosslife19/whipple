@@ -16,6 +16,7 @@ const gameOptions = {
   A: [
     {
       label: 'Game A1 (1-3) - 3 Odds',
+      subcategory:'a1',
       range: 3,
       totalOdds: 3,
       selectionCount: 1,
@@ -24,6 +25,7 @@ const gameOptions = {
     },
     {
       label: 'Game A2 (1-5) - 5 Odds',
+      subcategory:'a2',
       range: 5,
       totalOdds: 5,
       selectionCount: 1,
@@ -35,33 +37,37 @@ const gameOptions = {
       range: 5,
       totalOdds: 2.5,
       selectionCount: 2,
+      subcategory:'b',
       names: 'Lucky Number',
       route: '/(routes)/games/category/becomethehouse/luckynumbers-category/create-game',
     },
   ],
   C: [
     {
-      label: 'Game A - 5 numbers (1-100) - 20 Odds',
+      label: 'Game C1 - 5 numbers (1-100) - 20 Odds',
       range: 100,
       totalOdds: 20,
       selectionCount: 5,
+      subcategory:'c1',
       names: 'Lucky Number',
       route: '/(routes)/games/category/becomethehouse/luckynumbers-category/create-game',
     },
     {
-      label: 'Game B - 10 numbers (1-100) - 10 Odds',
+      label: 'Game C2 - 10 numbers (1-100) - 10 Odds',
       range: 100,
       totalOdds: 10,
       selectionCount: 10,
       names: 'Lucky Number',
+      subcategory:'c2',
       route: '/(routes)/games/category/becomethehouse/luckynumbers-category/create-game',
     },
     {
-      label: 'Game C - 1 number (1-100) - 100 Odds',
+      label: 'Game C3 - 1 number (1-100) - 100 Odds',
       range: 100,
       totalOdds: 100,
       selectionCount: 1,
       names: 'Lucky Number',
+      subcategory:"c3",
       route: '/(routes)/games/category/becomethehouse/luckynumbers-category/create-game',
     },
   ],
@@ -98,6 +104,8 @@ const SelectCategoryScreen = () => {
       range: game.range.toString(),
       totalOdds: game.totalOdds.toString(),
       selectionCount: game.selectionCount.toString(),
+      subcategory: game.subcategory,
+      category: selectedCategory
     });
     router.push(game.route); // dynamic routing
   };

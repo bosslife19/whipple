@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 // import HeaderBet from '../../../../../../screen/Header/HeaderBet';
 // import SuccessModal from '../../../../../../screen/sucessModal/successpopup';
@@ -8,14 +8,38 @@ import Losingmodal from '../../../loseModal/LoseModal';
 import ConfirmsSTy from '../../../../styles/confirmGame/confirmGame.styles';
 import HeaderBet from '../../../Header/HeaderBet';
 import { useGameContext } from '../../../../context/AppContext';
+import axiosClient from '../../../../axiosClient';
+import { useRequest } from '../../../../hooks/useRequest';
 // import HeaderBet from '../../../../../screen/Header/HeaderBet';
 
 const ConFirmSelectedLuckyNumbers = () => {
   const router = useRouter();
+
+  const {loading, makeRequest} = useRequest();
   // const { stake, odds, gameLabel, GameName, range, selected, selectionCount,totalOdds } = useLocalSearchParams();
 
         const { gameData ,updateGameData } = useGameContext();
-        const {  odds,  gameLabel, range, GameName ,stake,selected,totalOdds} = gameData || {};
+        const {  odds,  gameLabel, GameName ,stake,selected,totalOdds} = gameData || {};
+    const {id} = useLocalSearchParams();
+
+    const [game, setGame] = useState(null)
+
+    let range;
+    if (game?.subcategory === 'a1') {
+  range = 3
+}
+  
+
+    useEffect(()=>{
+      const getGame = async ()=>{
+        const res = await axiosClient.get(`/get-game/${id}`);
+
+        setGame(res.data.game)
+
+      }
+
+      getGame();
+    }, [])
       
   const correctNumber = parseInt(selected); // Ensures comparison is number-based
   const parsedTotalOdds = parseFloat(totalOdds);
@@ -35,15 +59,38 @@ const ConFirmSelectedLuckyNumbers = () => {
     if (success !== null) return; // Prevent interaction if already submitted
   
     if (selectedNumbers.includes(number)) {
-      setSelectedNumbers(selectedNumbers.filter((num) => num !== number));
-    } else if (selectedNumbers.length < 1) {
+     return
+    } 
+
+    else if(selectedNumbers.length > 0){
+     setSelectedNumbers([number]); // Clear and add only 
+    }
+    
+    else if (selectedNumbers.length < 1) {
+      
       setSelectedNumbers([...selectedNumbers, number]);
     }
   };
   
+  
 
-  const handleSubmit = () => {
-    if (selectedNumbers.includes(correctNumber)) {
+  const handleSubmit = async () => {
+
+
+    const res = await makeRequest('/play-game', {
+      gameId: game.id,
+      choiceNumber: selectedNumbers[0]
+
+
+    })
+
+ 
+    
+    if(res.error){
+      return Alert.alert('Error', res.error);
+    }
+    
+    if (res.response.success) {
       setSuccess(true); // It's a win
     } else {
       setSuccess(false); // It's a loss
@@ -66,26 +113,26 @@ const ConFirmSelectedLuckyNumbers = () => {
   
   return (
     <>
-      <HeaderBet arrow name={GameName} backgroundColor="#A8BFED" />
+      <HeaderBet arrow name={game?.name} backgroundColor="#A8BFED" />
       <ScrollView contentContainerStyle={ConfirmsSTy.container}>
         <View style={ConfirmsSTy.header}>
-          <Text style={ConfirmsSTy.title}>{GameName}</Text>
+          <Text style={ConfirmsSTy.title}>{game?.name}</Text>
           <Text style={ConfirmsSTy.subTitle}>
-            {GameName} - {gameLabel} (2 from 1-{range})
+            {game?.name} - {game?.subcategory} (2 from 1-{range})
           </Text>
         </View>
 
         <View style={ConfirmsSTy.card}>
           <Text style={ConfirmsSTy.sectionTitle}>Game Details</Text>
-          <Text style={ConfirmsSTy.info}>House: @current-user</Text>
+          <Text style={ConfirmsSTy.info}>House: @{game?.creator.name}</Text>
           <View style={ConfirmsSTy.detailRow}>
             <View>
               <Text style={ConfirmsSTy.label}>Stake</Text>
-              <Text style={ConfirmsSTy.value}>₦{stake}</Text>
+              <Text style={ConfirmsSTy.value}>₦{game?.stake}</Text>
             </View>
             <View>
               <Text style={ConfirmsSTy.label}>Odds</Text>
-              <Text style={ConfirmsSTy.value}>{odds}</Text>
+              <Text style={ConfirmsSTy.value}>{game?.odds}</Text>
             </View>
           </View>
           <Text style={ConfirmsSTy.label}>Players</Text>
@@ -136,7 +183,12 @@ const ConFirmSelectedLuckyNumbers = () => {
     </TouchableOpacity>
      ) : (
     <TouchableOpacity onPress={handleSubmit} style={ConfirmsSTy.primaryBtn}>
-     <Text style={ConfirmsSTy.primaryBtnText}>Submit Your Numbers</Text>
+      {
+        loading? (
+          <ActivityIndicator size={20} color='white'/>
+        ): <Text style={ConfirmsSTy.primaryBtnText}>Submit Your Number</Text>
+      }
+    
       </TouchableOpacity>
     )}
       </View>

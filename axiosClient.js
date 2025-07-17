@@ -18,6 +18,7 @@ axiosClient.interceptors.request.use(
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`; // Set the token
             }
+            
         } catch (error) {
             console.error('Error retrieving auth token:', error);
         }
@@ -40,7 +41,7 @@ axiosClient.interceptors.response.use(
                 
                 await AsyncStorage.removeItem('authToken'); // Await the token removal
                 await AsyncStorage.removeItem('loggedIn');
-                router.push('/login');
+                router.push('/auth/login');
             }
         } catch (err) {
             console.error('Error handling response error:', err);

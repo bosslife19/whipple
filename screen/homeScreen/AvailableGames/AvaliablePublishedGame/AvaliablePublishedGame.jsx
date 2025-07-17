@@ -1,49 +1,95 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
-import { useRouter } from 'expo-router';
-import Header from '../../../Header/Header';
-import LosersGameList from '../../../../styles/losersgameList/LosersGameList';
-import FilterTabPanel from '../../../../features/TabPanel/FilterTabPanel';
-import { useGameContext } from '../../../../context/AppContext';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+} from "react-native";
+import { useRouter } from "expo-router";
+import Header from "../../../Header/Header";
+import LosersGameList from "../../../../styles/losersgameList/LosersGameList";
+import FilterTabPanel from "../../../../features/TabPanel/FilterTabPanel";
+import { useGameContext } from "../../../../context/AppContext";
+import axiosClient from "../../../../axiosClient";
 // import { useGameContext } from '../../../../context/GameContext';
 
-const screenWidth = Dimensions.get('window').width;
+const screenWidth = Dimensions.get("window").width;
 
 const AvaliablePublishedGame = () => {
   const { gameData } = useGameContext();
-  const { stake, odds, gameLabel, range, selected, GameName } = gameData || {};
+  const { stake, totalOdds, gameLabel, range, selected, GameName } =
+    gameData || {};
+
+  const [games, setGames] = useState([]);
+
+  useEffect(() => {
+    const getAllgames = async () => {
+      try {
+       
+        const res = await axiosClient.get("/get-all-games");
+       
+        setGames(res.data.games);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getAllgames();
+  }, []);
 
   const router = useRouter();
-  const [selectedTab, setSelectedTab] = useState('All');
+  const [selectedTab, setSelectedTab] = useState("All");
   const [gamePlayed, setGamePlayed] = useState(false);
 
-  const normalizedGameName = GameName?.toLowerCase?.();
-  const isAvailable = stake && GameName && odds;
-  const isGameAvailable = selectedTab === 'All' || selectedTab.toLowerCase().includes(GameName?.toLowerCase());
-
-  const handlePlayNow = () => {
-    setGamePlayed(true);
-
+  const normalizedGameName = (game)=>{
+    game?.toLowerCase();
+  }
  
 
-    if (normalizedGameName === 'dice roll' || normalizedGameName === 'wheel spin' || normalizedGameName === 'mystery box'|| normalizedGameName === 'Spin the Bottle') {
+  
+
+const filteredGames = games?.filter(game => {
+  if (selectedTab !== 'All') {
+   
+    return game.name.trim().toLowerCase() === selectedTab.trim().toLowerCase();
+  }
+  return true;
+});
+
+
+
+  const handlePlayNow = (game) => {
+    setGamePlayed(true);
+
+    if (
+      normalizedGameName(game.name) === "dice roll" ||
+      normalizedGameName(game.name) === "wheel spin" ||
+      normalizedGameName(game.name) === "mystery box" ||
+      normalizedGameName(game.name) === "Spin the Bottle"
+    ) {
+     
       router.push({
-        pathname: '/games/vote',
+        pathname: "/games/vote",
         params: {
           stake,
-          odds,
+          odds: game.odds,
+          subcategory: game.subcategory,
           gameLabel,
           GameName,
-          range,
+          house: game.creator.name,
           result: gameLabel,
         },
       });
-      } else if (normalizedGameName === 'one number spin' || normalizedGameName === 'color roulette2') {
-         router.push({
-        pathname: '/games/details/gamedetails-without-vote',
+    } else if (
+      normalizedGameName(game.name) === "one number spin" ||
+      normalizedGameName(game.name) === "color roulette2"
+    ) {
+      router.push({
+        pathname: "/games/details/gamedetails-without-vote",
         params: {
           stake,
-          odds,
+          odds: game.totalOdds,
           gameLabel,
           GameName,
           range,
@@ -52,36 +98,42 @@ const AvaliablePublishedGame = () => {
       });
     } else {
       router.push({
-        pathname: '/games/details',
+        pathname: "/games/details",
         params: {
-          stake,
-          odds,
+          stake:game.stake,
+          odds: game.odds,
           gameLabel,
-          GameName,
-          range,
-          result: gameLabel,
+          name:game.name,
+          id: game.id,
+          result: game.result,
+          house: game.creator.name,
+          subcategory:game.subcategory
         },
       });
     }
   };
 
-  if (!isAvailable) {
+  if (!games) {
     return (
       <View style={LosersGameList.centeredContainer}>
         <Header name="Available Games" backgroundColor="transparent" />
-        <Text style={LosersGameList.noGameText}>No game is currently published.</Text>
+        <Text style={LosersGameList.noGameText}>
+          No game is currently published.
+        </Text>
       </View>
     );
   }
 
   return (
-    <View style={{ height: '100%', backgroundColor: '#EEF6FF' }}>
+    <ScrollView style={{ height: "100%", backgroundColor: "#EEF6FF" }}>
       <Header name="Available Games" />
       <View style={styles.container}>
         <View style={LosersGameList.rulesCard}>
           <Text style={LosersGameList.rulesTitle}>Game Rules</Text>
           <View style={LosersGameList.listItem}>
-            <Text>Browse all available games to play and bet against The House</Text>
+            <Text>
+              Browse all available games to play and bet against The House
+            </Text>
           </View>
           <View style={LosersGameList.listItem}>
             <Text>Voting Rules:</Text>
@@ -92,59 +144,74 @@ const AvaliablePublishedGame = () => {
         </View>
 
         <FilterTabPanel onTabChange={setSelectedTab} />
-        <Text style={[LosersGameList.rulesTitle, { paddingHorizontal: 20, paddingTop: 10 }]}>
+        <Text
+          style={[
+            LosersGameList.rulesTitle,
+            { paddingHorizontal: 20, paddingTop: 10 },
+          ]}
+        >
           Recently Published Games
         </Text>
 
-        {isGameAvailable ? (
-          
-          <ScrollView contentContainerStyle={styles.scrollContainer} showsHorizontalScrollIndicator={false}>
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Text style={styles.headerIcon}>🔢</Text>
-                <Text style={styles.headerText}>{GameName}</Text>
-              </View>
-
-              <View style={styles.cardBody}>
-                <View style={styles.row}>
-                  <View>
-                    <Text style={styles.label}>Stake</Text>
-                    <Text style={styles.value}>₦{stake}</Text>
-                  </View>
-                  <View style={{ alignItems: 'flex-end' }}>
-                    <Text style={styles.label}>Odds</Text>
-                    <Text style={styles.value}>{odds}</Text>
-                  </View>
+        {filteredGames && filteredGames ? (
+          filteredGames.map((game, index)=>(
+           
+              <ScrollView
+              contentContainerStyle={styles.scrollContainer}
+              showsHorizontalScrollIndicator={false}
+              key={game.id}
+            >
+              <View style={styles.card}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.headerIcon}>🔢</Text>
+                  <Text style={styles.headerText}>{game.name}</Text>
                 </View>
 
-                <Text style={styles.description}>
-                  {GameName} - {gameLabel}
-                </Text>
+                <View style={styles.cardBody}>
+                  <View style={styles.row}>
+                    <View>
+                      <Text style={styles.label}>Stake</Text>
+                      <Text style={styles.value}>₦{game.stake}</Text>
+                    </View>
+                    <View style={{ alignItems: "flex-end" }}>
+                      <Text style={styles.label}>Odds</Text>
+                      <Text style={styles.value}>{games.odds}</Text>
+                    </View>
+                  </View>
 
-                <View style={styles.row}>
-                  <Text style={styles.info}>
-                    <Text style={styles.infoLabel}>House:</Text> @current-user
+                  <Text style={styles.description}>
+                    {game.name} - {game.subcategory}
                   </Text>
-                  <Text style={styles.info}>
-                    <Text style={styles.infoLabel}>Status:</Text> Open
-                  </Text>
+
+                  <View style={styles.row}>
+                    <Text style={styles.info}>
+                      <Text style={styles.infoLabel}>House:</Text> @current-user
+                    </Text>
+                    <Text style={styles.info}>
+                      <Text style={styles.infoLabel}>Status:</Text> Open
+                    </Text>
+                  </View>
+
+                  <TouchableOpacity
+                    style={styles.playButton}
+                    onPress={()=>handlePlayNow(game)}
+                  >
+                    <Text style={styles.playButtonText}>
+                      {normalizedGameName(game.name) === "dice roll" ||
+                      normalizedGameName(game.name) === "wheel spin"
+                        ? "Vote Now"
+                        : "Play Now"}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-
-                <TouchableOpacity style={styles.playButton} onPress={handlePlayNow}>
-                  <Text style={styles.playButtonText}>
-                    {normalizedGameName === 'dice roll' || normalizedGameName === 'wheel spin'
-                      ? 'Vote Now'
-                      : 'Play Now'}
-                  </Text>
-                </TouchableOpacity>
               </View>
-            </View>
-          </ScrollView>
+            </ScrollView>
+          ))
         ) : (
           <Text style={styles.noGameText}>No published game found.</Text>
         )}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -153,34 +220,34 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   scrollContainer: {
-    marginHorizontal: '20',
-    backgroundColor: '#EEF6FF',
+    marginHorizontal: "20",
+    backgroundColor: "#EEF6FF",
     paddingVertical: 16,
   },
   noGameText: {
-    textAlign: 'center',
-    color: '#888',
+    textAlign: "center",
+    color: "#888",
     fontSize: 16,
     paddingHorizontal: 20,
   },
   card: {
-    width: '100%',
+    width: "100%",
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 12,
-    backgroundColor: '#fff',
-    overflow: 'hidden',
-    shadowColor: '#000',
+    backgroundColor: "#fff",
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 3,
   },
   cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   headerIcon: {
     fontSize: 18,
@@ -188,46 +255,46 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   cardBody: {
     padding: 12,
   },
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 8,
   },
   label: {
     fontSize: 12,
-    color: '#777',
+    color: "#777",
   },
   value: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   description: {
     fontSize: 13,
-    color: '#333',
+    color: "#333",
     marginBottom: 10,
   },
   info: {
     fontSize: 12,
-    color: '#555',
+    color: "#555",
   },
   infoLabel: {
-    color: '#777',
+    color: "#777",
   },
   playButton: {
     marginTop: 12,
-    backgroundColor: '#3b82f6',
+    backgroundColor: "#3b82f6",
     paddingVertical: 10,
     borderRadius: 6,
-    alignItems: 'center',
+    alignItems: "center",
   },
   playButtonText: {
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
     fontSize: 15,
   },
 });

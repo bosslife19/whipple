@@ -10,7 +10,7 @@ export const AuthProvider = ({children})=>{
     (async () => {
       try {
         const user = await AsyncStorage.getItem("userDetails");
-        console.log(user)
+        
         if (user) {
           setUserDetails(JSON.parse(user));
         }

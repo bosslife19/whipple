@@ -7,10 +7,12 @@ import HeaderBet from '../../Header/HeaderBet';
 const GameDetails = () => {
     const router = useRouter();
          const { gameData,updateGameData } = useGameContext();
-      const { stake, odds, gameLabel, range, selected, GameName } = gameData || {};
+      const { gameLabel, range, selected, GameName } = gameData || {};
+      const {name, stake, odds, house, result, subcategory,id} = useLocalSearchParams()
+  
     
     // Normalize GameName
-    const normalizedGameName = GameName?.toLowerCase?.();
+    const normalizedGameName = name?.toLowerCase?.();
   
     const handleContinue = () => {
       // Ensure all parameters are strings for safe navigation
@@ -28,6 +30,8 @@ const GameDetails = () => {
             GameName,
             range, 
             selected,
+            id,
+            name
           },
           });
           break;
@@ -161,24 +165,24 @@ const GameDetails = () => {
 
         default:
           // Handle unknown game gracefully
-          console.warn(`[Navigation Error]: Unknown game "${GameName}" selected.`);
+          console.warn(`[Navigation Error]: Unknown game "${name}" selected.`);
           alert('An error occurred: Unknown game selected. Please try again.');
       }
     };
     return (
         <>
-      <HeaderBet arrow name={GameName} backgroundColor="#A8BFED" />
+      <HeaderBet arrow name={name} backgroundColor="#A8BFED" />
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>{GameName}</Text>
+          <Text style={styles.title}>{name}</Text>
           <Text style={styles.subTitle}>
-            {GameName} - {gameLabel} (2 from 1-{range})
+            {name} - {subcategory} (2 from 1-{range})
           </Text>
         </View>
 
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Game Details</Text>
-          <Text style={styles.info}>House: @current-user</Text>
+          <Text style={styles.info}>House: @{house}</Text>
           <View style={styles.detailRow}>
             <View>
               <Text style={styles.label}>Stake</Text>
@@ -204,7 +208,7 @@ const GameDetails = () => {
             </View>
             <View>
               <Text style={styles.label}>Required Stake</Text>
-              <Text style={styles.value}>₦800</Text>
+              <Text style={styles.value}>₦{Math.floor(stake / 3)}</Text>
             </View>
           </View>
 
