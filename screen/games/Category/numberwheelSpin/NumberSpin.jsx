@@ -9,6 +9,7 @@ import {
   ScrollView,
   ImageBackground,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import HeaderBet from '../../../Header/HeaderBet';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -19,14 +20,16 @@ import bgs from "../../../../assets/images/games/koefficienty.webp"
 import FLipCoin from '../../../../styles/flipcoin/flipCoin';
 import { useGameContext } from '../../../../context/AppContext';
 import CustomInput from '../../../../components/Input/TextInput';
+import { useRequest } from '../../../../hooks/useRequest';
 
 const NumberSpinWheel = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
   const [totalInput, setTotalInput] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-  const [loading, setLoading] = useState(false);
+ 
   const [winningNumbers, setWinningNumbers] = useState([]);
   const [showResult, setShowResult] = useState(false);
+  const {loading, makeRequest} = useRequest()
 
   // Calculate admissionFee and stake from totalAmount
   const totalAmount = parseFloat(totalInput) || 0;
@@ -66,22 +69,32 @@ const NumberSpinWheel = () => {
         // const GameName = 'Wheel Spin' 
         // const odds = '10';
 
-  const handlePublishGame = () => {
-    setLoading(true);
+  const handlePublishGame = async() => {
+  
     const formattedOdds = `${odds}x`;
-
-    setTimeout(() => {
+ 
+    const res  = await makeRequest('/create-game', {
+      name: "One Number Spin",
+      odds,
+      winningNumber: winningNumbers[0],
+      stake,
+    })
+    if(res.response.status){
+      Alert.alert('Success', 'Game Created Successfully');
+       setTimeout(() => {
       router.push( '/(routes)/games/availablegames')
-      updateGameData({
-        stake: stake.toFixed(2),
-          odds: formattedOdds,
-          gameLabel: `${winningNumbers.join(', ')}`,
-          GameName,
-          range,
-          result: gameLabel,
-      });
-      setLoading(false);
+      // updateGameData({
+      //   stake: stake.toFixed(2),
+      //     odds: formattedOdds,
+      //     gameLabel: `${winningNumbers.join(', ')}`,
+      //     GameName,
+      //     range,
+      //     result: gameLabel,
+      // });
+
     }, 2000);
+    }
+    
   };
 
   return (

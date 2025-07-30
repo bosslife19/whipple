@@ -91,7 +91,7 @@ const CreateLuckyNumbers = () => {
 
     console.log(gameData);
     const response = await makeRequest("/create-game", {
-      name: gameData.GameName,
+      name: 'Lucky Number',
       category: gameData.category,
       subcategory: subcategory,
       result: selectedNumbers[0],

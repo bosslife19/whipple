@@ -8,9 +8,9 @@ const tabs = [
   'Dice Roll',
   'Wheel Spin',
   'Color Roulette',
-  'Mystery Box',
+  'Mystery Box Game',
   'Goal Challenge',
-  'Spin da Bottle',
+  'Spin The Bottle',
 ];
 
 const FilterTabPanel = ({ onTabChange }) => {

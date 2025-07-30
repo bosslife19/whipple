@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -20,7 +20,9 @@ import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
 import Slectedcol from '../../../../styles/selectedColorsstyles';
 import dicestyles from '../../../../styles/diceGame/dice.styles';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useRequest } from '../../../../hooks/useRequest';
+import axiosClient from '../../../../axiosClient';
 
 const screenWidth = Dimensions.get('window').width;
 const segmentWidth = screenWidth - 70;
@@ -29,11 +31,22 @@ const GoalSelected = () => {
   const ballBottom = useRef(new Animated.Value(24)).current;
   const ballLeft = useRef(new Animated.Value(segmentWidth / 2 - 0)).current;
 
+  const {id, name} = useLocalSearchParams();
+
+  const {makeRequest} = useRequest()
   const {updateGameData, gameData } = useGameContext();
   const { GameName} = gameData || {};
   const [selectedGuess, setSelectedGuess] = useState(null);
   const [isBallUp, setIsBallUp] = useState(false);
-
+  const [game, setGame] = useState(null)
+useEffect(()=>{
+  const getGame = async ()=>{
+    const res = await axiosClient.get(`/get-game/${id}`);
+    
+    setGame(res.data.game);
+  }
+  getGame()
+}, [])
       const [success, setSuccess] = useState(null); // null initially, true/false after check
     
       const [visible, setModalVisibled] = useState(false);
@@ -47,11 +60,26 @@ const GoalSelected = () => {
     setSelectedGuess(side);
   };
 
-  const shootBall = () => {
+  const shootBall = async() => {
     if (!selectedGuess) {
       Alert.alert('Choose Direction', 'Please select Left, Center, or Right first.');
       return;
     }
+
+    const res = await makeRequest('/play-game',{
+      name: game.name,
+      direction: selectedGuess.toLowerCase(),
+      gameId: game.id
+      
+
+
+    } )
+
+    if(res.error){
+      return Alert.alert('Error', res.error);
+    }
+
+    
 
     let targetLeft;
 
@@ -76,10 +104,10 @@ const GoalSelected = () => {
       }),
     ]).start(() => {
       setIsBallUp(true);
-      if (selectedGuess === 'Left') {
-        setSuccess(true); // It's a win
-      } else {
-        setSuccess(false); // It's a win
+      if(res.response.success){
+        setSuccess(true)
+      }else{
+        setSuccess(false);
       }
       setModalVisibled(true);
     });
@@ -102,7 +130,7 @@ const GoalSelected = () => {
     <HeaderBet arrow amount={'200'} name={GameName} />
            <ScrollView contentContainerStyle={styles.card}>
             <Text style={[styles.header,{textAlign:"left",width:"100%",marginBottom:0}]}>Goal Challenge</Text>
-            <Text style={[Slectedcol.cardSubtitle,{textAlign:"left",width:"100%"}]}>House: @user</Text>
+            <Text style={[Slectedcol.cardSubtitle,{textAlign:"left",width:"100%"}]}>House: @{game?.creator.name}</Text>
               
               
               <Text style={styles.header}>Shoot The Ball</Text>

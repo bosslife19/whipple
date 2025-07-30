@@ -11,6 +11,7 @@ import {
   TextInput,
   ActivityIndicator,
   Image,
+  Alert,
 } from 'react-native';
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 // import { Goal } from 'lucide-react-native';
@@ -25,6 +26,7 @@ import FLipCoin from '../../../../styles/flipcoin/flipCoin';
 import Goalstyles from '../../../../styles/Goal.styles';
 import { router } from 'expo-router';
 import CustomInput from '../../../../components/Input/TextInput';
+import { useRequest } from '../../../../hooks/useRequest';
 
 const { width } = Dimensions.get('window');
 const segmentWidth = width - 20;
@@ -32,6 +34,7 @@ const segmentWidth = width - 20;
 const GoalMain = () => {
   const ballBottom = useRef(new Animated.Value(24)).current;
   const ballLeft = useRef(new Animated.Value(segmentWidth / 2 - 20)).current;
+  const {makeRequest, loading} = useRequest()
 
   const [isBallUp, setIsBallUp] = useState(false);
   const [previousPositions, setPreviousPositions] = useState(new Set());
@@ -111,25 +114,30 @@ const GoalMain = () => {
   const [admissionFee, setAdmissionFee] = useState(0);
   const [stake, setStake] = useState(0);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-  const [loading, setLoading] = useState(false);
+  
   const [showResult, setShowResult] = useState(true); // Set true so button is enabled after input
 
-  const handlePublishGame = () => {
-    setLoading(true);
+  const handlePublishGame = async() => {
+   
     const totalAmount = parseFloat(totalInput);
+    
+    
+    const res = await makeRequest('/create-game', {name:'Goal Challenge', odds:mainOdd, direction:selectedGoal.toLowerCase(), stake:totalAmount});
+    if(res.response){
+       Alert.alert('Success', 'Game Created Successfully');
+      setTimeout(() => {
+      
 
-    setTimeout(() => {
-      updateGameData({
-        selectedBox: selectedGoal,
-        stake: totalAmount,
-        odds: mainOdd,
-        GameName,
-        gameLabel: `${selectedGoal} is the winning goal`,
-      });
-
-      setLoading(false);
+      
       router.push('/(routes)/games/availablegames');
     }, 2000);
+    } else if(res.error){
+      return Alert.alert('Error', res.error);
+    }else{
+      return Alert.alert('Error', 'Server Error');
+    }
+
+    
   };
 
   const handleTotalInputChange = (text) => {

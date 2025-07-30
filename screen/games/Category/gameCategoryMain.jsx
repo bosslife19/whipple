@@ -168,7 +168,7 @@ const GameCategoryMain = () => {
             <Text style={gameCates.description}>{game.description}</Text>
             <Text style={gameCates.variantLabel}>Variants:</Text>
             {game.variants.map((variant, idx) => (
-              <Text key={idx} style={gameCates.variantText}>• {variant}</Text>
+              <Text key={idx} style={gameCates.variantText}>•  {variant}</Text>
             ))}
             <TouchableOpacity style={gameCates.btn} onPress={game.handleNavigate}>
               <Text style={[gameCates.gameTitle,{textAlign:"center",color:"#fff"}]}>Create Game</Text>

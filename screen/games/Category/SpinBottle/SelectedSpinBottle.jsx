@@ -9,16 +9,17 @@ import {
   ImageBackground,
   Dimensions,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import HeaderBet from '../../../Header/HeaderBet';
 import WheelSPins from '../../../../styles/spining/wheelspining.styles';
 import bgs from "../../../../assets/icons/wods.jpeg";
 import bottleImage from "../../../../assets/icons/Beer-Bottle-Transparent-Image-2.png";
 import { useGameContext } from '../../../../context/AppContext';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import Winningmodal from '../../../winningmodal/winningmodal';
 import Losingmodal from '../../../loseModal/LoseModal';
-
+import { useRequest } from '../../../../hooks/useRequest';
 const SelectedSpinBottle = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
   const [selectedDirection, setSelectedDirection] = useState(null);
@@ -26,9 +27,13 @@ const SelectedSpinBottle = () => {
   const [result, setResult] = useState(null);
   const [success, setSuccess] = useState(null);
   const [visible, setVisible] = useState(false);
+
+  const {name, id} = useLocalSearchParams()
  
     const { gameData ,updateGameData } = useGameContext();
         const {  odds,  gameLabel,  GameName , stake} = gameData || {};
+    
+  const {makeRequest} = useRequest()
   
 
   const spinBottle = (direction) => {
@@ -53,8 +58,26 @@ const SelectedSpinBottle = () => {
     }).start(() => {
       setIsSpinning(false);
 
-      const didWin = Math.random() < 0.5; // 50% chance to win
-      setSuccess(didWin);
+      makeRequest('/play-game', {
+                gameId: id,
+                name,
+                direction: direction.toLowerCase()
+               }).then(res=>{
+                console.log(res);
+                 
+                  if(res.error){
+                    return Alert.alert('Error', res.error);
+                  }
+                  if(res.response.success){
+                    setSuccess(true);
+                  }else{
+                    setSuccess(false)
+                  }
+               }).catch((e)=>{
+                console.log(e);
+                
+               })
+        
       setResult(direction);
       setVisible(true);
     });
@@ -105,7 +128,7 @@ const SelectedSpinBottle = () => {
           <View style={WheelSPins.container}>
             <Text style={WheelSPins.sectionTitle}>{GameName}</Text>
             <Text style={[WheelSPins.inputLabel, { textAlign: "left", marginBottom: 30 }]}>
-              Select a direction and {GameName}!
+              Select a direction and Spin the Bottle!
             </Text>
 
             {/* Static Wheel */}

@@ -1,6 +1,6 @@
 // components/MysteryMain.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ImageBackground, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ImageBackground, ActivityIndicator, TextInput, Alert } from 'react-native';
 // import { Box, Check } from 'lucide-react-native'; // Check icon from lucide-react-native
 // import { useGameContext } from '../../../../context/GameContext'; // Import useGameContext hook
 import Header from '../../../Header/Header';
@@ -10,6 +10,7 @@ import { router } from 'expo-router';
 import { useGameContext } from '../../../../context/AppContext';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import CustomInput from '../../../../components/Input/TextInput';
+import { useRequest } from '../../../../hooks/useRequest';
 
 const MysteryMain = () => {
   const boxes = ['Box 1', 'Box 2', 'Box 3'];
@@ -23,6 +24,7 @@ const MysteryMain = () => {
 
   // Track selected box
   const [selectedBox, setSelectedBox] = useState( null);
+  const {makeRequest} = useRequest()
 
   const handleBoxPress = (label) => {
     // If the same box is tapped again, unselect it
@@ -45,10 +47,36 @@ const MysteryMain = () => {
   const isPublishEnabled = parsedStake > 0 && selectedBox;
   const totalAmount = parsedStake + admissionFee;
 
-  const handlePublish = () => {
+  const handlePublish = async() => {
     const mainOdd = '3.003x';
     const GameName = 'Mystery Box';
+
+  
     setLoading(true);
+
+ const res =    await makeRequest('/create-game', {
+      name: 'Mystery Box Game',
+      odds: 3.003,
+      stake,
+      boxSelected: selectedBox.toLowerCase().replace(/\s+/g, '')
+    })
+
+ if(res.response.status){
+  setLoading(false)
+    setTimeout(() => {
+      // Now navigate to the game page
+      router.push('/(routes)/games/availablegames');
+      setLoading(false);
+    }, 2000);
+  return Alert.alert('Success', 'Game Created Successfully');
+ }else{
+  setLoading(false);
+  Alert.alert('Error', 'Server Error')
+ }
+
+    
+
+
 
     // Save game data to the context
     updateGameData({

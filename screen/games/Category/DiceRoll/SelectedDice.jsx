@@ -8,23 +8,26 @@ import {
   ActivityIndicator,
   Animated,
   Easing,
+  Alert,
 } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import Header from '../../../Header/Header';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useGameContext } from '../../../../context/AppContext';
 import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
 import dicestyles from '../../../../styles/diceGame/dice.styles';
+import {useRequest} from '../../../../hooks/useRequest'
 
 const SelectedDiceRoll = () => {
   const { updateGameData, gameData } = useGameContext();
   const { stake, odds, gameLabel, GameName = 'Dice Roll' } = gameData || {};
+  const {makeRequest, loading} = useRequest()
 
   const [diceType, setDiceType] = useState('single');
   const [diceRolled, setDiceRolled] = useState(false);
-  const [face1, setFace1] = useState(1);
-  const [face2, setFace2] = useState(1);
+  const [face1, setFace1] = useState(0);
+  const [face2, setFace2] = useState(0);
   const [houseRoll, setHouseRoll] = useState(null);
   const [userRoll, setUserRoll] = useState(null);
   const [rolling, setRolling] = useState(false);
@@ -33,6 +36,10 @@ const SelectedDiceRoll = () => {
  
   const spinValue1 = useRef(new Animated.Value(0)).current;
   const spinValue2 = useRef(new Animated.Value(0)).current;
+
+  const {id, name} = useLocalSearchParams();
+
+  console.log(id, name)
 
   const closeModal = () => {
     setModalVisibled(false);
@@ -72,12 +79,42 @@ const SelectedDiceRoll = () => {
 
       setHouseRoll(houseTotal);
       setUserRoll(userTotal);
+      setRolling(false)
+     
 
-      setDiceRolled(true);
-      const gameResult = userTotal === houseTotal ? 'win' : 'lose';
-      setResult(gameResult);
-      setModalVisibled(true);
-      setRolling(false);
+       makeRequest('/play-game',{
+      name,
+      numberRolled: userTotal,
+      gameId: id
+      
+
+
+    } ).then((res)=>{
+     
+      console.log('res', res.error, res.response);
+      if(res.error){
+        
+        setFace1(0)
+        setFace2(0)
+        return Alert.alert('Error', res.error);
+      }
+      if(res.response.success){
+        console.log('truee')
+        setResult("win")
+      }else if(res.response.success ===false){
+        console.log('faseeee');
+        setResult("lose")
+      }
+
+      
+ setDiceRolled(true);
+    })
+
+     
+      // const gameResult = userTotal === houseTotal ? 'win' : 'lose';
+      // setResult(gameResult);
+      // setModalVisibled(true);
+      // setRolling(false);
     });
   };
 
@@ -236,11 +273,18 @@ const SelectedDiceRoll = () => {
 
           <View style={styles.diceRow}>
             <Animated.View style={[dicestyles.diceBox, styles.diceShadow, { transform: [{ rotate: spin1 }] }]}>
-              {getDots(face1)}
+              {/* {} */}
+              {
+                face1 ? <Text>{face1}</Text>:getDots(face1)
+              }
+              
             </Animated.View>
             {diceType === 'double' && (
               <Animated.View style={[dicestyles.diceBox, styles.diceShadow, { transform: [{ rotate: spin2 }] }]}>
-                {getDots(face2)}
+                {/* {getDots(face2)} */}
+                {
+                  face2 ? <Text>{face2}</Text>:getDots(face1)
+                }
               </Animated.View>
             )}
           </View>

@@ -20,7 +20,7 @@ const ConFirmSelectedLuckyNumbers = () => {
 
         const { gameData ,updateGameData } = useGameContext();
         const {  odds,  gameLabel, GameName ,stake,selected,totalOdds} = gameData || {};
-    const {id} = useLocalSearchParams();
+    const {id, name} = useLocalSearchParams();
 
     const [game, setGame] = useState(null)
 
@@ -79,7 +79,8 @@ const ConFirmSelectedLuckyNumbers = () => {
 
     const res = await makeRequest('/play-game', {
       gameId: game.id,
-      choiceNumber: selectedNumbers[0]
+      choiceNumber: selectedNumbers[0],
+      name
 
 
     })

@@ -29,6 +29,8 @@ const AvaliablePublishedGame = () => {
       try {
        
         const res = await axiosClient.get("/get-all-games");
+
+      
        
         setGames(res.data.games);
       } catch (error) {
@@ -65,8 +67,8 @@ const filteredGames = games?.filter(game => {
     if (
       normalizedGameName(game.name) === "dice roll" ||
       normalizedGameName(game.name) === "wheel spin" ||
-      normalizedGameName(game.name) === "mystery box" ||
-      normalizedGameName(game.name) === "Spin the Bottle"
+      normalizedGameName(game.name) === "mystery box game" ||
+      normalizedGameName(game.name) === "spin the bottle"
     ) {
      
       router.push({
@@ -175,7 +177,7 @@ const filteredGames = games?.filter(game => {
                     </View>
                     <View style={{ alignItems: "flex-end" }}>
                       <Text style={styles.label}>Odds</Text>
-                      <Text style={styles.value}>{games.odds}</Text>
+                      <Text style={styles.value}>{game.odds}</Text>
                     </View>
                   </View>
 
@@ -185,7 +187,7 @@ const filteredGames = games?.filter(game => {
 
                   <View style={styles.row}>
                     <Text style={styles.info}>
-                      <Text style={styles.infoLabel}>House:</Text> @current-user
+                      <Text style={styles.infoLabel}>House:</Text> {game?.creator.name}
                     </Text>
                     <Text style={styles.info}>
                       <Text style={styles.infoLabel}>Status:</Text> Open

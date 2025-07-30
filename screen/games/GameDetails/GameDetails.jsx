@@ -13,7 +13,7 @@ const GameDetails = () => {
     
     // Normalize GameName
     const normalizedGameName = name?.toLowerCase?.();
-  
+ 
     const handleContinue = () => {
       // Ensure all parameters are strings for safe navigation
       
@@ -46,6 +46,8 @@ const GameDetails = () => {
             GameName,
             range, 
             selected,
+            id,
+            name
           },
           });
           break;
@@ -59,6 +61,8 @@ const GameDetails = () => {
             GameName,
             range,
             selected,
+            name,
+            id
              },
             });
             break; 
@@ -73,11 +77,13 @@ const GameDetails = () => {
             GameName,
             range,
             selected,
+            id,
+            name
           },
           });
           break;
   
-          case 'mystery box':
+          case 'mystery box game':
             router.push({
             pathname: '/games/vote',
               params: {
@@ -87,6 +93,8 @@ const GameDetails = () => {
               GameName,
               range,
               selected,
+              name,
+              id
             },
             });
             break;
@@ -101,6 +109,8 @@ const GameDetails = () => {
                 GameName,
                 range,
                 selected,
+                id,
+                name
               },
               });
               break;
@@ -115,6 +125,8 @@ const GameDetails = () => {
                 GameName,
                 range,
                 selected,
+                name, 
+                id,
               },
               });
               break;
@@ -129,6 +141,8 @@ const GameDetails = () => {
                 GameName,
                 range,
                 selected,
+                name,
+                id
               },
               });
               break;
@@ -143,6 +157,8 @@ const GameDetails = () => {
                 GameName,
                 range,
                 selected,
+                name,
+                id
                 },
                });
             
@@ -158,6 +174,8 @@ const GameDetails = () => {
                 GameName,
                 range,
                 selected,
+                name,
+                id
                 },
                });
             

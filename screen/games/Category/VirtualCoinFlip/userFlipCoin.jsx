@@ -14,6 +14,7 @@ import HeaderBet from '../../../Header/HeaderBet';
 import Winningmodal from '../../../winningmodal/winningmodal';
 import Losingmodal from '../../../loseModal/LoseModal';
 import { useGameContext } from '../../../../context/AppContext';
+import { useRequest } from '../../../../hooks/useRequest';
 
 const UserFlipCoin = () => {
   // const {
@@ -27,7 +28,9 @@ const UserFlipCoin = () => {
 
     const { gameData ,updateGameData } = useGameContext();
     const {  totalOdds = '2.0',  gameLabel, range, GameName ,result: passedResult ,} = gameData || {};
-  
+  const {id, name} = useLocalSearchParams();
+  const {makeRequest} = useRequest()
+ 
   const router = useRouter();
   const rotation = useRef(new Animated.Value(0)).current;
   const [flipResult, setFlipResult] = useState(null);
@@ -68,6 +71,25 @@ const UserFlipCoin = () => {
       duration: 1500,
       useNativeDriver: true,
     }).start(() => {
+      makeRequest('/play-game', {
+       
+        gameId:id,
+        choice:choice.toLowerCase(),
+        name
+      }).then(res=>{
+        if(res.response.success){
+           setIsFlipping(false);
+      setFlippingButton(null);
+          setSuccess(false);
+          setModalVisibled(true)
+        }else{
+           setIsFlipping(false);
+      setFlippingButton(null);
+          setSuccess(false);
+          setModalVisibled(true)
+        }
+      }).catch(e=>console.log(e));
+      return
       const randomResult = Math.random() < 0.5 ? 'Tails' : 'Heads';
       setFlipResult(randomResult);
       const didWin = choice === randomResult;
@@ -110,8 +132,8 @@ const UserFlipCoin = () => {
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>{GameName}</Text>
-          <Text style={styles.cardSubTitle}>House: @user</Text>
+          <Text style={[styles.cardTitle, {textAlign:'center', marginBottom:5}]}>{name}</Text>
+          {/* <Text style={styles.cardSubTitle}>House: @user</Text> */}
 
           <View style={styles.coinWrapper}>
             <Animated.View style={[FLipCoin.coinContainer, { transform: [{ rotateY }] }]}>
@@ -136,7 +158,7 @@ const UserFlipCoin = () => {
                   {isFlipping && flippingButton === 'Heads' ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
-                    <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Flip Coin</Text>
+                    <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Heads</Text>
                   )}
                 </TouchableOpacity>
 
@@ -148,7 +170,7 @@ const UserFlipCoin = () => {
                   {isFlipping && flippingButton === 'Tails' ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
-                    <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Flip Coin</Text>
+                    <Text style={[FLipCoin.buttonText, { fontWeight: '700' }]}>Tails</Text>
                   )}
                 </TouchableOpacity>
               </> 

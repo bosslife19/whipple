@@ -8,15 +8,32 @@ import Slectedcol from '../../../../styles/selectedColorsstyles';
 import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
 import { useGameContext } from '../../../../context/AppContext';
-
+import GoalStyles from '../../../../styles/Goal.styles'
+import axiosClient from '../../../../axiosClient';
+import { useRequest } from '../../../../hooks/useRequest';
 const ColorRouletteSelect = () => {
     const [selectedColor, setSelectedColor] = useState(null);
     const [activeColors, setActiveColors] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hasSpun, setHasSpun] = useState(false);
     const [success, setSuccess] = useState(null); // null initially, true/false after check
-  
+    const [game, setGame] = useState(null)
     const [visible, setModalVisibled] = useState(false);
+    const {id, name} = useLocalSearchParams();
+
+    const {makeRequest} = useRequest()
+
+    useEffect(()=>{
+ const getGame = async ()=>{
+        const res = await axiosClient.get(`/get-game/${id}`);
+
+        setGame(res.data.game)
+
+      }
+
+      getGame();
+    }, [])
+
    
   
    const closeModal =()=>{
@@ -62,6 +79,27 @@ const ColorRouletteSelect = () => {
         const shuffled = colors.sort(() => 0.5 - Math.random());
         const selected = shuffled.slice(0, 2).map(c => c.id);
         setActiveColors(selected);
+
+         makeRequest('/play-game', {
+                gameId: id,
+                name,
+                colorSpun: selected[0]
+               }).then(res=>{
+                console.log(res);
+                  setLoading(false);
+                  if(res.error){
+                    return Alert.alert('Error', res.error);
+                  }
+                  if(res.response.success){
+                    setSuccess(true);
+                  }else{
+                    setSuccess(false)
+                  }
+               }).catch((e)=>{
+                console.log(e);
+                
+               })
+        
         
         setLoading(false);
         setHasSpun(true);
@@ -116,7 +154,8 @@ const ColorRouletteSelect = () => {
   
           <View style={Slectedcol.card}>
             <Text style={Slectedcol.cardTitle}>{GameName}</Text>
-            <Text style={Slectedcol.cardSubtitle}>House: @user</Text>
+            
+            <Text style={Slectedcol.cardSubtitle}>House: @{game?.creator.name}</Text>
           </View>
   
           <View style={Slectedcol.wheelContainer}>
@@ -171,7 +210,7 @@ const ColorRouletteSelect = () => {
                       )}
                        {success === true && ( 
                         <TouchableOpacity
-                         style={Goalstyles.button}
+                         style={GoalStyles.button}
                          onPress={() => router.push('/(routes)/games/category/category-main')}  >
                          <Text style={styles.buttonText}>Go Back to Games</Text>
                         </TouchableOpacity>  )} 

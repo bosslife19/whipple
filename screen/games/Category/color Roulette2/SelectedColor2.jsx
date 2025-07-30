@@ -9,6 +9,7 @@ import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
 import { useGameContext } from '../../../../context/AppContext';
 import Goalstyles from '../../../../styles/Goal.styles';
+import { useRequest } from '../../../../hooks/useRequest';
 
 const ColorRouletteSelect2 = () => {
     const [selectedColor, setSelectedColor] = useState(null);
@@ -16,8 +17,10 @@ const ColorRouletteSelect2 = () => {
     const [loading, setLoading] = useState(false);
     const [hasSpun, setHasSpun] = useState(false);
     const [success, setSuccess] = useState(null); // null initially, true/false after check
-  
+  const {makeRequest} = useRequest();
     const [visible, setModalVisibled] = useState(false);
+
+    const {name, id} = useLocalSearchParams()
    
   
    const closeModal =()=>{
@@ -63,7 +66,29 @@ const ColorRouletteSelect2 = () => {
        const randomIndex = Math.floor(Math.random() * colors.length);
        const selected = [colors[randomIndex].id];
        setActiveColors(selected);
-       setLoading(false);
+      
+
+       makeRequest('/play-game', {
+        gameId: id,
+        name,
+        colorSpun: selected[0]
+       }).then(res=>{
+        console.log(res);
+          setLoading(false);
+          if(res.error){
+            return Alert.alert('Error', res.error);
+          }
+          if(res.response.success){
+            setSuccess(true);
+          }else{
+            setSuccess(false)
+          }
+       }).catch((e)=>{
+        console.log(e);
+        
+       })
+
+      
      });
    };
 
@@ -176,7 +201,7 @@ const ColorRouletteSelect2 = () => {
             <TouchableOpacity
              style={Goalstyles.button}
              onPress={() => router.push('/(routes)/games/category/category-main')}  >
-             <Text style={styles.buttonText}>Go Back to Games</Text>
+             <Text style={Goalstyles.buttonText}>Go Back to Games</Text>
             </TouchableOpacity>  )} 
             {success === null && (
               <TouchableOpacity

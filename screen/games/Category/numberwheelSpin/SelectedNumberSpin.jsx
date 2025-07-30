@@ -7,27 +7,32 @@ import {
   Easing,
   ScrollView,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import HeaderBet from '../../../Header/HeaderBet';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import creategame from '../../../../styles/creategame/creategame.styles';
 import WheelSPins from '../../../../styles/spining/wheelspining.styles';
 import bgs from '../../../../assets/images/games/image_fx_ (35) 1.png';
 import { useGameContext } from '../../../../context/AppContext';
 import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
+import { useRequest } from '../../../../hooks/useRequest';
 
 const SelectedNumberSpinWheel = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
   const lastResultWasWin = useRef(null);
+  const {makeRequest, loading}  = useRequest()
 
   const [totalInput, setTotalInput] = useState('');
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [winningNumbers, setWinningNumbers] = useState([]);
   const [showResult, setShowResult] = useState(false);
   const [success, setSuccess] = useState(null);
   const [visible, setModalVisible] = useState(false);
   const [selectedNumbers, setSelectedNumbers] = useState([]); // Start empty
+
+  const {name, id} = useLocalSearchParams();
 
   const { gameData, updateGameData } = useGameContext();
   const { odds = '10', gameLabel, range, GameName = 'One Number Spin'} = gameData || {};
@@ -76,7 +81,7 @@ const SelectedNumberSpinWheel = () => {
         }
       }
       setWinningNumbers(result);
-      checkResult(result);
+      // checkResult(result);
     });
   };
 
@@ -98,23 +103,34 @@ const SelectedNumberSpinWheel = () => {
     setSuccess(null);
   };
 
-  const handleSpinButtonPress = () => {
-    if (showResult) {
-      if (lastResultWasWin.current) {
-         router.push('/(routes)/games/category/category-main')
-      } else {
-         updateGameData({
-        stake: stake.toFixed(2),
-        odds,
-        gameLabel: winningNumbers.join(', '),
-        GameName,
-       isGameLost: true,
-      });
-        router.push('/(routes)/games/LostGames/ViewLostGames');
-      }
-    } else { 
-      spinWheel();
+  const handleSpinButtonPress = async() => {
+    spinWheel();
+    const res = await makeRequest('/play-game',{
+      gameId: id,
+      name,
+      numberWheeled: selectedNumbers[0]
+    })
+
+    if(res.error){
+      return Alert.alert('Error', res.error);
     }
+    if(res.response.success){
+      setSuccess(true);
+    }else if(!res.error && !res.response.success){
+      console.log('ree')
+      setSuccess(false);
+    }
+
+    // if (showResult) {
+    //   if (lastResultWasWin.current) {
+    //      router.push('/(routes)/games/category/category-main')
+    //   } else {
+         
+    //     router.push('/(routes)/games/LostGames/ViewLostGames');
+    //   }
+    // } else { 
+    //   spinWheel();
+    // }
   };
 
   return (

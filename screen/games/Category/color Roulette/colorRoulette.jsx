@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, Animated, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, Animated, ActivityIndicator, TextInput, Alert } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import diceColorRou from '../../../../styles/diceGame/dice.styles';
 import ColorRou from '../../../../styles/colorRoulete.styles';
@@ -9,6 +9,7 @@ import Header from '../../../Header/Header';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useGameContext } from '../../../../context/AppContext';
 import CustomInput from '../../../../components/Input/TextInput';
+import {useRequest} from '../../../../hooks/useRequest'
 
 const colors = [
   { id: 'red', hex: '#EA384C', label: 'Red' },
@@ -20,8 +21,8 @@ const colors = [
 const ColorRouletteGame = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
   const [activeColors, setActiveColors] = useState([]);
-  const [loading, setLoading] = useState(false);
   
+  const {makeRequest, loading} = useRequest();
   // New state for stake, admission fee, and total amount
   const [stake, setStake] = useState('');
   const [admissionFee, setAdmissionFee] = useState(0);
@@ -51,7 +52,7 @@ const ColorRouletteGame = () => {
   };
 
   const spinWheel = () => {
-    setLoading(true);
+    
     Animated.timing(spinValue, {
       toValue: 360 * 4,
       duration: 2000,
@@ -61,7 +62,7 @@ const ColorRouletteGame = () => {
       const shuffled = colors.sort(() => 0.5 - Math.random());
       const selected = shuffled.slice(0, 2).map(c => c.id);
       setActiveColors(selected);
-      setLoading(false);
+      
     });
   };
 
@@ -82,15 +83,25 @@ const ColorRouletteGame = () => {
           const {  range  } = gameData || {};
           const GameName='Color Roulette' 
           const gameLabel=`${activeColors}`
-       const handlePublish = () => {
+       const handlePublish = async() => {
       // Ensure there are exactly 2 selected colors (or any other valid number)
       if (activeColors.length !== 2) {
         alert('Please spin the wheel and let two colors be selected.');
         return;
       }
       const selectedColors = activeColors.join(','); // Join selected color IDs into a comma-separated string
+    const res = await makeRequest('/create-game', {name:'Color Roulette', colors:selectedColors.toLowerCase(), stake})
+   
+   if(res.response){
+     Alert.alert('Success', 'Game Created Successfully');
+      setTimeout(()=>{
     
-    router.push( '/(routes)/games/availablegames',)
+router.push( '/(routes)/games/availablegames')
+   }, 2000)
+   }
+
+  
+    
 
       updateGameData({
         stake: stake.toString(),
@@ -140,11 +151,9 @@ const ColorRouletteGame = () => {
         )}
 
         <TouchableOpacity onPress={spinWheel} style={ColorRou.button} disabled={loading}>
-          {loading ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
+          
             <Text style={[diceColorRou.result, ColorRou.buttonText]}>Spin Wheel</Text>
-          )}
+         
         </TouchableOpacity>
 
         {/* Right Card - Stake Input */}
@@ -177,7 +186,11 @@ const ColorRouletteGame = () => {
             ]}
             disabled={!isPublishEnabled}
           >
-            <Text style={dicestyles.buttonText}>Publish Game</Text>
+            {
+              loading? <ActivityIndicator size={20} color="white"/>:
+                          <Text style={dicestyles.buttonText}>Publish Game</Text>
+            }
+
           </TouchableOpacity>
         </View>
 

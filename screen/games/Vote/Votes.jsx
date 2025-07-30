@@ -28,6 +28,8 @@ const VoteColorRouletteScreen = () => {
         const { stake, odds, gameLabel, range, selected, GameName } = gameData || {};
         const {id, name} = useLocalSearchParams()
 
+      
+
         
   
   const handleSubmit = async() => {
@@ -35,6 +37,7 @@ const VoteColorRouletteScreen = () => {
       alert('Please select an option.');
       return;
     }
+ 
 
     const res = await makeRequest('/submit-vote', {gameId: id, vote: value})
 
@@ -42,6 +45,8 @@ const VoteColorRouletteScreen = () => {
 
 
     const normalizedGameName = name?.toLowerCase?.();
+
+    
 
     let path = '';
 
@@ -58,6 +63,7 @@ const VoteColorRouletteScreen = () => {
             range,  
             selected,
             id,
+            name,
           },
           });
           break;
@@ -72,6 +78,9 @@ const VoteColorRouletteScreen = () => {
             GameName,
             range,
             selected,
+            id,
+            name
+            
           },
           });
           break;
@@ -86,11 +95,13 @@ const VoteColorRouletteScreen = () => {
             GameName,
             range,
             selected,
+            id,
+            name
           },
           });
           break;
   
-          case 'mystery box':
+          case 'mystery box game':
             router.push({
               pathname: '/games/category/becomethehouse/mysteryGame/mysterySelect',
               params: {
@@ -100,6 +111,8 @@ const VoteColorRouletteScreen = () => {
               GameName,
               range,
               selected,
+              name,
+              id
             },
             });
             break;
@@ -114,6 +127,8 @@ const VoteColorRouletteScreen = () => {
                 GameName,
                 range,
                 selected,
+                name,
+                id
               },
               });
               break;
@@ -127,6 +142,7 @@ const VoteColorRouletteScreen = () => {
                 GameName,
                 range,
                 selected,
+                id, name
               },
               });
               break;
@@ -140,6 +156,8 @@ const VoteColorRouletteScreen = () => {
                 GameName,
                 range,
                 selected,
+                name,
+                id
               },
               });
               break; 
@@ -153,6 +171,8 @@ const VoteColorRouletteScreen = () => {
                 GameName,
                 range,
                 selected,
+                name,
+                id
               },
               });
               break; 
@@ -167,6 +187,8 @@ const VoteColorRouletteScreen = () => {
                 GameName,
                 range,
                 selected,
+                id,
+                name
               },
               });
               break;
@@ -181,6 +203,8 @@ const VoteColorRouletteScreen = () => {
                 GameName,
                 range,
                 selected,
+                name,
+                id
               },
               });
               break;

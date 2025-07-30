@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 // import { Package } from 'lucide-react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -13,11 +15,16 @@ import Winningmodal from '../../../winningmodal/winningmodal';
 import HeaderBet from '../../../Header/HeaderBet';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useGameContext } from '../../../../context/AppContext';
+import { useRequest } from '../../../../hooks/useRequest';
 
 const MyseterySelect = () => {
   // const { selected, GameName } = useLocalSearchParams();
       const { gameData ,updateGameData } = useGameContext();
       const {  odds,  gameLabel, selected, GameName , stake} = gameData || {};
+
+      const {name, id} = useLocalSearchParams()
+
+      const {makeRequest, loading} = useRequest();
      
   const router = useRouter();
 
@@ -30,13 +37,28 @@ const MyseterySelect = () => {
     setSelectedBox(boxLabel);
   };
 
-  const handleRevealBox = () => {
+  const handleRevealBox = async() => {
     if (!selectedBox) {
       alert('Please select a box first!');
       return;
     }
 
-    setSuccess(selectedBox === selected);
+    const res = await makeRequest('/play-game', {
+    name,
+    gameId: id,
+    boxSelected:"box"+selectedBox,
+    });
+
+    if(res.error){
+      return Alert.alert('Error', res.error);
+    }
+    if(res.response.success){
+      setSuccess(true);
+    }else{
+      setSuccess(false);
+    }
+
+    // setSuccess(selectedBox === selected);
     setModalVisibled(true);
   };
 
@@ -96,7 +118,9 @@ const MyseterySelect = () => {
                       style={styles.revealButton} 
                       onPress={handleRevealBox}
                   >
-                      <Text style={styles.revealButtonText}>Reveal Box</Text>
+                      {
+                        loading? <ActivityIndicator color='white' size={20}/>:<Text style={styles.revealButtonText}>Reveal Box</Text>
+                      }
                   </TouchableOpacity>
               )}
 

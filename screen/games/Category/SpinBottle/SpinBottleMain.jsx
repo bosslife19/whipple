@@ -9,6 +9,7 @@ import {
   ImageBackground,
   Dimensions,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import HeaderBet from '../../../Header/HeaderBet';
 import WheelSPins from '../../../../styles/spining/wheelspining.styles';
@@ -19,6 +20,7 @@ import FLipCoin from '../../../../styles/flipcoin/flipCoin';
 import creategame from '../../../../styles/creategame/creategame.styles';
 import { useGameContext } from '../../../../context/AppContext';
 import { router } from 'expo-router';
+import { useRequest } from '../../../../hooks/useRequest';
 
 const SpinBottleMain = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
@@ -27,6 +29,8 @@ const SpinBottleMain = () => {
   const [result, setResult] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
+
+  const {makeRequest} = useRequest()
 
   const [totalInput, setTotalInput] = useState('');
   const [admissionFee, setAdmissionFee] = useState(0);
@@ -100,11 +104,22 @@ const SpinBottleMain = () => {
           // const GameName = 'Wheel Spin' 
           // const odds = '3.333';
   
-    const handlePublishGame = () => {
+    const handlePublishGame = async() => {
       setLoading(true);
       const formattedOdds = `${odds}x`;
-  
-      setTimeout(() => {
+
+
+      const res = await makeRequest('/create-game', {
+        name: 'Spin The Bottle',
+        spinDirection: result.toLowerCase(),
+        odds,
+        stake
+      })
+
+      if(res.response){
+setLoading(false);
+Alert.alert('Success', 'Game Created Successfully');
+setTimeout(() => {
         updateGameData({
           stake: stake.toFixed(2),
             odds: formattedOdds,
@@ -117,6 +132,16 @@ const SpinBottleMain = () => {
 
         setLoading(false);
       }, 2000);
+      }else if(res.error){
+        setLoading(false);
+        return Alert.alert('Error', res.error)
+      }else{
+        setLoading(false)
+        return Alert.alert("Error", 'Server Error. Please check your internet connection')
+      }
+    
+  
+      
     };
 
   return (
@@ -127,7 +152,7 @@ const SpinBottleMain = () => {
           <View style={WheelSPins.container}>
             <Text style={WheelSPins.sectionTitle}>{GameName}</Text>
             <Text style={[WheelSPins.inputLabel, { textAlign: "left", marginBottom: 30 }]}>
-              Select a direction and {GameName}!
+              Select a direction and Spin the Bottle!
             </Text>
 
             {/* Static Wheel */}
