@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
 import Header from '../../../Header/Header';
 import FilterTabPanel from '../../../../features/TabPanel/FilterTabPanel';
@@ -6,6 +6,8 @@ import LosersGameList from '../../../../styles/losersgameList/LosersGameList';
 // import { useGameContext } from '../../../../context/AppContext';
 import { useRouter } from 'expo-router';
 import { useGameContext } from '../../../../context/AppContext';
+import {AuthContext} from '../../../../context/AuthContext'
+import {useRequest} from '../../../../hooks/useRequest';
 
 const LosersGames = () => {
   const router = useRouter();
@@ -13,8 +15,12 @@ const LosersGames = () => {
   const { stake, odds, gameLabel, range, selected, GameName, isGameLost } = gameData;
 
   const [selectedTab, setSelectedTab] = useState('All');
+  const {userDetails} = useContext(AuthContext)
 
   const isLostAvailable = stake && isGameLost;
+  const {makeRequest} = useRequest()
+  
+  
 
   const handlePlayNow = () => {
     router.push({
@@ -41,7 +47,17 @@ const LosersGames = () => {
       </View>
     );
   }
+useEffect(()=>{
+    const getLostGames = async()=>{
+     
+      const res = await makeRequest('/get-losers-game', {
+      id:userDetails?.id
+      });
 
+      return console.log(res.response);
+    }
+    getLostGames();
+  }, [])
   return (
     <View style={{height:'100%'}}>
       <Header name="Loser's Game" backgroundColor="#EEF6FF" />
