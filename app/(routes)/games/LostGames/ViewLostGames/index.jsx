@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import LosersGames from '../../../../../screen/homeScreen/PastGames/LosersGameList/LosersGameList';
 
 const ViewAllLoseGame = () => {
+   
     return (
         <View>
             <LosersGames/>

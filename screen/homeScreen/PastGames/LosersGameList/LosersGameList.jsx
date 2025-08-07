@@ -8,6 +8,7 @@ import { useRouter } from 'expo-router';
 import { useGameContext } from '../../../../context/AppContext';
 import {AuthContext} from '../../../../context/AuthContext'
 import {useRequest} from '../../../../hooks/useRequest';
+import axiosClient from '../../../../axiosClient';
 
 const LosersGames = () => {
   const router = useRouter();
@@ -16,45 +17,222 @@ const LosersGames = () => {
 
   const [selectedTab, setSelectedTab] = useState('All');
   const {userDetails} = useContext(AuthContext)
-
+const [lostGames, setLostGames] = useState(null);
   const isLostAvailable = stake && isGameLost;
-  const {makeRequest} = useRequest()
+
+
+
   
   
 
-  const handlePlayNow = () => {
-    router.push({
-      pathname: '/(routes)/games/details',
-      params: {
-        stake,
-        odds,
-        gameLabel,
-        GameName,
-        range,
-        selected,
-      },
-    });
+  const handlePlayNow = (name, id, odds, stake) => {
+        const normalizedGameName = name?.toLowerCase?.();
+    
+        
+    
+       
+    
+       
+          switch (normalizedGameName) {
+            case 'lucky number':
+              router.push({
+                pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,  
+                selected,
+                id,
+                name,
+                losersGame:true
+              },
+              });
+              break;
+        
+            case 'flip the coin':
+              router.push({
+                pathname: '/games/availablegames/CoinFLip/confirmFlipCoin',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                gameLabel,
+                GameName,
+                range,
+                selected,
+                id,
+                name,
+                losersGame:true
+                
+              },
+              });
+              break;
+        
+            case 'color roulette': 
+              router.push({
+                pathname: '/(routes)/games/category/becomethehouse/colorRoulette/selectedColor',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,
+                selected,
+                id,
+                name,
+                losersGame:true
+              },
+              });
+              break;
+      
+              case 'mystery box game':
+                router.push({
+                  pathname: '/games/category/becomethehouse/mysteryGame/mysterySelect',
+                  params: {
+                  stake: stake?.toString(),
+                  odds,
+                   gameLabel,
+                  GameName,
+                  range,
+                  selected,
+                  name,
+                  id,
+                  losersGame:true
+                },
+                });
+                break;
+      
+                case 'goal challenge':
+                  router.push({
+                    pathname: '/games/category/becomethehouse/goal/selectedGoal',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                     gameLabel,
+                    GameName,
+                    range,
+                    selected,
+                    name,
+                    id,
+                    losersGame:true
+                  },
+                  });
+                  break;
+                    case 'dice roll':
+                       router.push({
+                    pathname: '/games/category/becomethehouse/DiceRoll/selectedDice',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                     gameLabel,
+                    GameName,
+                    range,
+                    selected,
+                    id, name,
+                    losersGame:true
+                  },
+                  });
+                  break;
+                   case 'wheel spin':
+                       router.push({
+                    pathname: '/games/category/becomethehouse/spinwheel/selectedSpin',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                     gameLabel,
+                    GameName,
+                    range,
+                    selected,
+                    name,
+                    id,
+                    losersGame:true
+                  },
+                  });
+                  break; 
+                   case 'spin the bottle':
+                       router.push({
+                    pathname: '/games/category/becomethehouse/spindabottle/selectedSpins',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                     gameLabel,
+                    GameName,
+                    range,
+                    selected,
+                    name,
+                    id,
+                    losersGame:true
+                  },
+                  });
+                  break; 
+    
+                  case 'one number spin':
+                  router.push({
+                   pathname: '/games/category/becomethehouse/one-number-spin/number-spin-selected',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                     gameLabel,
+                    GameName,
+                    range,
+                    selected,
+                    id,
+                    name,
+                    losersGame:true
+                  },
+                  });
+                  break;
+    
+                   case 'color roulette2':
+                  router.push({
+                   pathname: '/games/category/becomethehouse/colorRoulette2/selectedColor2',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                     gameLabel,
+                    GameName,
+                    range,
+                    selected,
+                    name,
+                    id,
+                    losersGame:true
+                  },
+                  });
+                  break;
+            default:
+              // Handle unknown game gracefully
+              console.warn(`[Navigation Error]: Unknown game "${GameName}" selected.`);
+              alert('An error occurred: Unknown game selected. Please try again.');
+          }
+   
   };
 
   const shouldDisplayGame =
     selectedTab === 'All' || selectedTab.toLowerCase().includes(GameName?.toLowerCase());
 
-  if (!isLostAvailable) {
-    return (
-      <View style={LosersGameList.centeredContainer}>
-        <Header name="Loser's Game" backgroundColor="transparent" />
-        <Text style={LosersGameList.noGameText}>No game is currently published.</Text>
-      </View>
-    );
-  }
-useEffect(()=>{
-    const getLostGames = async()=>{
-     
-      const res = await makeRequest('/get-losers-game', {
-      id:userDetails?.id
-      });
+  // if (!lostGames) {
+  //   return (
+  //     <View style={LosersGameList.centeredContainer}>
+  //       <Header name="Loser's Game" backgroundColor="transparent" />
+  //       <Text style={LosersGameList.noGameText}>No game is currently published.</Text>
+  //     </View>
+  //   );
+  // }
 
-      return console.log(res.response);
+useEffect(()=>{
+    const getLostGames =async()=>{
+
+      if(userDetails){
+ const res = await axiosClient.get("/get-losers-game");
+setLostGames(res.data.games);
+
+            
+
+      }
+     
+      
+
     }
     getLostGames();
   }, [])
@@ -78,27 +256,27 @@ useEffect(()=>{
         <FilterTabPanel onTabChange={setSelectedTab} />
 
         <ScrollView contentContainerStyle={LosersGameList.scrollContainer}>
-          {shouldDisplayGame ? (
-            <View style={LosersGameList.card}>
+          {lostGames ?lostGames.map(game=>(
+ <View style={LosersGameList.card}>
               <View style={LosersGameList.cardHeader}>
                 <Text style={LosersGameList.headerIcon}>🎲</Text>
-                <Text style={LosersGameList.headerText}>{GameName} - Lost Game</Text>
+                <Text style={LosersGameList.headerText}>{game.name} - Lost Games</Text>
               </View>
 
               <View style={LosersGameList.cardBody}>
                 <View style={LosersGameList.row}>
                   <View>
                     <Text style={LosersGameList.label}>Stake</Text>
-                    <Text style={LosersGameList.value}>₦{stake}</Text>
+                    <Text style={LosersGameList.value}>₦{game.stake}</Text>
                   </View>
                   <View style={{ alignItems: 'flex-end' }}>
                     <Text style={LosersGameList.label}>Odds</Text>
-                    <Text style={LosersGameList.value}>{odds}</Text>
+                    <Text style={LosersGameList.value}>{game.odds}</Text>
                   </View>
                 </View>
 
                 <Text style={LosersGameList.description}>
-                  {GameName} - {gameLabel} 
+                  {/* {game.name} - {gameLabel}  */}
                   {/* this range is for lucky numbers */}
                   {range}
                 </Text>
@@ -108,12 +286,12 @@ useEffect(()=>{
                   <Text style={LosersGameList.info}><Text style={LosersGameList.infoLabel}>Status:</Text> Open</Text>
                 </View>
 
-                <TouchableOpacity style={LosersGameList.playButton} onPress={handlePlayNow}>
+                <TouchableOpacity style={LosersGameList.playButton} onPress={()=>handlePlayNow(game.name, game.id, game.odds, game.stake)}>
                   <Text style={LosersGameList.playButtonText}>Play Now</Text>
                 </TouchableOpacity>
               </View>
             </View>
-          ) : (
+          ))  : (
             <Text style={LosersGameList.noGameText}>No game is currently published.</Text>
           )}
         </ScrollView>

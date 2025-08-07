@@ -20,7 +20,8 @@ const ConFirmSelectedLuckyNumbers = () => {
 
         const { gameData ,updateGameData } = useGameContext();
         const {  odds,  gameLabel, GameName ,stake,selected,totalOdds} = gameData || {};
-    const {id, name} = useLocalSearchParams();
+        const [isLosersGame, setIsLosersGame] = useState(false);
+    const {id, name, losersGame} = useLocalSearchParams();
 
     const [game, setGame] = useState(null)
 
@@ -29,7 +30,11 @@ const ConFirmSelectedLuckyNumbers = () => {
   range = 3
 }
   
-
+useEffect(()=>{
+ if(losersGame){
+  setIsLosersGame(true);
+ }
+}, [losersGame])
     useEffect(()=>{
       const getGame = async ()=>{
         const res = await axiosClient.get(`/get-game/${id}`);
@@ -44,6 +49,12 @@ const ConFirmSelectedLuckyNumbers = () => {
   const correctNumber = parseInt(selected); // Ensures comparison is number-based
   const parsedTotalOdds = parseFloat(totalOdds);
   const [isFirstLoss, setIsFirstLoss] = useState(true);
+
+  function getRandomNumber() {
+  return Math.floor(Math.random() * 3) + 1;
+}
+
+const losersGameNumber = getRandomNumber();
 
   const [selectedNumbers, setSelectedNumbers] = useState([]);
   const [success, setSuccess] = useState(null); // null initially, true/false after check
@@ -75,8 +86,8 @@ const ConFirmSelectedLuckyNumbers = () => {
   
 
   const handleSubmit = async () => {
-
-
+   
+    if(!losersGame){
     const res = await makeRequest('/play-game', {
       gameId: game.id,
       choiceNumber: selectedNumbers[0],
@@ -97,12 +108,49 @@ const ConFirmSelectedLuckyNumbers = () => {
       setSuccess(false); // It's a loss
     }
     setModalVisibled(true);
+    }else{
+      
+    const res = await makeRequest('/play-losers-game', {
+      gameId: game.id,
+      choiceNumber: selectedNumbers[0],
+      name
+
+
+    })
+
+   
+
+
+ 
+    
+    if(res.error){
+      return Alert.alert('Sorry', res.error);
+    }
+
+    if(res.response.error){
+      return Alert.alert('Sorry', res.response.error)
+    }
+    
+    if (res.response.status) {
+      if(selectedNumbers[0] == losersGameNumber){
+         setSuccess(true)
+        // Alert.alert('Congratulations!', "You have won the loser's game for this game");
+        await makeRequest('/win-losers-game', {gameId:game.id});
+      }else{
+        setSuccess(false)
+        // Alert.alert('Sorry', "You lost the loser's game for this round");
+      }
+      setModalVisibled(true);
+    } 
+    
+    }
+
   };
 
   const losers = ()=>{
     router.push( '/(routes)/games/LostGames/ViewLostGames',  )
       updateGameData({
-        stake: stake.toString(),
+        stake: stake?.toString(),
         odds,
         gameLabel,
         GameName,
