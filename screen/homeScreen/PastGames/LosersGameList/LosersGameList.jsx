@@ -31,47 +31,111 @@ const [lostGames, setLostGames] = useState(null);
         
     
        
-    
-       
           switch (normalizedGameName) {
-            case 'lucky number':
+        case 'lucky number':
+          router.push({
+            pathname: '/games/vote',
+            params: {
+            stake: stake?.toString(),
+            odds,
+             gameLabel,
+            GameName,
+            range, 
+            selected,
+            id,
+            name,
+            losersGame:true
+          },
+          });
+          break;
+    
+        case 'flip the coin':
+          router.push({
+            pathname: '/games/vote',
+            params: {
+            stake: stake?.toString(),
+            odds,
+            gameLabel,
+            GameName,
+            range, 
+            selected,
+            id,
+            name,
+            losersGame:true
+          },
+          });
+          break;
+           case 'spin the bottle':
+             router.push({
+               pathname: '/games/vote',
+              params: {
+             stake: stake?.toString(),
+            odds,
+            gameLabel,
+            GameName,
+            range,
+            selected,
+            name,
+            id,
+            losersGame:true
+             },
+            });
+            break; 
+    
+        case 'color roulette': 
+          router.push({
+            pathname: '/games/vote',
+            params: {
+            stake: stake?.toString(),
+            odds,
+             gameLabel,
+            GameName,
+            range,
+            selected,
+            id,
+            name,
+            losersGame:true
+          },
+          });
+          break;
+  
+          case 'mystery box game':
+            router.push({
+            pathname: '/games/vote',
+              params: {
+              stake: stake?.toString(),
+              odds,
+               gameLabel,
+              GameName,
+              range,
+              selected,
+              name,
+              id,
+              losersGame:true
+            },
+            });
+            break;
+  
+            case 'goal challenge':
               router.push({
-                pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+            pathname: '/games/vote',
                 params: {
                 stake: stake?.toString(),
                 odds,
                  gameLabel,
-                GameName,
-                range,  
-                selected,
-                id,
-                name,
-                losersGame:true
-              },
-              });
-              break;
-        
-            case 'flip the coin':
-              router.push({
-                pathname: '/games/availablegames/CoinFLip/confirmFlipCoin',
-                params: {
-                stake: stake?.toString(),
-                odds,
-                gameLabel,
                 GameName,
                 range,
                 selected,
                 id,
                 name,
                 losersGame:true
-                
               },
               });
               break;
-        
-            case 'color roulette': 
+    
+              case 'dice roll':
               router.push({
-                pathname: '/(routes)/games/category/becomethehouse/colorRoulette/selectedColor',
+            pathname: '/games/vote',
                 params: {
                 stake: stake?.toString(),
                 odds,
@@ -79,132 +143,73 @@ const [lostGames, setLostGames] = useState(null);
                 GameName,
                 range,
                 selected,
+                name, 
                 id,
-                name,
                 losersGame:true
               },
               });
               break;
-      
-              case 'mystery box game':
-                router.push({
-                  pathname: '/games/category/becomethehouse/mysteryGame/mysterySelect',
-                  params: {
-                  stake: stake?.toString(),
-                  odds,
-                   gameLabel,
-                  GameName,
-                  range,
-                  selected,
-                  name,
-                  id,
-                  losersGame:true
+
+               case 'wheel spin':
+              router.push({
+                pathname: '/games/vote',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,
+                selected,
+                name,
+                id,
+                losersGame:true
+              },
+              });
+              break;
+
+               case 'one number spin':
+              router.push({
+                pathname: '/games/vote',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,
+                selected,
+                name,
+                id,
+                losersGame:true
                 },
-                });
-                break;
-      
-                case 'goal challenge':
-                  router.push({
-                    pathname: '/games/category/becomethehouse/goal/selectedGoal',
-                    params: {
-                    stake: stake?.toString(),
-                    odds,
-                     gameLabel,
-                    GameName,
-                    range,
-                    selected,
-                    name,
-                    id,
-                    losersGame:true
-                  },
-                  });
-                  break;
-                    case 'dice roll':
-                       router.push({
-                    pathname: '/games/category/becomethehouse/DiceRoll/selectedDice',
-                    params: {
-                    stake: stake?.toString(),
-                    odds,
-                     gameLabel,
-                    GameName,
-                    range,
-                    selected,
-                    id, name,
-                    losersGame:true
-                  },
-                  });
-                  break;
-                   case 'wheel spin':
-                       router.push({
-                    pathname: '/games/category/becomethehouse/spinwheel/selectedSpin',
-                    params: {
-                    stake: stake?.toString(),
-                    odds,
-                     gameLabel,
-                    GameName,
-                    range,
-                    selected,
-                    name,
-                    id,
-                    losersGame:true
-                  },
-                  });
-                  break; 
-                   case 'spin the bottle':
-                       router.push({
-                    pathname: '/games/category/becomethehouse/spindabottle/selectedSpins',
-                    params: {
-                    stake: stake?.toString(),
-                    odds,
-                     gameLabel,
-                    GameName,
-                    range,
-                    selected,
-                    name,
-                    id,
-                    losersGame:true
-                  },
-                  });
-                  break; 
-    
-                  case 'one number spin':
-                  router.push({
-                   pathname: '/games/category/becomethehouse/one-number-spin/number-spin-selected',
-                    params: {
-                    stake: stake?.toString(),
-                    odds,
-                     gameLabel,
-                    GameName,
-                    range,
-                    selected,
-                    id,
-                    name,
-                    losersGame:true
-                  },
-                  });
-                  break;
-    
-                   case 'color roulette2':
-                  router.push({
-                   pathname: '/games/category/becomethehouse/colorRoulette2/selectedColor2',
-                    params: {
-                    stake: stake?.toString(),
-                    odds,
-                     gameLabel,
-                    GameName,
-                    range,
-                    selected,
-                    name,
-                    id,
-                    losersGame:true
-                  },
-                  });
-                  break;
-            default:
-              // Handle unknown game gracefully
-              console.warn(`[Navigation Error]: Unknown game "${GameName}" selected.`);
-              alert('An error occurred: Unknown game selected. Please try again.');
-          }
+               });
+            
+              break;
+
+               case 'color roulette2':
+              router.push({
+                pathname: '/games/vote',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,
+                selected,
+                name,
+                id,
+                losersGame:true
+                },
+               });
+            
+              break;
+
+        default:
+          // Handle unknown game gracefully
+          console.warn(`[Navigation Error]: Unknown game "${name}" selected.`);
+          alert('An error occurred: Unknown game selected. Please try again.');
+      }
+       
+         
    
   };
 
@@ -237,7 +242,7 @@ setLostGames(res.data.games);
     getLostGames();
   }, [])
   return (
-    <View style={{height:'100%'}}>
+    <ScrollView style={{height:'100%'}}>
       <Header name="Loser's Game" backgroundColor="#EEF6FF" />
       <View style={LosersGameList.container}>
         <View style={LosersGameList.rulesCard}>
@@ -257,7 +262,7 @@ setLostGames(res.data.games);
 
         <ScrollView contentContainerStyle={LosersGameList.scrollContainer}>
           {lostGames ?lostGames.map(game=>(
- <View style={LosersGameList.card}>
+ <View style={LosersGameList.card} key={game.id}>
               <View style={LosersGameList.cardHeader}>
                 <Text style={LosersGameList.headerIcon}>🎲</Text>
                 <Text style={LosersGameList.headerText}>{game.name} - Lost Games</Text>
@@ -296,7 +301,7 @@ setLostGames(res.data.games);
           )}
         </ScrollView>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

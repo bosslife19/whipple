@@ -26,32 +26,195 @@ const VoteColorRouletteScreen = () => {
 
     const { gameData } = useGameContext();
         const { stake, odds, gameLabel, range, selected, GameName } = gameData || {};
-        const {id, name} = useLocalSearchParams()
+        const {id, name, losersGame} = useLocalSearchParams()
 
       
-
-        
+ 
   
   const handleSubmit = async() => {
     if (!value) {
       alert('Please select an option.');
       return;
     }
+     const normalizedGameName = name?.toLowerCase?.();
  
-
-    const res = await makeRequest('/submit-vote', {gameId: id, vote: value})
-
-   
-
-
-    const normalizedGameName = name?.toLowerCase?.();
-
+    if(losersGame){
+      const res = await makeRequest('/losers-vote', {gameId: id, vote: value})
+ switch (normalizedGameName) {
+            case 'lucky number':
+              router.push({
+                pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,  
+                selected,
+                id,
+                name,
+                losersGame
+              },
+              });
+              break;
+        
+            case 'flip the coin':
+              router.push({
+               pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                gameLabel,
+                GameName,
+                range,
+                selected,
+                id,
+                name,
+                losersGame:true
+                
+              },
+              });
+              break;
+        
+            case 'color roulette': 
+              router.push({
+                pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                 gameLabel,
+                GameName,
+                range,
+                selected,
+                id,
+                name,
+                losersGame:true
+              },
+              });
+              break;
+      
+              case 'mystery box game':
+                router.push({
+                 pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                  params: {
+                  stake: stake?.toString(),
+                  odds,
+                   gameLabel,
+                  GameName,
+                  range,
+                  selected,
+                  name,
+                  id,
+                  losersGame:true
+                },
+                });
+                break;
+      
+                case 'goal challenge':
+                  router.push({
+                    pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                     gameLabel,
+                    GameName,
+                    range,
+                    selected,
+                    name,
+                    id,
+                    losersGame:true
+                  },
+                  });
+                  break;
+                    case 'dice roll':
+                       router.push({
+                    pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                     gameLabel,
+                    GameName,
+                    range,
+                    selected,
+                    id, name,
+                    losersGame:true
+                  },
+                  });
+                  break;
+                   case 'wheel spin':
+                       router.push({
+                    pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                     gameLabel,
+                    GameName,
+                    range,
+                    selected,
+                    name,
+                    id,
+                    losersGame:true
+                  },
+                  });
+                  break; 
+                   case 'spin the bottle':
+                       router.push({
+                    pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                     gameLabel,
+                    GameName,
+                    range,
+                    selected,
+                    name,
+                    id,
+                    losersGame:true
+                  },
+                  });
+                  break; 
     
-
-    let path = '';
-
-    // Navigate based on the selected game
-      switch (normalizedGameName) {
+                  case 'one number spin':
+                  router.push({
+                  pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                     gameLabel,
+                    GameName,
+                    range,
+                    selected,
+                    id,
+                    name,
+                    losersGame:true
+                  },
+                  });
+                  break;
+    
+                   case 'color roulette2':
+                  router.push({
+                   pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                     gameLabel,
+                    GameName,
+                    range,
+                    selected,
+                    name,
+                    id,
+                    losersGame:true
+                  },
+                  });
+                  break;
+            default:
+              // Handle unknown game gracefully
+              console.warn(`[Navigation Error]: Unknown game "${GameName}" selected.`);
+              alert('An error occurred: Unknown game selected. Please try again.');
+          }
+    }else{
+ const res = await makeRequest('/submit-vote', {gameId: id, vote: value})
+  switch (normalizedGameName) {
         case 'lucky number':
           router.push({
             pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
@@ -142,7 +305,7 @@ const VoteColorRouletteScreen = () => {
                 GameName,
                 range,
                 selected,
-                id, name
+                id, name, losersGame
               },
               });
               break;
@@ -157,7 +320,7 @@ const VoteColorRouletteScreen = () => {
                 range,
                 selected,
                 name,
-                id
+                id, losersGame
               },
               });
               break; 
@@ -172,7 +335,8 @@ const VoteColorRouletteScreen = () => {
                 range,
                 selected,
                 name,
-                id
+                id,
+                losersGame,
               },
               });
               break; 
@@ -188,7 +352,7 @@ const VoteColorRouletteScreen = () => {
                 range,
                 selected,
                 id,
-                name
+                name,loser
               },
               });
               break;
@@ -213,8 +377,20 @@ const VoteColorRouletteScreen = () => {
           console.warn(`[Navigation Error]: Unknown game "${GameName}" selected.`);
           alert('An error occurred: Unknown game selected. Please try again.');
       }
+    }
+   
+
+   
+
+
+   
+
+    
+
+
+     
       
-    setIsSubmitting(true);
+    // setIsSubmitting(true);
     // setTimeout(() => {
     //   router.push({
     //     pathname: path,

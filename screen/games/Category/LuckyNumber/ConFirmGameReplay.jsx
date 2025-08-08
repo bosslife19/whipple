@@ -29,6 +29,8 @@ const ConFirmSelectedLuckyNumbers = () => {
     if (game?.subcategory === 'a1') {
   range = 3
 }
+
+
   
 useEffect(()=>{
  if(losersGame){
@@ -55,6 +57,7 @@ useEffect(()=>{
 }
 
 const losersGameNumber = getRandomNumber();
+
 
   const [selectedNumbers, setSelectedNumbers] = useState([]);
   const [success, setSuccess] = useState(null); // null initially, true/false after check
@@ -109,39 +112,46 @@ const losersGameNumber = getRandomNumber();
     }
     setModalVisibled(true);
     }else{
-      
-    const res = await makeRequest('/play-losers-game', {
+      try {
+         const res = await makeRequest('/play-losers-game', {
       gameId: game.id,
       choiceNumber: selectedNumbers[0],
       name
 
 
-    })
+    });
+    
+     if(res.error){
+      return Alert.alert('Sorry', res.error)
+    }
+    if(res.response.error){
+      return Alert.alert("Sorry", res.response.error);
+    }
+   
+
+    if(res.response.status){
+      if(selectedNumbers[0]== losersGameNumber){
+        setSuccess(true)
+      }else{
+        setSuccess(false);
+      }
+
+      setModalVisibled(true)
+    }
+
+      } catch (error) {
+        console.log(error);
+        return Alert.alert('Error', 'Server Error');
+      }
+   
+    
 
    
 
 
  
     
-    if(res.error){
-      return Alert.alert('Sorry', res.error);
-    }
-
-    if(res.response.error){
-      return Alert.alert('Sorry', res.response.error)
-    }
     
-    if (res.response.status) {
-      if(selectedNumbers[0] == losersGameNumber){
-         setSuccess(true)
-        // Alert.alert('Congratulations!', "You have won the loser's game for this game");
-        await makeRequest('/win-losers-game', {gameId:game.id});
-      }else{
-        setSuccess(false)
-        // Alert.alert('Sorry', "You lost the loser's game for this round");
-      }
-      setModalVisibled(true);
-    } 
     
     }
 
