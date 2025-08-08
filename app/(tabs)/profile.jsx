@@ -9,7 +9,8 @@ const settingsItems = [
  { id: '5', label: 'Support', icon: () => <AntDesign name="questioncircle" size={24} color="black" />,handOnclick:()=>router.push('/(routes)/profile/support') },
   { id: '6', label: 'Security and Privacy', icon: () => <MaterialIcons name="security" size={22} color="#333" /> ,handOnclick:()=>router.push('/(routes)/profile/security')},
   { id: '7', label: 'Refer and Earn', icon: () => <FontAwesome6 name="coins" size={24} color="black" />,handOnclick:()=>router.push('/(routes)/profile/refer-and-earn') },
-  { id: '8', label: 'Logout', icon: () => <AntDesign name="logout" size={24} color="#FF0000" />, noArrow: true ,handOnclick:()=> {}},
+  { id: '8', label: 'Transaction Pin', icon: () => <MaterialIcons name="security" size={24} color="black" />,handOnclick:()=>router.push('/(routes)/transaction-pin') },
+  { id: '9', label: 'Logout', icon: () => <AntDesign name="logout" size={24} color="#FF0000" />, noArrow: true ,handOnclick:()=> {}},
 ];
 
 export default function Profile() {

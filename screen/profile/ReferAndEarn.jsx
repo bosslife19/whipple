@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 import Profilescs from '../../styles/profileScren.styles'
 import Header from '../Header/Header'
+import { router } from 'expo-router'
 
 export default function ReferAndEarn() {
   return (
@@ -26,7 +27,7 @@ export default function ReferAndEarn() {
             <TouchableOpacity style={Profilescs.shareButton}>
               <Text>Share Link</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={Profilescs.shareButton}>
+            <TouchableOpacity style={Profilescs.shareButton} onPress={()=>router.push('/(routes)/referral')}>
               <Text>View Referrals</Text>
             </TouchableOpacity>
           </View>
