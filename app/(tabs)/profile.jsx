@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native
 import { Ionicons, Feather, MaterialIcons, FontAwesome5, Fontisto, AntDesign, FontAwesome6 } from '@expo/vector-icons';
 import Header from '../../screen/Header/Header';
 import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const settingsItems = [
   { id: '1', label: 'Profile', icon: () => <FontAwesome5 name="user-alt" size={24} color="black" />,handOnclick:()=>router.push('/(routes)/profile/profileScreen') },
@@ -10,7 +11,14 @@ const settingsItems = [
   { id: '6', label: 'Security and Privacy', icon: () => <MaterialIcons name="security" size={22} color="#333" /> ,handOnclick:()=>router.push('/(routes)/profile/security')},
   { id: '7', label: 'Refer and Earn', icon: () => <FontAwesome6 name="coins" size={24} color="black" />,handOnclick:()=>router.push('/(routes)/profile/refer-and-earn') },
   { id: '8', label: 'Transaction Pin', icon: () => <MaterialIcons name="security" size={24} color="black" />,handOnclick:()=>router.push('/(routes)/transaction-pin') },
-  { id: '9', label: 'Logout', icon: () => <AntDesign name="logout" size={24} color="#FF0000" />, noArrow: true ,handOnclick:()=> {}},
+  { id: '9', label: 'Logout', icon: () => <AntDesign name="logout" size={24} color="#FF0000" />, noArrow: true ,handOnclick: async () => {
+    try {
+        await AsyncStorage.removeItem('userDetails');
+        router.replace('/auth/login'); // redirect to login screen
+      } catch (error) {
+        console.error('Error logging out:', error);
+      }
+  }},
 ];
 
 export default function Profile() {

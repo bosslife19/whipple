@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 const Index = () => {
-  const [userExists, setUserExists] = useState(true);
+  const [userExists, setUserExists] = useState(false);
 useEffect(()=>{
   const checkUserDets = async ()=>{
     const user = await AsyncStorage.getItem('userDetails');

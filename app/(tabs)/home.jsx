@@ -23,9 +23,10 @@ import SlideShowBet from '../../features/slideshow/slideshowBet';
 import { useContext, useEffect, useState } from 'react';
 import {AuthContext} from '../../context/AuthContext'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { formatCurrency } from '../../utlils';
 
 export default function HomeScreen() {
-  const {userDetails, setUserDetails} = useContext(AuthContext)
+  const {userDetails, setUserDetails, userBalance, userPoint} = useContext(AuthContext)
  
 
   useEffect(()=>{
@@ -65,7 +66,7 @@ export default function HomeScreen() {
         <SlideShowBet />
         <View style={Homes.imageBackground}>
           <Text style={[Homes.imageText,{ fontSize:14,fontWeight:500,textAlign:"center",fontFamily:"Grotesk",paddingVertical:4}]}>Available Balance </Text>
-             <Text style={[Homes.imageText,{ textAlign:"center",fontFamily:"Poppins",fontSize:24,paddingVertical:14}]}>NGN 15, 000.34</Text>
+             <Text style={[Homes.imageText,{ textAlign:"center",fontFamily:"Poppins",fontSize:24,paddingVertical:14}]}>NGN {formatCurrency(userBalance)}</Text>
              
               <View style={[Homes.flexD,{justifyContent:"space-between"}]}>
               <TouchableOpacity onPress={()=> router.push("/(routes)/deposit")} style={[Homes.flexD,{paddingHorizontal:"14%",paddingVertical:14, backgroundColor:"#0A1931",borderRadius:20,gap:8}]}>

@@ -26,6 +26,7 @@ export default function ReferralListScreen({ referrals: initialReferrals, onRefr
 
   const [query, setQuery] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  // const [referrals, setReferrals] = useState([]);
 
   const referrals = initialReferrals && initialReferrals.length ? initialReferrals : example;
 

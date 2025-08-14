@@ -20,7 +20,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { loading, makeRequest } = useRequest();
-const {setUserDetails} = useContext(AuthContext);
+const {setUserDetails, setUserBalance, setUserPoint} = useContext(AuthContext);
   const handleLogin = async () => {
     
     if (!email || !password) {
@@ -36,9 +36,13 @@ const {setUserDetails} = useContext(AuthContext);
       return Alert.alert('Error', error)
     }
     await AsyncStorage.setItem('userDetails', JSON.stringify(response.user));
+    await AsyncStorage.setItem('userBalance', JSON.stringify(response.user.wallet_balance));
+    await AsyncStorage.setItem('userPoint', JSON.stringify(response.user.whipple_point));
     await AsyncStorage.setItem('authToken', response.token);
 
     setUserDetails({...response.user})
+    setUserBalance(response.user.wallet_balance);
+    setUserPoint(response.user.whipple_point);
 
     router.replace("/(tabs)/home");
   };
