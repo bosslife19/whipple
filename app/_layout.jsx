@@ -10,6 +10,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { Platform } from 'react-native';
 import { GameProvider } from '../context/AppContext.js'; // adjust path
 import {AuthProvider} from '../context/AuthContext.js'
+import { PaystackProvider } from 'react-native-paystack-webview';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -48,13 +49,15 @@ export default function RootLayout() {
   
 
   return (
-    <AuthProvider>
- <GameProvider >
- <Stack screenOptions={{headerShown:false}}>
-  <Stack.Screen name="index" />
-</Stack>
- </GameProvider>
-    </AuthProvider>
-   
-  );
+  <AuthProvider>
+    <GameProvider>
+      <PaystackProvider publicKey="pk_test_d4a07c0edb2ca6e77d6c872ee07e55f8af4c3a52">
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+        </Stack>
+      </PaystackProvider>
+    </GameProvider>
+  </AuthProvider>
+);
+
 } 

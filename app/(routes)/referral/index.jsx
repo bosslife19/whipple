@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -12,22 +12,35 @@ import {
   Linking,
   Platform,
 } from "react-native";
+import axiosClient from "../../../axiosClient"
 
  
 export default function ReferralListScreen({ referrals: initialReferrals, onRefresh }) {
   // Example data fallback
-  const example = [
-    { id: "1", name: "Ada Lovelace", email: "ada@example.com" },
-    { id: "2", name: "Alan Turing", email: "alan@example.com" },
-    { id: "3", name: "Grace Hopper", email: "grace@example.com" },
-    { id: "4", name: "Katherine Johnson", email: "katherine@example.com" },
-    { id: "5", name: "Margaret Hamilton", email: "margaret@example.com" },
-  ];
 
   const [query, setQuery] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  const [referrals, setReferrals] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const referrals = initialReferrals && initialReferrals.length ? initialReferrals : example;
+  // const referrals = initialReferrals && initialReferrals.length ? initialReferrals : example;
+
+   // Fetch transactions from API
+  const fetchReferral = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosClient.get("/referral-list");
+      setReferrals(res.data.data); // assuming API returns array of Referral
+    } catch (error) {
+      console.error('Error fetching Referral:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReferral();
+  }, []);
 
   // Filtered list
   const filtered = useMemo(() => {

@@ -9,13 +9,15 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { useRequest } from "../../../hooks/useRequest";
 
 export default function TransactionPinScreen({ mode = "set" }) {
   const [currentPin, setCurrentPin] = useState("");
   const [newPin, setNewPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
+  const { loading, makeRequest } = useRequest();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (mode === "change" && currentPin.length !== 4) {
       Alert.alert("Error", "Please enter your current 4-digit PIN.");
       return;
@@ -28,6 +30,14 @@ export default function TransactionPinScreen({ mode = "set" }) {
       Alert.alert("Error", "PIN confirmation does not match.");
       return;
     }
+
+    const { error, response } = await makeRequest("/transaction-pin", {
+      pin: newPin,
+    });
+  
+      if(error){
+        return Alert.alert('Error', error)
+      }
 
     Alert.alert(
       "Success",
@@ -73,7 +83,7 @@ export default function TransactionPinScreen({ mode = "set" }) {
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>
-            {mode === "set" ? "Set PIN" : "Change PIN"}
+            {loading ? "Loading..." : mode === "set" ? "Set PIN" : "Change PIN"}
           </Text>
         </TouchableOpacity>
       </View>

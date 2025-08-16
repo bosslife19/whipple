@@ -1,10 +1,13 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, {useContext} from 'react'
 import Profilescs from '../../styles/profileScren.styles'
 import Header from '../Header/Header'
 import { router } from 'expo-router'
+import {AuthContext} from '../../context/AuthContext'
 
 export default function ReferAndEarn() {
+  const {userDetails} = useContext(AuthContext)
+
   return (
     <View style={{height:'100%'}}>
     <Header name={'Refer And Earn'} />
@@ -17,7 +20,7 @@ export default function ReferAndEarn() {
           </Text>
 
           <View style={Profilescs.referralRow}>
-            <Text style={Profilescs.referralCode}>WHIPPLE123</Text>
+            <Text style={Profilescs.referralCode}>{userDetails?.referral_code}</Text>
             <TouchableOpacity style={Profilescs.copyButton}>
               <Text>Copy</Text>
             </TouchableOpacity>

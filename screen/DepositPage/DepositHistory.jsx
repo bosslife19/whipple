@@ -1,36 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   FlatList,
   StyleSheet,
-  TouchableOpacity,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import { MaterialIcons, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import Header from '../Header/Header';
 import { formatCurrency } from '../../utlils/formatCurrency';
-// import { formatCurrency } from '../../utlils';
+import { formatDate } from '../../utlils/formatDate';
+import axiosClient from "../../axiosClient"
 
-const TABS = ['All', 'Deposits', 'Stakes', 'payouts'];
-
-const TRANSACTIONS = [
-  { id: '1', amount: 1000, date: '2025-04-20', type: 'Deposit', credit: true },
-  { id: '2', amount: 500, date: '2025-04-18',game:'Game: Lucky Number', type: 'Stake', credit: false },
-  { id: '3', amount: 200, date: '2025-04-15', type: 'Payout', credit: true },
-  { id: '4', amount: 300, date: '2025-04-14',game:'Game: Lucky Number', type: 'Stake', credit: false },
-  { id: '5', amount: 800, date: '2025-04-10', type: 'Deposit', credit: true },
-  { id: '6', amount: 800, date: '2025-04-10', type: 'Deposit', credit: true },
-  { id: '7', amount: 300, date: '2025-04-14',game:'Game: Lucky Number', type: 'payouts', credit: true },
-
+// Tabs now have label + key
+const TABS = [
+  { label: 'All', key: 'all' },
+  { label: 'Deposits', key: 'deposit' },
+  { label: 'Stakes', key: 'game' },
+  { label: 'Payouts', key: 'withdrawal' },
 ];
 
 export default function TransactionsHistory() {
   const [activeTab, setActiveTab] = useState('All');
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch transactions from API
+  const fetchTransactions = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosClient.get("/transaction-list");
+      setTransactions(res.data.data); // assuming API returns array of transactions
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
 
   const getFilteredTransactions = () => {
-    if (activeTab === 'All') return TRANSACTIONS;
-    return TRANSACTIONS.filter(t => t.type === activeTab.slice(0, -1)); // remove 's'
+    if (activeTab === 'all') return transactions;
+    return transactions.filter(
+      t => t.type && t.type.toLowerCase() === activeTab.toLowerCase()
+    );
   };
 
   const iconMap = {
@@ -50,15 +67,13 @@ export default function TransactionsHistory() {
       color: '#3B82F6',
     },
   };
-  
-  const renderIcon = (type) => {
+
+  const renderIcon = type => {
     const icon = iconMap[type];
     if (!icon) return null;
-  
     const IconComponent = icon.component;
     return <IconComponent name={icon.name} size={20} color={icon.color} />;
   };
-  
 
   const renderTransaction = ({ item }) => (
     <View style={styles.card}>
@@ -68,50 +83,63 @@ export default function TransactionsHistory() {
           <Text
             style={[
               styles.amount,
-              { color: item.credit ? '#22C55E' : '#EF4444' },
+              { color: item.type == 'deposit' ? '#22C55E' : '#EF4444' },
             ]}
           >
-            {item.credit ? '+' : '-'} {formatCurrency(item.amount)}
+            {item.type == 'deposit' ? '+' : '-'} {formatCurrency(item.amount)}
           </Text>
           <Text style={styles.type}>{item.type}</Text>
         </View>
       </View>
-      <Text style={styles.date}>{item.date}</Text>
+      <Text style={styles.date}>{formatDate(item.created_at)}</Text>
     </View>
   );
 
   return (
     <>
-      <Header name="Transactions History" arrow="arrow-back" backgroundColor="#A8BFED" />
+      <Header
+        name="Transactions History"
+        arrow="arrow-back"
+        backgroundColor="#A8BFED"
+      />
       <View style={styles.container}>
         <View style={styles.tabs}>
           {TABS.map(tab => (
             <Pressable
-              key={tab}
-              onPress={() => setActiveTab(tab)}
+              key={tab.key}
+              onPress={() => setActiveTab(tab.key)}
               style={({ pressed }) => [
                 styles.tab,
-                activeTab === tab && styles.activeTab,
+                activeTab === tab.key && styles.activeTab,
                 pressed && styles.tabPressed,
               ]}
             >
-              <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
-                {tab}
+              <Text
+                style={[
+                  styles.tabText,
+                  activeTab === tab.key && styles.activeTabText,
+                ]}
+              >
+                {tab.label}
               </Text>
             </Pressable>
           ))}
         </View>
 
-        <FlatList
-          data={getFilteredTransactions()}
-          keyExtractor={(item) => item.id}
-          renderItem={renderTransaction}
-          ListEmptyComponent={
-            <Text style={styles.empty}>No Transactions found.</Text>
-          }
-          contentContainerStyle={{ paddingBottom: '156%', }}
-          showsVerticalScrollIndicator={false}
-        />
+        {loading ? (
+          <ActivityIndicator size="large" color="#3B82F6" />
+        ) : (
+          <FlatList
+            data={getFilteredTransactions()}
+            keyExtractor={item => item.id.toString()}
+            renderItem={renderTransaction}
+            ListEmptyComponent={
+              <Text style={styles.empty}>No Transactions found.</Text>
+            }
+            contentContainerStyle={{ paddingBottom: '156%' }}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
       </View>
     </>
   );
@@ -119,10 +147,8 @@ export default function TransactionsHistory() {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     backgroundColor: '#F8FAFC',
     padding: 16,
-    // height:"100%"
   },
   tabs: {
     flexDirection: 'row',
