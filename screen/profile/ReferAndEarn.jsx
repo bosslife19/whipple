@@ -13,7 +13,10 @@ export default function ReferAndEarn() {
     <Header name={'Refer And Earn'} />
      {/* Referral Section */}
      <View style={Profilescs.card}>
-          <Text style={Profilescs.sectionTitle}>Refer & Earn</Text>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+            <Text style={Profilescs.sectionTitle}>Refer & Earn</Text>
+            <Text style={[Profilescs.sectionTitle, {color: "green"}]}>{userDetails?.whipple_point}</Text>
+          </View>
           <Text style={Profilescs.description}>
             Share your referral code with friends and earn bonuses when they
             join and play!

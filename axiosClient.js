@@ -3,7 +3,7 @@ import axios from 'axios';
 import { router } from 'expo-router';
 
 const axiosClient = axios.create({
-    baseURL: `${process.env.EXPO_PUBLIC_BASE_URL}/api`,
+    baseURL: `https://14080a70524a.ngrok-free.app/api`,
     headers: {
         'Content-Security-Policy': "default-src 'self'; img-src https://*; script-src 'self';"
       }
@@ -13,8 +13,8 @@ axiosClient.interceptors.request.use(
     async (config) => {
         try {
             const token = await AsyncStorage.getItem('authToken'); // Await the token retrieval
+            console.log('Auth Token:', token);
             
-         
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`; // Set the token
             }
