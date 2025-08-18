@@ -102,7 +102,11 @@ const FlipTheCoin = () => {
 
     })
   if(res.response){
-    return Alert.alert('Success', 'Game Created Successfully');
+   Alert.alert('Success', 'Game Created Successfully');
+   setTimeout(()=>{
+       
+   router.push( '/(routes)/games/availablegames')
+      }, 2000)
   }
   if(res.error){
     return Alert.alert('Error', res.error);
@@ -213,11 +217,11 @@ const FlipTheCoin = () => {
             />
 
             <TouchableOpacity
-              style={[FLipCoin.button, { marginTop: 16 }]}
+              style={[FLipCoin.button, { marginTop: 16, alignItems:"center", justifyContent:'center' }]}
               onPress={handlePublish}
             >
               {loading ? (
-                <ActivityIndicator size={20} color="white" />
+                <ActivityIndicator size={20} color="white" style={{alignSelf:'center'}}/>
               ) : (
                 <Text style={FLipCoin.buttonText}>Publish Game</Text>
               )}
