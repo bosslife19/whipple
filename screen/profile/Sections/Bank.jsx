@@ -30,7 +30,8 @@ const BankInfoScreen = () => {
     try {
       setLoading(true);
       const res = await axiosClient.get("/paystack/getbank");
-      setBanks(res.data.banks.map(bank => ({
+      setBanks(res.data.banks.map((bank, index) => ({
+        key: index.toString(), // unique key for each item
         label: bank.name, // for dropdown
         value: bank.code, // for dropdown
         name: bank.name,
@@ -69,7 +70,7 @@ const BankInfoScreen = () => {
           account_number: accountNumber,
         });
         if (error) {
-          console.error(error);
+          // console.error(error);
           return Alert.alert("Error", "Error saving bank account");
         }
         fetchBankList()
