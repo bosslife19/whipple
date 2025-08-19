@@ -8,6 +8,7 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "jsEngine": "jsc",
     "ios": {
       "supportsTablet": true
     },
@@ -41,7 +42,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "d26e3c0f-858c-4419-8353-1f50e8aca6dd"
+        "projectId": "a150233f-a7f4-4402-8ce9-5813be1495de"
       }
     }
   }
