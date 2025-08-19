@@ -22,7 +22,7 @@ export default function TabLayout() {
         tabBarBackground: TabBarBackground,
         tabBarStyle: {
           position: 'absolute',
-          height: 50, // Adjust tab bar height for better spacing
+          height: 150, // Adjust tab bar height for better spacing
           backgroundColor: 'white',
          },
       }}>

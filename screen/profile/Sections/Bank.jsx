@@ -30,7 +30,8 @@ const BankInfoScreen = () => {
     try {
       setLoading(true);
       const res = await axiosClient.get("/paystack/getbank");
-      setBanks(res.data.banks.map(bank => ({
+      setBanks(res.data.banks.map((bank, index) => ({
+        key: index.toString(),
         label: bank.name, // for dropdown
         value: bank.code, // for dropdown
         name: bank.name,
@@ -49,7 +50,8 @@ const BankInfoScreen = () => {
       const res = await axiosClient.get("/bank-list");
       setBankAccounts(res.data.data ?? []); 
     } catch (error) {
-      console.error('Error fetching bank:', error);
+      Alert.alert("Error", "Error fetching bank list");
+      // console.error('Error fetching bank:', error);
     } finally {
       setLoading(false); 
     }
@@ -69,13 +71,13 @@ const BankInfoScreen = () => {
           account_number: accountNumber,
         });
         if (error) {
-          console.error(error);
+          // console.error(error);
           return Alert.alert("Error", "Error saving bank account");
         }
         fetchBankList()
         Alert.alert("Success", "Bank Saved!");
       } catch (err) {
-        console.error(err);
+        // console.error(err);
         Alert.alert("Error", "Unable to resolve bank account");
       }
     }
