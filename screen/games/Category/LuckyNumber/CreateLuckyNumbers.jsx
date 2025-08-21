@@ -105,7 +105,11 @@ const CreateLuckyNumbers = () => {
     }
 
 if(response.response){
-  return Alert.alert('Success', 'Game Created Successfully');
+   Alert.alert('Success', 'Game Created Successfully');
+   setTimeout(()=>{
+       
+   router.push( '/(routes)/games/availablegames')
+      }, 2000)
 }
     router.push("/(routes)/games/availablegames");
     updateGameData({

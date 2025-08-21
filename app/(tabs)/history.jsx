@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
 import Header from '../../screen/Header/Header';
 import img from "../../assets/images/Rectangle 69.png"
 import { useGameContext } from '../../context/AppContext';
 import Goalstyles from '../../styles/Goal.styles';
+import axiosClient from '../../axiosClient';
+import { AuthContext } from '../../context/AuthContext';
+
 
 
 export default function History() {
   const [activeTab, setActiveTab] = useState('My Games');
   const TABS = ['My Games', 'Past Games'];
-
+  const {userDetails} = useContext(AuthContext);
+const [playedGames, setPlayedGames] = useState([]);
   const myGamesData = [
     {
       id: '1',
@@ -52,12 +56,33 @@ export default function History() {
   
   const { gameData } = useGameContext();
   const { stake, odds, gameLabel, range, selected, GameName } = gameData || {};
+  const [myGames, setMyGames] = useState([])
+
+  useEffect(()=>{
+    const getMyGames = async ()=>{
+      const res = await axiosClient.get('/get-my-games');
+     
+      setMyGames(res.data.games);
+
+    }
+    getMyGames();
+  }, [])
+
+  useEffect(()=>{
+    const getMyPlayedGames = async ()=>{
+      const res = await axiosClient.get('/get-my-played-games');
+  
+      setPlayedGames(res.data);
+
+    }
+    getMyPlayedGames();
+  }, [])
 
 
   const renderGameCard = ({ item }) => (
     <View style={[styles.card,{marginBottom: 14,}]}>
       <View style={styles.flexD}>
-      <Text style={styles.value}>{item.gameName} Goal Challenge</Text>
+      <Text style={styles.value}>{item.name}</Text>
       {activeTab === 'My Games' ? (
   <Text style={[styles.value, { backgroundColor: '#3B82F6', padding: 4, borderRadius: 25, color: '#fff' }]}>
     GameList
@@ -66,26 +91,29 @@ export default function History() {
   <Text style={[
     styles.value,
     {
-      backgroundColor: item.concluded === 'Concluded' && '#F97316' , // green or red
+      backgroundColor: item.result === 'lost'?'#F97316':'green' , // green or red
       padding: 6,
       borderRadius: 25,
       color: '#fff'
     }
   ]}>
-    {item.concluded}
+    {item.result}
   </Text>
 )}
 
       </View> 
 
-    <View style={[styles.card,{ flexDirection: 'row',}]}> 
+{
+  activeTab === 'My Games'? 
+  <>
+<View style={[styles.card,{ flexDirection: 'row',}]}> 
       <View style={styles.details}>
         <Text style={styles.label}>Odds:</Text>
-        <Text style={styles.value}>3.003x</Text>
+        <Text style={styles.value}>{item.odds}</Text>
 
-        <Text style={[styles.label,{maxWidth:"77%"}]}>Left, right, or center? Choose where to shoot!</Text>
-        <Text style={styles.value}>Status: 2 winner</Text>
-        <Text style={styles.label}>House: @GoalKeeper22</Text>
+        {/* <Text style={[styles.label,{maxWidth:"77%"}]}>Left, right, or center? Choose where to shoot!</Text> */}
+        <Text style={styles.value}>Status: {item.status}</Text>
+        <Text style={styles.label}>House: {userDetails.name}</Text>
 
       </View>
       <View>
@@ -97,19 +125,57 @@ export default function History() {
           item.status === 'lost' && styles.amountLost,
         ]}
       >
-        {item.amount}
+        {item.stake}
       </Text>
 
       </View>
       </View>
       <TouchableOpacity
-    style={[Goalstyles.button,{opacity:0.3}]} >
-     <Text style={[styles.buttonText,{textAlign:"center",width:"100%"}]}> Game Ended</Text>
+    style={[Goalstyles.button,{opacity:item.status=='closed'?0.3:1}]} >
+     <Text style={[styles.buttonText,{textAlign:"center",width:"100%", color:'white'}]}>{
+      item.status=='closed'?'Game Ended':'Game Still Open'}</Text>
   </TouchableOpacity>
+</>:
+
+<>
+<View style={[styles.card,{ flexDirection: 'row',}]}> 
+      <View style={styles.details}>
+        <Text style={styles.label}>Odds:</Text>
+        <Text style={styles.value}>{item.odds}</Text>
+
+        {/* <Text style={[styles.label,{maxWidth:"77%"}]}>Left, right, or center? Choose where to shoot!</Text> */}
+        <Text style={styles.value}>Status: {item.status}</Text>
+        <Text style={styles.label}>House: {item.creator}</Text>
+
+      </View>
+      <View>
+      <Text style={styles.value}> Stake</Text>
+      <Text
+        style={[
+          styles.amount,
+          item.status === 'won' && styles.amountWon,
+          item.status === 'lost' && styles.amountLost,
+        ]}
+      >
+        {item.stake}
+      </Text>
+
+      </View>
+      </View>
+      <TouchableOpacity
+    style={[Goalstyles.button,{opacity:item.status=='closed'?0.3:1}]} >
+     <Text style={[styles.buttonText,{textAlign:"center",width:"100%", color:'white'}]}>{
+      item.status=='closed'?'Game Ended':'Game Still Open'}</Text>
+  </TouchableOpacity>
+</>
+
+}
+
+    
     </View>
   );
 
-  const dataToDisplay = activeTab === 'My Games' ? myGamesData : postGamesData;
+  const dataToDisplay = activeTab === 'My Games' ? myGames : playedGames;
 
   return (
     <>

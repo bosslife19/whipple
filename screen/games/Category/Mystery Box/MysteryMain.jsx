@@ -68,7 +68,11 @@ const MysteryMain = () => {
       router.push('/(routes)/games/availablegames');
       setLoading(false);
     }, 2000);
-  return Alert.alert('Success', 'Game Created Successfully');
+   Alert.alert('Success', 'Game Created Successfully');
+   setTimeout(()=>{
+       
+   router.push( '/(routes)/games/availablegames')
+      }, 2000)
  }else{
   setLoading(false);
   Alert.alert('Error', 'Server Error')
