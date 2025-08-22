@@ -116,7 +116,7 @@ const BankInfoScreen = () => {
             onChange={item => {
               setSelectedBank(item.value);
               setBankCode(item.code);
-              setBankName(item.name);1
+              setBankName(item.name);
             }}
           />
         )}

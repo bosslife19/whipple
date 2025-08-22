@@ -88,6 +88,7 @@ export default function WithdrawScreen() {
   const [otpMethod, setOtpMethod] = React.useState('sms');
   const [selectedBank, setSelectedBank] = useState("");
   const [bankId, setBankId] = useState("");
+  const [pin, setPin] = useState('');
   const [searchText, setSearchText] = useState("");
   const [loader, setLoader] = useState("");
   const { loading, makeRequest } = useRequest();
@@ -123,7 +124,8 @@ export default function WithdrawScreen() {
     try {
       const { error, response }  = await makeRequest("/withdraw/request", {   
         bank_id: bankId,
-        amount: amount
+        amount: amount,
+        pin: pin
       });
       if (error) {
         return Alert.alert("Error", error?.message);
@@ -150,6 +152,15 @@ export default function WithdrawScreen() {
           placeholderTextColor="#555"
           value={amount}
           onChangeText={(text) => setAmount(text)}
+        />
+        <Label>Pin</Label>
+        <Input
+          placeholder="***"
+          keyboardType="numeric"
+          placeholderTextColor="#555"
+          value={pin}
+          secureTextEntry
+          onChangeText={(text) => setPin(text)}
         />
         <Label>Bank Account</Label>
         <View style={styles.container}>
