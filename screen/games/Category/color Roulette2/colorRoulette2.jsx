@@ -105,6 +105,7 @@ const {userDetails} = useContext(AuthContext)
 if(Number(stake) > userDetails.wallet_balance){
       return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
     }
+    
     const res = await makeRequest("/create-game", {
       name: "Color Roulette2",
       colorSpun: activeColors[0],

@@ -37,7 +37,7 @@ const NumberSpinWheel = () => {
   // Calculate admissionFee and stake from totalAmount
   const totalAmount = parseFloat(totalInput) || 0;
   const admissionFee = totalAmount * 0.25;
-  const stake = totalAmount + admissionFee;
+  const stake = totalAmount;
 
   const spinWheel = () => {
     setShowResult(false);
