@@ -43,12 +43,18 @@ const Signup = () => {
       if(res.error){
         return Alert.alert('Error', res.error);
       }
+
+      if(res.response.status){
+         await AsyncStorage.setItem('authToken', res.response.token);
+         router.replace('/otp');
+      }
+    
       
       
-      router.replace('/auth/login');
 
     } catch (err) {
       console.log(err);
+      Alert.alert('Error','Server Error');
       
     }
   }
