@@ -3,7 +3,7 @@ import axios from 'axios';
 import { router } from 'expo-router';
 
 const axiosClient = axios.create({
-    baseURL: 'https://e2b4378dba90.ngrok-free.app/api',
+    baseURL:  `${process.env.EXPO_PUBLIC_BASE_URL}/api`,
     headers: {
         'Content-Security-Policy': "default-src 'self'; img-src https://*; script-src 'self';"
       }
@@ -40,7 +40,7 @@ axiosClient.interceptors.response.use(
                 
                 await AsyncStorage.removeItem('authToken'); // Await the token removal
                 await AsyncStorage.removeItem('loggedIn');
-                router.push('/auth/login');
+                router.replace('/auth/login');
             }
         } catch (err) {
             console.error('Error handling response error:', err);

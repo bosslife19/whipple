@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import bgs from '../../../../assets/images/games/image_fx_ (35) 1.png';
 import { useGameContext } from '../../../../context/AppContext';
 import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
+import { AuthContext } from '../../../../context/AuthContext';
 
 const SpinTheWheel = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
@@ -31,6 +32,7 @@ const SpinTheWheel = () => {
 
   const { gameData, updateGameData } = useGameContext();
   const { odds = '3.333', gameLabel, range, GameName = 'Wheel Spin' } = gameData || {};
+  const {userDetails} = useContext(AuthContext);
 
   const totalAmount = parseFloat(totalInput) || 0;
   const admissionFee = totalAmount * 0.25;
@@ -92,6 +94,9 @@ const SpinTheWheel = () => {
   };
 
   const handlePublishGame = () => {
+    if(Number(stake) > userDetails.wallet_balance){
+      return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
+    }
     setLoading(true);
     const formattedOdds = `${odds}x`;
 

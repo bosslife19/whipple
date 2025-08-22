@@ -8,7 +8,10 @@ import maingamess from '../../styles/maingameDetails/maingameDetails.styles';
 
 const Losingmodal = ({ visible,GameName, closeModal, correctNumber,stake,odds,gameLabel ,range,selected,parsedTotalOdds,selectedNumbers,  isFirstLoss = true, // default to true
 }) => {
- 
+ const losers = ()=>{
+    router.push( '/(routes)/games/LostGames/ViewLostGames',  )
+      
+}
 
 
   return (
@@ -39,10 +42,10 @@ const Losingmodal = ({ visible,GameName, closeModal, correctNumber,stake,odds,ga
 
                 <TouchableOpacity
                   style={{ paddingHorizontal: "6%", backgroundColor: "#0A1931", paddingVertical: 10, borderRadius: 5 }}
-                  onPress={()=>router.push('/(tabs)/home')}
+                  onPress={losers}
                 >
                   <Text style={maingamess.confirmText}>
-                  Go Back Home
+                  Play Losers Game
 
                     </Text>
                 </TouchableOpacity> 

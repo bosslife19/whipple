@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import { ImageBackground } from "react-native";
 import bgs from "../../../../assets/images/games/bluur.jpeg";
 import CustomInput from "../../../../components/Input/TextInput";
 import { useRequest } from "../../../../hooks/useRequest";
+import { AuthContext } from "../../../../context/AuthContext";
 const colors = [
   { id: "red", hex: "#EA384C", label: "Red" },
   { id: "blue", hex: "#0EA5E9", label: "Blue" },
@@ -39,7 +40,7 @@ const ColorRouletteGame2 = () => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [walletBalance, setWalletBalance] = useState(150000); // Example balance
   const { name, id } = useLocalSearchParams();
-
+const {userDetails} = useContext(AuthContext)
   const [isPublishEnabled, setIsPublishEnabled] = useState(false); // Track if publish button should be enabled
 
   // Function to update stake and calculate admission fee and total amount
@@ -101,17 +102,20 @@ const ColorRouletteGame2 = () => {
       return;
     }
     const selectedColors = activeColors.join(","); // Join selected color IDs into a comma-separated string
-
+if(Number(stake) > userDetails.wallet_balance){
+      return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
+    }
     const res = await makeRequest("/create-game", {
       name: "Color Roulette2",
       colorSpun: activeColors[0],
+      odds:Number(parsedTotalOdds),
       stake,
     });
     if (res.response) {
       setLoading(false)
       Alert.alert("Success", "Game Created Successfully");
       setTimeout(() => {
-        router.push("/(routes)/games/availablegames");
+        router.replace("/(routes)/games/availablegames");
       }, 2000);
     } else {
       setLoading(false)

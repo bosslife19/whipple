@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -27,6 +27,7 @@ import Goalstyles from '../../../../styles/Goal.styles';
 import { router } from 'expo-router';
 import CustomInput from '../../../../components/Input/TextInput';
 import { useRequest } from '../../../../hooks/useRequest';
+import { AuthContext } from '../../../../context/AuthContext';
 
 const { width } = Dimensions.get('window');
 const segmentWidth = width - 20;
@@ -35,7 +36,7 @@ const GoalMain = () => {
   const ballBottom = useRef(new Animated.Value(24)).current;
   const ballLeft = useRef(new Animated.Value(segmentWidth / 2 - 20)).current;
   const {makeRequest, loading} = useRequest()
-
+const{userDetails} = useContext(AuthContext);
   const [isBallUp, setIsBallUp] = useState(false);
   const [previousPositions, setPreviousPositions] = useState(new Set());
   const [shotMessage, setShotMessage] = useState('');
@@ -121,7 +122,9 @@ const GoalMain = () => {
    
     const totalAmount = parseFloat(totalInput);
     
-    
+    if(Number(totalAmount) > userDetails.wallet_balance){
+          return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
+        }
     const res = await makeRequest('/create-game', {name:'Goal Challenge', odds:mainOdd, direction:selectedGoal.toLowerCase(), stake:totalAmount});
     if(res.response){
        Alert.alert('Success', 'Game Created Successfully');
@@ -129,7 +132,7 @@ const GoalMain = () => {
       
 
       
-      router.push('/(routes)/games/availablegames');
+      router.replace('/(routes)/games/availablegames');
     }, 2000);
     } else if(res.error){
       return Alert.alert('Error', res.error);

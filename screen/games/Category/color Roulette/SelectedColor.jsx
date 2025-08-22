@@ -119,7 +119,7 @@ const ColorRouletteSelect = () => {
        GameName,
        isGameLost: true, // Flag indicating if the game is lost
      });
-        router.push('/(routes)/games/LostGames/ViewLostGames');
+        router.replace('/(routes)/games/LostGames/ViewLostGames');
       };
   
     const spin = spinValue.interpolate({
@@ -211,7 +211,7 @@ const ColorRouletteSelect = () => {
                        {success === true && ( 
                         <TouchableOpacity
                          style={GoalStyles.button}
-                         onPress={() => router.push('/(routes)/games/category/category-main')}  >
+                         onPress={() => router.replace('/(routes)/games/category/category-main')}  >
                          <Text style={styles.buttonText}>Go Back to Games</Text>
                         </TouchableOpacity>  )} 
                         {success === null && (

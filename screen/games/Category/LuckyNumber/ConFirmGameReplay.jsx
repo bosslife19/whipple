@@ -169,7 +169,9 @@ const losersGameNumber = getRandomNumber();
        isGameLost: true, // Flag indicating if the game is lost
     });
 }
-  
+  if(!range){
+    range = 3;
+  }
   return (
     <>
       <HeaderBet arrow name={game?.name} backgroundColor="#A8BFED" />
@@ -231,8 +233,8 @@ const losersGameNumber = getRandomNumber();
           </Text>
 
           {success === false ? (
-       <TouchableOpacity onPress={losers} style={ConfirmsSTy.primaryBtn}>
-        <Text style={ConfirmsSTy.primaryBtnText}>Play Losers Game</Text>
+       <TouchableOpacity onPress={()=>router.replace('/(tabs)/home')} style={ConfirmsSTy.primaryBtn}>
+        <Text style={ConfirmsSTy.primaryBtnText}>Go Home</Text>
        </TouchableOpacity>
        ) : success === true ? (
       <TouchableOpacity

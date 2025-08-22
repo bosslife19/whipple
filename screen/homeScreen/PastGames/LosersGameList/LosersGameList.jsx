@@ -13,12 +13,12 @@ import axiosClient from '../../../../axiosClient';
 const LosersGames = () => {
   const router = useRouter();
   const { gameData } = useGameContext();
-  const { stake, odds, gameLabel, range, selected, GameName, isGameLost } = gameData;
+  const {  gameLabel, range, selected, GameName,  } = gameData;
 
   const [selectedTab, setSelectedTab] = useState('All');
   const {userDetails} = useContext(AuthContext)
 const [lostGames, setLostGames] = useState(null);
-  const isLostAvailable = stake && isGameLost;
+  
 
 
 

@@ -226,7 +226,7 @@ const GameDetails = () => {
             </View>
             <View>
               <Text style={styles.label}>Required Stake</Text>
-              <Text style={styles.value}>₦{Math.floor(stake / 3)}</Text>
+              <Text style={styles.value}>₦{Math.floor(stake / odds)}</Text>
             </View>
           </View>
 

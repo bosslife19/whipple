@@ -200,7 +200,7 @@ const SelectedDiceRoll = () => {
       GameName,
       isGameLost: true,
     });
-    router.push('/(routes)/games/LostGames/ViewLostGames');
+    router.replace('/(routes)/games/LostGames/ViewLostGames');
   };
 
   const renderButton = () => {
@@ -216,7 +216,7 @@ const SelectedDiceRoll = () => {
       return (
         <TouchableOpacity
           style={[styles.rollButton]}
-        onPress={() => router.push('/(routes)/games/category/category-main')}
+        onPress={() => router.replace('/(routes)/games/category/category-main')}
         >
           <Text style={styles.rollButtonText}>Go Back to Games</Text>
         </TouchableOpacity>

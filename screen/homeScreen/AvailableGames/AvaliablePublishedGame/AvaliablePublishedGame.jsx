@@ -63,7 +63,7 @@ const filteredGames = games?.filter(game => {
 
 
   const handlePlayNow = (game) => {
-   
+  
     setGamePlayed(true);
     
 

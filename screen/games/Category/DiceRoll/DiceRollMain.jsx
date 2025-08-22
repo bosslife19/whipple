@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -19,6 +19,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useGameContext } from "../../../../context/AppContext";
 import CustomInput from "../../../../components/Input/TextInput";
 import { useRequest } from "../../../../hooks/useRequest";
+import { AuthContext } from "../../../../context/AuthContext";
 
 export default function DiceGameScreen() {
   const [diceType, setDiceType] = useState("single");
@@ -27,12 +28,14 @@ export default function DiceGameScreen() {
   const [stake, setStake] = useState("");
   const [face1, setFace1] = useState(1);
   const [face2, setFace2] = useState(1);
+  const {userDetails} = useContext(AuthContext);
   const walletBalance = 150000;
   const admissionFee = Number(stake) * 0.25;
   const totalAmount = Number(stake) + admissionFee;
 
   const spinValue1 = useRef(new Animated.Value(0)).current;
   const spinValue2 = useRef(new Animated.Value(0)).current;
+
 
   const rollDice = () => {
     const newFace1 = Math.floor(Math.random() * 6) + 1;
@@ -186,7 +189,9 @@ export default function DiceGameScreen() {
   const handlePublish = async () => {
     const odds = getOdds();
     const gameLabel = diceType === "double" ? `${face1 + face2}` : `${face1}`;
-   
+   if(Number(stake) > userDetails.wallet_balance){
+         return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
+       }
     const res = await makeRequest("/create-game", {
       name: "Dice Roll",
       odds: getOdds(),
@@ -197,7 +202,7 @@ export default function DiceGameScreen() {
     if(res.response){
       Alert.alert('Success', 'Game Created Successfully');
       setTimeout(()=>{
-        router.push("/(routes)/games/availablegames");
+        router.replace("/(routes)/games/availablegames");
       }, 3000)
     }else if(res.error){
       return Alert.alert('Error', res.error);

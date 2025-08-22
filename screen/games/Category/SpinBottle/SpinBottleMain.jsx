@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import creategame from '../../../../styles/creategame/creategame.styles';
 import { useGameContext } from '../../../../context/AppContext';
 import { router } from 'expo-router';
 import { useRequest } from '../../../../hooks/useRequest';
+import { AuthContext } from '../../../../context/AuthContext';
 
 const SpinBottleMain = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
@@ -35,6 +36,8 @@ const SpinBottleMain = () => {
   const [totalInput, setTotalInput] = useState('');
   const [admissionFee, setAdmissionFee] = useState(0);
   const [stake, setStake] = useState(0);
+
+  const {userDetails} = useContext(AuthContext)
 
   const spinBottle = (direction) => {
     setIsSpinning(true);
@@ -105,6 +108,9 @@ const SpinBottleMain = () => {
           // const odds = '3.333';
   
     const handlePublishGame = async() => {
+      if(Number(stake) > userDetails.wallet_balance){
+      return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
+    }
       setLoading(true);
       const formattedOdds = `${odds}x`;
 
@@ -128,7 +134,7 @@ setTimeout(() => {
            
             result: gameLabel,
         });
-        router.push('/(routes)/games/availablegames')
+        router.replace('/(routes)/games/availablegames')
 
         setLoading(false);
       }, 2000);

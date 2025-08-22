@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -21,11 +21,14 @@ import FLipCoin from '../../../../styles/flipcoin/flipCoin';
 import { useGameContext } from '../../../../context/AppContext';
 import CustomInput from '../../../../components/Input/TextInput';
 import { useRequest } from '../../../../hooks/useRequest';
+import { AuthContext } from '../../../../context/AuthContext';
 
 const NumberSpinWheel = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
   const [totalInput, setTotalInput] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+
+  const {userDetails} = useContext(AuthContext);
  
   const [winningNumbers, setWinningNumbers] = useState([]);
   const [showResult, setShowResult] = useState(false);
@@ -72,6 +75,9 @@ const NumberSpinWheel = () => {
   const handlePublishGame = async() => {
   
     const formattedOdds = `${odds}x`;
+    if(Number(stake) > userDetails.wallet_balance){
+          return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
+        }
  
     const res  = await makeRequest('/create-game', {
       name: "One Number Spin",
@@ -82,7 +88,7 @@ const NumberSpinWheel = () => {
     if(res.response.status){
       Alert.alert('Success', 'Game Created Successfully');
        setTimeout(() => {
-      router.push( '/(routes)/games/availablegames')
+      router.replace( '/(routes)/games/availablegames')
       // updateGameData({
       //   stake: stake.toFixed(2),
       //     odds: formattedOdds,

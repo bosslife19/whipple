@@ -66,6 +66,7 @@ const SpinTheWheel = () => {
         // const odds = '3.333';
 
   const handlePublishGame = () => {
+   
     setLoading(true);
     const formattedOdds = `${odds}x`;
 
