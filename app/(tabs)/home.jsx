@@ -20,13 +20,31 @@ import FloatingMessage from '../../screen/homeScreen/Message/Message';
 import AvailableGamesList from '../../screen/homeScreen/AvailableGames/AvailableGamesList';
 import FeaturesSection from '../../screen/homeScreen/features/Features';
 import SlideShowBet from '../../features/slideshow/slideshowBet';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import {AuthContext} from '../../context/AuthContext'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { formatCurrency } from '../../utlils';
+import {useFocusEffect} from 'expo-router';
+import axiosClient from '../../axiosClient';
 
 export default function HomeScreen() {
   const {userDetails, setUserDetails, userBalance, userPoint} = useContext(AuthContext)
+const [user, setUser] = useState(null);
+  const getLoggedInUser = async ()=>{
+    const res = await axiosClient.get('/user');
+   
+    setUserDetails(res.data);
+    setUser(res.data);
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      // Runs every time the screen comes into focus
+      getLoggedInUser();
+    }, [])
+  );
+
+  
  
 
   useEffect(()=>{
@@ -66,7 +84,7 @@ export default function HomeScreen() {
         <SlideShowBet />
         <View style={Homes.imageBackground}>
           <Text style={[Homes.imageText,{ fontSize:14,fontWeight:500,textAlign:"center",fontFamily:"Grotesk",paddingVertical:4}]}>Available Balance </Text>
-             <Text style={[Homes.imageText,{ textAlign:"center",fontFamily:"Poppins",fontSize:24,paddingVertical:14}]}>NGN {formatCurrency(userBalance) || `${userBalance}.00`}</Text>
+             <Text style={[Homes.imageText,{ textAlign:"center",fontFamily:"Poppins",fontSize:24,paddingVertical:14}]}>NGN {formatCurrency(user?.wallet_balance) || formatCurrency(userDetails.wallet_balance) }</Text>
              
               <View style={[Homes.flexD,{justifyContent:"space-between"}]}>
               <TouchableOpacity onPress={()=> router.push("/(routes)/deposit")} style={[Homes.flexD,{paddingHorizontal:"14%",paddingVertical:14, backgroundColor:"#0A1931",borderRadius:20,gap:8}]}>

@@ -80,7 +80,15 @@ const ColorRouletteSelect = () => {
         const selected = shuffled.slice(0, 2).map(c => c.id);
         setActiveColors(selected);
 
-         makeRequest('/play-game', {
+        makeRequest('/deduct-balance', {
+          amount: game.stake/game.odds
+        }).then(res=>{
+          if(res.error){
+            return Alert.alert('Sorry', res.error);
+          }
+
+  
+   makeRequest('/play-game', {
                 gameId: id,
                 name,
                 colorSpun: selected[0]
@@ -95,10 +103,16 @@ const ColorRouletteSelect = () => {
                   }else{
                     setSuccess(false)
                   }
+                  setModalVisibled(true);
                }).catch((e)=>{
                 console.log(e);
                 
                })
+        }).catch(error=>{
+          console.log(error);
+        })
+
+      
         
         
         setLoading(false);
@@ -212,7 +226,7 @@ const ColorRouletteSelect = () => {
                         <TouchableOpacity
                          style={GoalStyles.button}
                          onPress={() => router.replace('/(routes)/games/category/category-main')}  >
-                         <Text style={styles.buttonText}>Go Back to Games</Text>
+                         <Text style={GoalStyles.buttonText}>Go Back to Games</Text>
                         </TouchableOpacity>  )} 
                         {success === null && (
                           <TouchableOpacity

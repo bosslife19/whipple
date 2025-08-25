@@ -19,8 +19,20 @@ const ColorRouletteSelect2 = () => {
     const [success, setSuccess] = useState(null); // null initially, true/false after check
   const {makeRequest} = useRequest();
     const [visible, setModalVisibled] = useState(false);
+    const [game, setGame] = useState(null);
 
     const {name, id} = useLocalSearchParams()
+
+     useEffect(()=>{
+ const getGame = async ()=>{
+        const res = await axiosClient.get(`/get-game/${id}`);
+
+        setGame(res.data.game)
+
+      }
+
+      getGame();
+    }, [])
    
   
    const closeModal =()=>{
@@ -66,9 +78,12 @@ const ColorRouletteSelect2 = () => {
        const randomIndex = Math.floor(Math.random() * colors.length);
        const selected = [colors[randomIndex].id];
        setActiveColors(selected);
-      
 
-       makeRequest('/play-game', {
+      
+      
+      makeRequest('/deduct-balance', {amount: game.stake/game.odds}).then(res=>{
+        if(res.response.status){
+            makeRequest('/play-game', {
         gameId: id,
         name,
         colorSpun: selected[0]
@@ -83,10 +98,21 @@ const ColorRouletteSelect2 = () => {
           }else{
             setSuccess(false)
           }
+          setModalVisibled(true);
        }).catch((e)=>{
         console.log(e);
         
        })
+        }else{
+         if(res.error){
+          return Alert.alert('Sorry', res.error);
+         }
+         return Alert.alert('Error', 'Server Error');
+        }
+      }
+
+      ).catch(e=>console.log(e));
+     
 
       
      });

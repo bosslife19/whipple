@@ -125,7 +125,7 @@ const{userDetails} = useContext(AuthContext);
     if(Number(totalAmount) > userDetails.wallet_balance){
           return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
         }
-    const res = await makeRequest('/create-game', {name:'Goal Challenge', odds:mainOdd, direction:selectedGoal.toLowerCase(), stake:totalAmount});
+    const res = await makeRequest('/create-game', {name:'Goal Challenge', odds:3.003, direction:selectedGoal.toLowerCase(), stake:totalAmount});
     if(res.response){
        Alert.alert('Success', 'Game Created Successfully');
       setTimeout(() => {

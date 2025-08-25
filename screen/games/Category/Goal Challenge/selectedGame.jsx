@@ -65,8 +65,12 @@ useEffect(()=>{
       Alert.alert('Choose Direction', 'Please select Left, Center, or Right first.');
       return;
     }
-
-    const res = await makeRequest('/play-game',{
+try {
+   const resp = await makeRequest('/deduct-balance', {
+      amount: game.stake/game.odds
+    });
+    if(resp.response.status){
+const res = await makeRequest('/play-game',{
       name: game.name,
       direction: selectedGuess.toLowerCase(),
       gameId: game.id
@@ -74,10 +78,22 @@ useEffect(()=>{
 
 
     } )
-
-    if(res.error){
+     if(res.error){
       return Alert.alert('Error', res.error);
     }
+    }
+    if(resp.error){
+      return Alert.alert('Sorry', resp.error)
+    }
+} catch (error) {
+  console.log(error);
+  Alert.alert('Error', 'Server Error');
+}
+   
+
+    
+
+   
 
     
 
@@ -114,13 +130,7 @@ useEffect(()=>{
   };
 
   const lostGame = () =>{
-      updateGameData({
-            stake ,
-            odds,
-            gameLabel ,
-            GameName,
-           isGameLost: true,
-          });
+     
             router.push('/(routes)/games/LostGames/ViewLostGames');
           }
   

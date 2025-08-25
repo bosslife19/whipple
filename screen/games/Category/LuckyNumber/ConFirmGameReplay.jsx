@@ -91,17 +91,19 @@ const losersGameNumber = getRandomNumber();
   const handleSubmit = async () => {
    
     if(!losersGame){
-    const res = await makeRequest('/play-game', {
+      try {
+         const resp = await makeRequest('/deduct-balance', {
+      amount: game.stake/game.odds
+    })
+    if(resp.response.status){
+       const res = await makeRequest('/play-game', {
       gameId: game.id,
       choiceNumber: selectedNumbers[0],
       name
 
 
     })
-
- 
-    
-    if(res.error){
+          if(res.error){
       return Alert.alert('Error', res.error);
     }
     
@@ -111,6 +113,18 @@ const losersGameNumber = getRandomNumber();
       setSuccess(false); // It's a loss
     }
     setModalVisibled(true);
+
+    }
+   
+
+ 
+    
+
+      } catch (error) {
+        console.log(error);
+        Alert.alert('Error', 'Server Error')
+      }
+   
     }else{
       try {
          const res = await makeRequest('/play-losers-game', {

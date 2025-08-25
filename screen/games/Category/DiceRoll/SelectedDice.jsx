@@ -18,6 +18,7 @@ import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
 import dicestyles from '../../../../styles/diceGame/dice.styles';
 import {useRequest} from '../../../../hooks/useRequest'
+import { useEffect } from 'react';
 
 const SelectedDiceRoll = () => {
   const { updateGameData, gameData } = useGameContext();
@@ -33,13 +34,24 @@ const SelectedDiceRoll = () => {
   const [rolling, setRolling] = useState(false);
   const [result, setResult] = useState(null);
   const [visible, setModalVisibled] = useState(false);
+  const [game, setGame] = useState(null);
  
   const spinValue1 = useRef(new Animated.Value(0)).current;
   const spinValue2 = useRef(new Animated.Value(0)).current;
 
   const {id, name} = useLocalSearchParams();
 
-  console.log(id, name)
+      useEffect(()=>{
+   const getGame = async ()=>{
+          const res = await axiosClient.get(`/get-game/${id}`);
+  
+          setGame(res.data.game)
+  
+        }
+  
+        getGame();
+      }, [])
+  
 
   const closeModal = () => {
     setModalVisibled(false);
@@ -81,8 +93,12 @@ const SelectedDiceRoll = () => {
       setUserRoll(userTotal);
       setRolling(false)
      
-
-       makeRequest('/play-game',{
+      makeRequest('/deduct-balance', {amount:game.stake/game.odds}).then(res=>{
+        if(res.error){
+          return Alert.alert('Sorry', res.error);
+        }
+        if(res.response.status){
+                 makeRequest('/play-game',{
       name,
       numberRolled: userTotal,
       gameId: id
@@ -91,7 +107,7 @@ const SelectedDiceRoll = () => {
 
     } ).then((res)=>{
      
-      console.log('res', res.error, res.response);
+     
       if(res.error){
         
         setFace1(0)
@@ -109,6 +125,12 @@ const SelectedDiceRoll = () => {
       
  setDiceRolled(true);
     })
+        }
+      }).catch(e=>{
+        console.log(e);
+        Alert.alert('Error', 'Server Error');
+      })
+
 
      
       // const gameResult = userTotal === houseTotal ? 'win' : 'lose';

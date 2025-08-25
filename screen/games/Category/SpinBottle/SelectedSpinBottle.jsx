@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -28,7 +28,19 @@ const SelectedSpinBottle = () => {
   const [success, setSuccess] = useState(null);
   const [visible, setVisible] = useState(false);
 
-  const {name, id} = useLocalSearchParams()
+  const {name, id} = useLocalSearchParams();
+  const [game, setGame] = useState(null);
+
+    useEffect(()=>{
+                const getGame = async ()=>{
+                  const res = await axiosClient.get(`/get-game/${id}`);
+          
+                  setGame(res.data.game)
+          
+                }
+          
+                getGame();
+              }, [])
  
     const { gameData ,updateGameData } = useGameContext();
         const {  odds,  gameLabel,  GameName , stake} = gameData || {};
@@ -58,7 +70,13 @@ const SelectedSpinBottle = () => {
     }).start(() => {
       setIsSpinning(false);
 
-      makeRequest('/play-game', {
+      makeRequest('/deduct-balance', {
+        amount: game.stake/game.odds
+      }).then(res=>{
+        if(res.error){
+          return Alert.alert('Sorry', res.error)
+        }
+              makeRequest('/play-game', {
                 gameId: id,
                 name,
                 direction: direction.toLowerCase()
@@ -77,6 +95,13 @@ const SelectedSpinBottle = () => {
                 console.log(e);
                 
                })
+
+      }).catch(e=>{
+       console.log(e);
+       Alert.alert('Error', 'Server Error');
+      })
+
+
         
       setResult(direction);
       setVisible(true);
