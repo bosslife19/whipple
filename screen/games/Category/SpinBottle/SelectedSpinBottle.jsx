@@ -70,7 +70,7 @@ const SelectedSpinBottle = () => {
       useNativeDriver: true,
     }).start(() => {
       setIsSpinning(false);
-     
+    
       makeRequest('/deduct-balance', {
         amount: game.stake/game.odds
       }).then(res=>{

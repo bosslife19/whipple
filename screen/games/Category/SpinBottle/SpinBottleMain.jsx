@@ -93,7 +93,7 @@ const SpinBottleMain = () => {
       const stakeAmount = amount + fee;
 
       setAdmissionFee(fee);
-      setStake(stakeAmount);
+      setStake(amount);
       setIsButtonDisabled(false);
     } else {
       setAdmissionFee(0);
@@ -108,19 +108,20 @@ const SpinBottleMain = () => {
           // const odds = '3.333';
   
     const handlePublishGame = async() => {
+      console.log('show')
       if(Number(stake) > userDetails.wallet_balance){
       return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
     }
+    
       setLoading(true);
       const formattedOdds = `${odds}x`;
 
-
+   
       const res = await makeRequest('/create-game', {
         name: 'Spin The Bottle',
         spinDirection: result.toLowerCase(),
         odds,
-        stake:amount
-      })
+        stake,      })
 
       if(res.response){
 setLoading(false);
