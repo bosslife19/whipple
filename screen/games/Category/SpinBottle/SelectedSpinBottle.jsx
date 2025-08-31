@@ -20,6 +20,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import Winningmodal from '../../../winningmodal/winningmodal';
 import Losingmodal from '../../../loseModal/LoseModal';
 import { useRequest } from '../../../../hooks/useRequest';
+import axiosClient from '../../../../axiosClient';
 const SelectedSpinBottle = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
   const [selectedDirection, setSelectedDirection] = useState(null);
@@ -69,7 +70,7 @@ const SelectedSpinBottle = () => {
       useNativeDriver: true,
     }).start(() => {
       setIsSpinning(false);
-
+     
       makeRequest('/deduct-balance', {
         amount: game.stake/game.odds
       }).then(res=>{

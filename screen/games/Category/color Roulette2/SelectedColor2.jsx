@@ -10,6 +10,7 @@ import Winningmodal from '../../../winningmodal/winningmodal';
 import { useGameContext } from '../../../../context/AppContext';
 import Goalstyles from '../../../../styles/Goal.styles';
 import { useRequest } from '../../../../hooks/useRequest';
+import axiosClient from '../../../../axiosClient';
 
 const ColorRouletteSelect2 = () => {
     const [selectedColor, setSelectedColor] = useState(null);

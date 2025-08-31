@@ -19,7 +19,9 @@ const GameDetails = () => {
       
     
       // Navigate based on the selected game
+   
       switch (normalizedGameName) {
+        
         case 'lucky number':
           router.push({
             pathname: '/games/vote',

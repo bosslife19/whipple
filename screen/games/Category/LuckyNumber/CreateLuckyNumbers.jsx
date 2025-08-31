@@ -97,11 +97,12 @@ const CreateLuckyNumbers = () => {
     }
 
     
+    const numbersString = selectedNumbers.join(","); 
     const response = await makeRequest("/create-game", {
       name: 'Lucky Number',
       category: gameData.category,
       subcategory: subcategory,
-      result: selectedNumbers[0],
+      result: numbersString,
       odds: gameData.totalOdds,
       stake:stakeAmount,
     });

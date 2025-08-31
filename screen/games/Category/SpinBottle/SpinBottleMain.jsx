@@ -119,7 +119,7 @@ const SpinBottleMain = () => {
         name: 'Spin The Bottle',
         spinDirection: result.toLowerCase(),
         odds,
-        stake
+        stake:amount
       })
 
       if(res.response){

@@ -63,8 +63,9 @@ const filteredGames = games?.filter(game => {
 
 
   const handlePlayNow = (game) => {
-  
+ 
     setGamePlayed(true);
+    
     
 
     if (
@@ -92,6 +93,7 @@ const filteredGames = games?.filter(game => {
       normalizedGameName(game.name) === "one number spin" ||
       normalizedGameName(game.name) === "color roulette2"
     ) {
+     
       router.push({
         pathname: "/games/details/gamedetails-without-vote",
         params: {
@@ -106,7 +108,7 @@ const filteredGames = games?.filter(game => {
         },
       });
     } else {
-     
+    
       router.push({
         pathname: "/games/details",
         params: {

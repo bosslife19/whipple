@@ -103,12 +103,7 @@ const MysteryMain = () => {
     }, 2000);
   };
 
-useEffect(() => {
-  // Only update the context if the selectedBox has actually changed
-  if (gameData.selectedBox !== selectedBox) {
-    updateGameData({ selectedBox });
-  }
-}, [selectedBox, gameData.selectedBox, updateGameData]);
+
 
 
   return (

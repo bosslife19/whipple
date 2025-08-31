@@ -16,6 +16,7 @@ import HeaderBet from '../../../Header/HeaderBet';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useGameContext } from '../../../../context/AppContext';
 import { useRequest } from '../../../../hooks/useRequest';
+import axiosClient from '../../../../axiosClient';
 
 const MyseterySelect = () => {
   // const { selected, GameName } = useLocalSearchParams();
@@ -49,6 +50,7 @@ const MyseterySelect = () => {
   };
 
   const handleRevealBox = async() => {
+
     if (!selectedBox) {
       alert('Please select a box first!');
       return;

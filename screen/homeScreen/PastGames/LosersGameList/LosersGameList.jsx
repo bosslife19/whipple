@@ -13,7 +13,7 @@ import axiosClient from '../../../../axiosClient';
 const LosersGames = () => {
   const router = useRouter();
   const { gameData } = useGameContext();
-  const {  gameLabel, range, selected, GameName,  } = gameData;
+  // const {  gameLabel, range, selected, GameName,  } = gameData;
 
   const [selectedTab, setSelectedTab] = useState('All');
   const {userDetails} = useContext(AuthContext)
@@ -38,10 +38,10 @@ const [lostGames, setLostGames] = useState(null);
             params: {
             stake: stake?.toString(),
             odds,
-             gameLabel,
-            GameName,
-            range, 
-            selected,
+           
+            
+            
+           
             id,
             name,
             losersGame:true
@@ -55,10 +55,10 @@ const [lostGames, setLostGames] = useState(null);
             params: {
             stake: stake?.toString(),
             odds,
-            gameLabel,
-            GameName,
-            range, 
-            selected,
+           
+
+           
+            
             id,
             name,
             losersGame:true
@@ -71,10 +71,10 @@ const [lostGames, setLostGames] = useState(null);
               params: {
              stake: stake?.toString(),
             odds,
-            gameLabel,
-            GameName,
-            range,
-            selected,
+           
+           
+            
+            
             name,
             id,
             losersGame:true
@@ -88,10 +88,10 @@ const [lostGames, setLostGames] = useState(null);
             params: {
             stake: stake?.toString(),
             odds,
-             gameLabel,
-            GameName,
-            range,
-            selected,
+             
+           
+
+            
             id,
             name,
             losersGame:true
@@ -105,10 +105,9 @@ const [lostGames, setLostGames] = useState(null);
               params: {
               stake: stake?.toString(),
               odds,
-               gameLabel,
-              GameName,
-              range,
-              selected,
+              
+              
+              
               name,
               id,
               losersGame:true
@@ -122,10 +121,10 @@ const [lostGames, setLostGames] = useState(null);
                 params: {
                 stake: stake?.toString(),
                 odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
+
+                
+
+                
                 id,
                 name,
                 losersGame:true
@@ -139,10 +138,9 @@ const [lostGames, setLostGames] = useState(null);
                 params: {
                 stake: stake?.toString(),
                 odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
+                
+                
+                
                 name, 
                 id,
                 losersGame:true
@@ -156,10 +154,10 @@ const [lostGames, setLostGames] = useState(null);
                 params: {
                 stake: stake?.toString(),
                 odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
+                
+                
+               
+                
                 name,
                 id,
                 losersGame:true
@@ -173,10 +171,10 @@ const [lostGames, setLostGames] = useState(null);
                 params: {
                 stake: stake?.toString(),
                 odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
+                
+                
+                
+               
                 name,
                 id,
                 losersGame:true
@@ -191,10 +189,9 @@ const [lostGames, setLostGames] = useState(null);
                 params: {
                 stake: stake?.toString(),
                 odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
+
+                
+
                 name,
                 id,
                 losersGame:true
@@ -213,8 +210,7 @@ const [lostGames, setLostGames] = useState(null);
    
   };
 
-  const shouldDisplayGame =
-    selectedTab === 'All' || selectedTab.toLowerCase().includes(GameName?.toLowerCase());
+
 
   // if (!lostGames) {
   //   return (
@@ -283,7 +279,7 @@ setLostGames(res.data.games);
                 <Text style={LosersGameList.description}>
                   {/* {game.name} - {gameLabel}  */}
                   {/* this range is for lucky numbers */}
-                  {range}
+                  
                 </Text>
 
                 <View style={LosersGameList.row}>
