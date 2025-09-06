@@ -110,7 +110,7 @@ const {userDetails} = useContext(AuthContext);
    Alert.alert('Success', 'Game Created Successfully');
    setTimeout(()=>{
        
-   router.replace( '/(routes)/games/availablegames')
+   router.replace( '/(tabs)/home')
       }, 2000)
   }
   if(res.error){

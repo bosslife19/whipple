@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -9,22 +9,26 @@ import {
   ImageBackground,
 } from 'react-native';
 import HeaderBet from '../../../Header/HeaderBet';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import creategame from '../../../../styles/creategame/creategame.styles';
 import WheelSPins from '../../../../styles/spining/wheelspining.styles';
 import bgs from '../../../../assets/images/games/image_fx_ (35) 1.png';
 import { useGameContext } from '../../../../context/AppContext';
 import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
+import { useRequest } from '../../../../hooks/useRequest';
 import { AuthContext } from '../../../../context/AuthContext';
+import axiosClient from '../../../../axiosClient';
 
 const SpinTheWheel = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
   const lastResultWasWin = useRef(null);
+  const [game, setGame] = useState({});
 
   const [totalInput, setTotalInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [winningNumbers, setWinningNumbers] = useState([]);
+  const {makeRequest} = useRequest()
+  
   const [showResult, setShowResult] = useState(false);
   const [success, setSuccess] = useState(null);
   const [visible, setModalVisible] = useState(false);
@@ -37,11 +41,23 @@ const SpinTheWheel = () => {
   const totalAmount = parseFloat(totalInput) || 0;
   const admissionFee = totalAmount * 0.25;
   const stake = totalAmount + admissionFee;
+  const { id, name } = useLocalSearchParams();
+
 
   const spin = spinValue.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '1080deg'],
   });
+    useEffect(()=>{
+ const getGame = async ()=>{
+        const res = await axiosClient.get(`/get-game/${id}`);
+
+        setGame(res.data.game)
+
+      }
+
+      getGame();
+    }, [])
 
   const toggleNumber = (num) => {
     if (selectedNumbers.includes(num)) {
@@ -70,15 +86,52 @@ const SpinTheWheel = () => {
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start(() => {
-      const result = [];
-      while (result.length < 1) {
-        const num = Math.floor(Math.random() * 10) + 1;
-        if (!result.includes(num)) {
-          result.push(num);
+      // const result = [];
+      // while (result.length < 1) {
+      //   const num = Math.floor(Math.random() * 10) + 1;
+      //   if (!result.includes(num)) {
+      //     result.push(num);
+      //   }
+      // }
+      // setWinningNumbers(result);
+      // checkResult(result);
+      makeRequest('/deduct-balance', {amount:game.stake/game.odds}).then(res=>{
+        if(res.error){
+          return Alert.alert('Sorry', res.error);
         }
+        if(res.response.status){
+                 makeRequest('/play-game',{
+      name,
+      number: selectedNumbers[0],
+      gameId: id
+      
+
+
+    } ).then((res)=>{
+     
+     
+      if(res.error){
+        
+       
+        return Alert.alert('Error', res.error);
       }
-      setWinningNumbers(result);
-      checkResult(result);
+      if(res.response.success){
+        setSuccess(true)
+
+      }else if(res.response.success ===false){
+       
+        
+        setSuccess(false)
+      }
+
+      
+      setModalVisible(true);
+    })
+        }
+      }).catch(e=>{
+        console.log(e);
+        Alert.alert('Error', 'Server Error');
+      })
     });
   };
 
@@ -93,26 +146,7 @@ const SpinTheWheel = () => {
     setShowResult(true);
   };
 
-  const handlePublishGame = () => {
-    if(Number(stake) > userDetails.wallet_balance){
-      return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
-    }
-    setLoading(true);
-    const formattedOdds = `${odds}x`;
 
-    setTimeout(() => {
-      updateGameData({
-        stake: stake.toFixed(2),
-        odds,
-        gameLabel ,
-        GameName,
-       isGameLost: true,
-      });
-
-      setLoading(false);
-      router.push('/(routes)/games/availablegames');
-    }, 2000);
-  };
 
   const closeModal = () => {
     setModalVisible(false);

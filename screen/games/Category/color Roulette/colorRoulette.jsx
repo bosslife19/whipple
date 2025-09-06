@@ -101,7 +101,7 @@ const ColorRouletteGame = () => {
      Alert.alert('Success', 'Game Created Successfully');
       setTimeout(()=>{
     
-router.replace( '/(routes)/games/availablegames')
+router.replace( '/(tabs)/home')
    }, 2000)
    }
 

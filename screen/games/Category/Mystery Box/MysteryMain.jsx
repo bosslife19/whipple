@@ -70,7 +70,7 @@ const MysteryMain = () => {
   setLoading(false)
     setTimeout(() => {
       // Now navigate to the game page
-      router.push('/(routes)/games/availablegames');
+      router.push('/(tabs)/home');
       setLoading(false);
     }, 2000);
    Alert.alert('Success', 'Game Created Successfully');

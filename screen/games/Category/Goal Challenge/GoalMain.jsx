@@ -132,7 +132,7 @@ const{userDetails} = useContext(AuthContext);
       
 
       
-      router.replace('/(routes)/games/availablegames');
+      router.replace('/(tabs)/home');
     }, 2000);
     } else if(res.error){
       return Alert.alert('Error', res.error);

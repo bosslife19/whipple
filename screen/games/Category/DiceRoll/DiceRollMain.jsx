@@ -192,17 +192,19 @@ export default function DiceGameScreen() {
    if(Number(stake) > userDetails.wallet_balance){
          return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
        }
+     
     const res = await makeRequest("/create-game", {
       name: "Dice Roll",
       odds: getOdds(),
       stake,
+      diceType,
       diceRolled: gameLabel,
     });
     
     if(res.response){
       Alert.alert('Success', 'Game Created Successfully');
       setTimeout(()=>{
-        router.replace("/(routes)/games/availablegames");
+        router.replace("/(tabs)/home");
       }, 3000)
     }else if(res.error){
       return Alert.alert('Error', res.error);

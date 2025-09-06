@@ -1,14 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import axiosClient from '../../../axiosClient';
 
 const FeaturesSection = () => {
+  const [leaderBoard, setLeaderBoard] = useState(null)
+  useEffect(()=>{
+    const getLeaderBoard = async ()=>{
+      const res = await axiosClient.get('/leaderboard');
+      console.log(res.data.winners);
+      setLeaderBoard(res.data.winners)
+    }
+    getLeaderBoard()
+  }, [])
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Featured Games */}
-      <View style={styles.card}>
+      {/* <View style={styles.card}>
         <Text style={styles.heading}>Featured Games</Text>
         <Text style={styles.subText}>Check out our most popular games with the highest stakes!</Text>
-      </View>
+      </View> */}
 
       {/* Leaderboard */}
       <View style={styles.card}>

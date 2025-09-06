@@ -66,12 +66,22 @@ const ConFirmSelectedLuckyNumbers = () => {
   const correctNumber = parseInt(selected); // Ensures comparison is number-based
   const parsedTotalOdds = parseFloat(totalOdds);
   const [isFirstLoss, setIsFirstLoss] = useState(true);
-
+  const [losersGameNumber, setLosersGameNumber] = useState()
   function getRandomNumber() {
-    return Math.floor(Math.random() * 3) + 1;
+    return setLosersGameNumber(Math.floor(Math.random() * 3) + 1); 
   }
 
-  const losersGameNumber = getRandomNumber();
+  useEffect(()=>{
+    getRandomNumber();
+  },[])
+
+  
+
+  
+
+  
+
+
 
   const [selectedNumbers, setSelectedNumbers] = useState([]);
   const [success, setSuccess] = useState(null); // null initially, true/false after check
@@ -138,6 +148,9 @@ const ConFirmSelectedLuckyNumbers = () => {
         if (res.response.status) {
           if (selectedNumbers[0] == losersGameNumber) {
             setSuccess(true);
+            await makeRequest('/win-losers-game', {
+              gameId: id
+            });
           } else {
             setSuccess(false);
           }

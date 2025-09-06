@@ -88,7 +88,7 @@ const NumberSpinWheel = () => {
     if(res.response.status){
       Alert.alert('Success', 'Game Created Successfully');
        setTimeout(() => {
-      router.replace( '/(routes)/games/availablegames')
+      router.replace( '/(tabs)/home');
       // updateGameData({
       //   stake: stake.toFixed(2),
       //     odds: formattedOdds,

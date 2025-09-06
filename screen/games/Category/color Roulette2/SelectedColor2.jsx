@@ -89,7 +89,7 @@ const ColorRouletteSelect2 = () => {
         name,
         colorSpun: selected[0]
        }).then(res=>{
-        console.log(res);
+        
           setLoading(false);
           if(res.error){
             return Alert.alert('Error', res.error);

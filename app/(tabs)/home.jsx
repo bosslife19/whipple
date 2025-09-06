@@ -84,7 +84,8 @@ const [user, setUser] = useState(null);
         <SlideShowBet />
         <View style={Homes.imageBackground}>
           <Text style={[Homes.imageText,{ fontSize:14,fontWeight:500,textAlign:"center",fontFamily:"Grotesk",paddingVertical:4}]}>Available Balance </Text>
-             <Text style={[Homes.imageText,{ textAlign:"center",fontFamily:"Poppins",fontSize:24,paddingVertical:14}]}>NGN {formatCurrency(user?.wallet_balance) || formatCurrency(userDetails.wallet_balance) }</Text>
+         
+             <Text style={[Homes.imageText,{ textAlign:"center",fontFamily:"Poppins",fontSize:24,paddingVertical:14}]}>NGN {formatCurrency(user?.wallet_balance) || formatCurrency(userDetails.wallet_balance) ||'0.00'}</Text>
              
               <View style={[Homes.flexD,{justifyContent:"space-between"}]}>
               <TouchableOpacity onPress={()=> router.push("/(routes)/deposit")} style={[Homes.flexD,{paddingHorizontal:"14%",paddingVertical:14, backgroundColor:"#0A1931",borderRadius:20,gap:8}]}>
@@ -121,10 +122,10 @@ const [user, setUser] = useState(null);
         </View>
 
          {/* Lost Games*/}
-         <View style={Homes.contentContainer}>
-         <View style={[Homes.scrollContainer,{justifyContent:"space-between",marginHorizontal:16,}]}>
-            <Text style={Homes.Header}>Loser's Games</Text>
-             <TouchableOpacity 
+         {/* <View style={Homes.contentContainer}> */}
+         {/* <View style={[Homes.scrollContainer,{justifyContent:"space-between",marginHorizontal:16,}]}> */}
+            {/* <Text style={Homes.Header}>Loser's Games</Text> */}
+             {/* <TouchableOpacity 
               onPress={()=> router.push("/(routes)/games/LostGames/ViewLostGames")}
              style={{backgroundColor:'#0040841F',paddingHorizontal:15,paddingVertical:5,borderRadius:5}} >
                       <Text style={[
@@ -133,11 +134,11 @@ const [user, setUser] = useState(null);
                       See all
                       </Text>
                     
-            </TouchableOpacity>
-         </View>
+            </TouchableOpacity> */}
+         {/* </View> */}
           {/* Available Games */}
-          <PastGames/>
-        </View>
+          {/* <PastGames/> */}
+        {/* </View> */}
 
         {/* Features */}
         <FeaturesSection/>

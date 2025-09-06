@@ -135,7 +135,7 @@ setTimeout(() => {
            
             result: gameLabel,
         });
-        router.replace('/(routes)/games/availablegames')
+        router.replace('/(tabs)/home');
 
         setLoading(false);
       }, 2000);

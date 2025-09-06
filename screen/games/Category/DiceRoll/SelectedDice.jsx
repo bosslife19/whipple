@@ -19,10 +19,11 @@ import Winningmodal from '../../../winningmodal/winningmodal';
 import dicestyles from '../../../../styles/diceGame/dice.styles';
 import {useRequest} from '../../../../hooks/useRequest'
 import { useEffect } from 'react';
+import axiosClient from '../../../../axiosClient';
 
 const SelectedDiceRoll = () => {
   const { updateGameData, gameData } = useGameContext();
-  const { stake, odds, gameLabel, GameName = 'Dice Roll' } = gameData || {};
+  
   const {makeRequest, loading} = useRequest()
 
   const [diceType, setDiceType] = useState('single');
@@ -44,6 +45,7 @@ const SelectedDiceRoll = () => {
       useEffect(()=>{
    const getGame = async ()=>{
           const res = await axiosClient.get(`/get-game/${id}`);
+          
   
           setGame(res.data.game)
   
@@ -92,7 +94,7 @@ const SelectedDiceRoll = () => {
       setHouseRoll(houseTotal);
       setUserRoll(userTotal);
       setRolling(false)
-     
+    
       makeRequest('/deduct-balance', {amount:game.stake/game.odds}).then(res=>{
         if(res.error){
           return Alert.alert('Sorry', res.error);
@@ -118,9 +120,11 @@ const SelectedDiceRoll = () => {
         console.log('truee')
         setResult("win")
       }else if(res.response.success ===false){
-        console.log('faseeee');
+        
         setResult("lose")
       }
+
+      setModalVisibled(true);
 
       
  setDiceRolled(true);
@@ -215,13 +219,7 @@ const SelectedDiceRoll = () => {
   };
 
   const handleGoGames = () => {
-    updateGameData({
-      stake: stake.toString(),
-      odds,
-      gameLabel,
-      GameName,
-      isGameLost: true,
-    });
+    
     router.replace('/(routes)/games/LostGames/ViewLostGames');
   };
 
@@ -267,14 +265,15 @@ const SelectedDiceRoll = () => {
     <>
       <Header name={'Back to Game Selection'} backgroundColor="#4a69bd" />
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>{GameName} Game</Text>
+        <Text style={styles.title}>Dice Roll Game</Text>
         <Text style={styles.subtitle}>Roll the dice and try to match the House's outcome</Text>
 
         <View style={dicestyles.card}>
           <Text style={dicestyles.title}>Roll The Dice</Text>
 
           <View style={dicestyles.radioGroup}>
-            <TouchableOpacity style={dicestyles.radio} onPress={() => setDiceType('single')}>
+            {
+              game?.dice_type ==='single' &&            <TouchableOpacity style={dicestyles.radio} onPress={() => setDiceType('single')}>
               <View style={[dicestyles.radioDot, diceType === 'single' && dicestyles.radioDotSelected]}>
                 {diceType === 'single' && (
                   <Svg width={10} height={10}><Circle cx={5} cy={5} r={5} fill="#0a1931" /></Svg>
@@ -282,15 +281,19 @@ const SelectedDiceRoll = () => {
               </View>
               <Text style={styles.radioLabel}>Single Dice</Text>
             </TouchableOpacity>
+            }
 
-            <TouchableOpacity style={dicestyles.radio} onPress={() => setDiceType('double')}>
+            {
+              game?.dice_type ==='double' &&  <TouchableOpacity style={dicestyles.radio} onPress={() => setDiceType('double')}>
               <View style={[dicestyles.radioDot, diceType === 'double' && dicestyles.radioDotSelected]}>
-                {diceType === 'double' && (
+                {game?.dice_type === 'double' && (
                   <Svg width={10} height={10}><Circle cx={5} cy={5} r={5} fill="#0a1931" /></Svg>
                 )}
               </View>
               <Text style={styles.radioLabel}>Double Dice</Text>
             </TouchableOpacity>
+            }
+          
           </View>
 
           <View style={styles.diceRow}>
@@ -301,7 +304,7 @@ const SelectedDiceRoll = () => {
               }
               
             </Animated.View>
-            {diceType === 'double' && (
+            {game?.dice_type === 'double' && (
               <Animated.View style={[dicestyles.diceBox, styles.diceShadow, { transform: [{ rotate: spin2 }] }]}>
                 {/* {getDots(face2)} */}
                 {

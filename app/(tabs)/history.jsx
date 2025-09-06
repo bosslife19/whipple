@@ -71,7 +71,7 @@ const [playedGames, setPlayedGames] = useState([]);
   useEffect(()=>{
     const getMyPlayedGames = async ()=>{
       const res = await axiosClient.get('/get-my-played-games');
-  
+      
       setPlayedGames(res.data);
 
     }
@@ -97,7 +97,8 @@ const [playedGames, setPlayedGames] = useState([]);
       color: '#fff'
     }
   ]}>
-    {item.result}
+   
+    {item.result||'won'}
   </Text>
 )}
 

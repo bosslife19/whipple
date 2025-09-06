@@ -116,18 +116,11 @@ if(response.response){
    Alert.alert('Success', 'Game Created Successfully');
    setTimeout(()=>{
        
-   router.replace( '/(routes)/games/availablegames')
+   router.replace( '/(tabs)/home')
       }, 2000)
 }
     router.replace("/(routes)/games/availablegames");
-    updateGameData({
-      stake: totalAmount.toString(),
-      odds: parsedTotalOdds + "x",
-      gameLabel,
-      GameName,
-      range,
-      selected: selectedNumbers.join(","),
-    });
+    
   };
 
   return (
