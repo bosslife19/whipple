@@ -50,7 +50,8 @@ const BankInfoScreen = () => {
       const res = await axiosClient.get("/bank-list");
       setBankAccounts(res.data.data ?? []); 
     } catch (error) {
-      console.error('Error fetching bank:', error);
+      Alert.alert("Error", "Error fetching bank list");
+      // console.error('Error fetching bank:', error);
     } finally {
       setLoading(false); 
     }
@@ -76,7 +77,7 @@ const BankInfoScreen = () => {
         fetchBankList()
         Alert.alert("Success", "Bank Saved!");
       } catch (err) {
-        console.error(err);
+        // console.error(err);
         Alert.alert("Error", "Unable to resolve bank account");
       }
     }
@@ -115,7 +116,7 @@ const BankInfoScreen = () => {
             onChange={item => {
               setSelectedBank(item.value);
               setBankCode(item.code);
-              setBankName(item.name);1
+              setBankName(item.name);
             }}
           />
         )}

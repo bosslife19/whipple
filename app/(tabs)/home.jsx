@@ -94,6 +94,7 @@ const [user, setUser] = useState(null);
                 Deposit
                 </Text>
                 </TouchableOpacity>
+                {/*<TouchableOpacity onPress={()=> router.push("/(routes)/withdraw")} style={[Homes.flexD,{paddingHorizontal:"14%",paddingVertical:14, backgroundColor:"#0A1931",borderRadius:20,gap:8}]}>*/}
                 <TouchableOpacity onPress={()=>router.push('/(routes)/withdraw')} style={[Homes.flexD,{paddingHorizontal:"14%",paddingVertical:14, backgroundColor:"#0A1931",borderRadius:20,gap:8}]}>
                  <FontAwesome6 name="circle-dollar-to-slot" size={14} color="#fff" />
                 <Text style={[Homes.imageText,{ color:"#fff",fontFamily:"Grotesk",fontSize:10}]}>Withdraw</Text>
