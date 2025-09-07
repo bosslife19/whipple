@@ -52,6 +52,7 @@ const FLipCoin = StyleSheet.create({
       FlipButton: {
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent:'center',
       backgroundColor: '#0A1931',
       paddingVertical: 22,
       paddingHorizontal: 32,

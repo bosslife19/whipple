@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { View, Text, TouchableOpacity, Animated, ActivityIndicator, TextInput, Alert } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import diceColorRou from '../../../../styles/diceGame/dice.styles';
@@ -10,6 +10,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useGameContext } from '../../../../context/AppContext';
 import CustomInput from '../../../../components/Input/TextInput';
 import {useRequest} from '../../../../hooks/useRequest'
+import { AuthContext } from '../../../../context/AuthContext';
 
 const colors = [
   { id: 'red', hex: '#EA384C', label: 'Red' },
@@ -21,6 +22,7 @@ const colors = [
 const ColorRouletteGame = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
   const [activeColors, setActiveColors] = useState([]);
+  const{userDetails} = useContext(AuthContext);
   
   const {makeRequest, loading} = useRequest();
   // New state for stake, admission fee, and total amount
@@ -90,13 +92,16 @@ const ColorRouletteGame = () => {
         return;
       }
       const selectedColors = activeColors.join(','); // Join selected color IDs into a comma-separated string
-    const res = await makeRequest('/create-game', {name:'Color Roulette', colors:selectedColors.toLowerCase(), stake})
+      if(Number(stake) > userDetails.wallet_balance){
+            return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
+          }
+    const res = await makeRequest('/create-game', {name:'Color Roulette', colors:selectedColors.toLowerCase(), stake,odds:Number(parsedTotalOdds)})
    
    if(res.response){
      Alert.alert('Success', 'Game Created Successfully');
       setTimeout(()=>{
     
-router.push( '/(routes)/games/availablegames')
+router.replace( '/(tabs)/home')
    }, 2000)
    }
 

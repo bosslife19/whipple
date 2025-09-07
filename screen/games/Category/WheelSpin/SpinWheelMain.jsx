@@ -9,6 +9,7 @@ import {
   ScrollView,
   ImageBackground,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import HeaderBet from '../../../Header/HeaderBet';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -18,6 +19,8 @@ import bgs from "../../../../assets/images/games/image_fx_ (35) 1.png";
 import FLipCoin from '../../../../styles/flipcoin/flipCoin';
 import { useGameContext } from '../../../../context/AppContext';
 import CustomInput from '../../../../components/Input/TextInput';
+import { useRequest } from '../../../../hooks/useRequest';
+import axiosClient from '../../../../axiosClient';
 
 const SpinTheWheel = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
@@ -26,6 +29,7 @@ const SpinTheWheel = () => {
   const [loading, setLoading] = useState(false);
   const [winningNumbers, setWinningNumbers] = useState([]);
   const [showResult, setShowResult] = useState(false);
+  const { makeRequest} = useRequest()
 
   // Calculate admissionFee and stake from totalAmount
   const totalAmount = parseFloat(totalInput) || 0;
@@ -65,21 +69,36 @@ const SpinTheWheel = () => {
         // const GameName = 'Wheel Spin' 
         // const odds = '3.333';
 
-  const handlePublishGame = () => {
+  const handlePublishGame = async() => {
+   
     setLoading(true);
-    const formattedOdds = `${odds}x`;
-
+    try {
+       const res = await axiosClient.post('/create-game', {
+    name: GameName,
+    numbers: winningNumbers.join(', '),
+    stake: totalAmount,
+    odds:3.33
+   }
+  
+  );
+  if(res.data.status){
+    Alert.alert('Success', 'Game published successfully!');
     setTimeout(() => {
-      router.push( '/(routes)/games/availablegames')
-      updateGameData({
-        stake: stake.toFixed(2),
-          odds: formattedOdds,
-          gameLabel: `${winningNumbers.join(', ')}`,
-          GameName,
-          range,
-          result: gameLabel,
-      });
-      setLoading(false);
+      router.push( '/(tabs)/home'); 
+  }, 3000);
+}
+    } catch (error) {
+      console.log(error);
+    }
+    
+  
+        setLoading(false);
+
+        Alert.alert('Success', 'Game published successfully!');
+    setTimeout(() => {
+      router.push( '/(tabs)/home');
+      
+
     }, 2000);
   };
 

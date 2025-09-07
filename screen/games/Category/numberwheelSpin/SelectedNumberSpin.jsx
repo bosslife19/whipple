@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -31,8 +31,22 @@ const SelectedNumberSpinWheel = () => {
   const [success, setSuccess] = useState(null);
   const [visible, setModalVisible] = useState(false);
   const [selectedNumbers, setSelectedNumbers] = useState([]); // Start empty
+  
 
   const {name, id} = useLocalSearchParams();
+
+  const [game, setGame] = useState(null);
+
+  useEffect(()=>{
+              const getGame = async ()=>{
+                const res = await axiosClient.get(`/get-game/${id}`);
+        
+                setGame(res.data.game)
+        
+              }
+        
+              getGame();
+            }, [])
 
   const { gameData, updateGameData } = useGameContext();
   const { odds = '10', gameLabel, range, GameName = 'One Number Spin'} = gameData || {};
@@ -105,7 +119,10 @@ const SelectedNumberSpinWheel = () => {
 
   const handleSpinButtonPress = async() => {
     spinWheel();
-    const res = await makeRequest('/play-game',{
+try {
+  const resp = await makeRequest('/deduct-balance');
+  if(resp.response.status){
+       const res = await makeRequest('/play-game',{
       gameId: id,
       name,
       numberWheeled: selectedNumbers[0]
@@ -117,9 +134,19 @@ const SelectedNumberSpinWheel = () => {
     if(res.response.success){
       setSuccess(true);
     }else if(!res.error && !res.response.success){
-      console.log('ree')
+    
       setSuccess(false);
     }
+
+    setModalVisible(true);
+  }else if(resp.error){
+    Alert.alert('Error', resp.error);
+  }
+} catch (error) {
+  console.log(error);
+  Alert.alert('Error', 'Server Error');
+}
+ 
 
     // if (showResult) {
     //   if (lastResultWasWin.current) {

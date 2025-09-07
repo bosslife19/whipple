@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
@@ -23,6 +23,7 @@ import { useGameContext } from "../../../../context/AppContext";
 import CustomInput from "../../../../components/Input/TextInput";
 import { useRequest } from "../../../../hooks/useRequest";
 import Toast from "react-native-toast-message";
+import { AuthContext } from "../../../../context/AuthContext";
 
 const formatCurrency = (value) => {
   if (!value) return "";
@@ -33,6 +34,8 @@ const formatCurrency = (value) => {
 const CreateLuckyNumbers = () => {
   const { gameData, updateGameData } = useGameContext();
   const { loading, makeRequest, success, error, response } = useRequest();
+  const {userDetails} = useContext(AuthContext);
+ 
   const {
     totalOdds,
     gameLabel,
@@ -89,12 +92,17 @@ const CreateLuckyNumbers = () => {
       return;
     }
 
-    console.log(gameData);
+    if(Number(stakeAmount) > userDetails.wallet_balance){
+      return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
+    }
+
+    
+    const numbersString = selectedNumbers.join(","); 
     const response = await makeRequest("/create-game", {
       name: 'Lucky Number',
       category: gameData.category,
       subcategory: subcategory,
-      result: selectedNumbers[0],
+      result: numbersString,
       odds: gameData.totalOdds,
       stake:stakeAmount,
     });
@@ -105,17 +113,14 @@ const CreateLuckyNumbers = () => {
     }
 
 if(response.response){
-  return Alert.alert('Success', 'Game Created Successfully');
+   Alert.alert('Success', 'Game Created Successfully');
+   setTimeout(()=>{
+       
+   router.replace( '/(tabs)/home')
+      }, 2000)
 }
-    router.push("/(routes)/games/availablegames");
-    updateGameData({
-      stake: totalAmount.toString(),
-      odds: parsedTotalOdds + "x",
-      gameLabel,
-      GameName,
-      range,
-      selected: selectedNumbers.join(","),
-    });
+    router.replace("/(routes)/games/availablegames");
+    
   };
 
   return (

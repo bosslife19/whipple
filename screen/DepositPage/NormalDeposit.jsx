@@ -19,7 +19,7 @@ const presetAmounts = [100,200,500,1000];
 export default function NormalDeposit({ amount, setAmount }) {
   const [isFocused, setIsFocused] = useState(false);
   const { loading, makeRequest } = useRequest();
-  const {userDetails, setUserBalance} = useContext(AuthContext)
+  const {userDetails, setUserBalance, setUserDetails} = useContext(AuthContext)
   const { popup } = usePaystack();
 
   const handleClear = () => setAmount('');
@@ -74,7 +74,11 @@ export default function NormalDeposit({ amount, setAmount }) {
         return Alert.alert("Error", "Error verifying payment");
       }
       setUserBalance(response?.data)
-      Alert.alert("Success", "Payment Verified!");
+      setUserDetails(prev=>({...prev, wallet_balance:response?.data}));
+      Alert.alert("Success", "Deposit Successful!");
+      setTimeout(()=>{
+        router.replace('(tabs)/home');
+      },2000);
     } catch (err) {
       console.error(err);
       Alert.alert("Error", "Unable to verify payment");

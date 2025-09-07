@@ -51,7 +51,7 @@ export default function RootLayout() {
   return (
   <AuthProvider>
     <GameProvider>
-      <PaystackProvider publicKey="pk_test_d4a07c0edb2ca6e77d6c872ee07e55f8af4c3a52">
+      <PaystackProvider publicKey={`${process.env.EXPO_PUBLIC_PAYSTACK_TEST}`}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
         </Stack>

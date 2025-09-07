@@ -37,7 +37,7 @@ const VoteColorRouletteScreen = () => {
       return;
     }
      const normalizedGameName = name?.toLowerCase?.();
- 
+  
     if(losersGame){
       const res = await makeRequest('/losers-vote', {gameId: id, vote: value})
  switch (normalizedGameName) {
@@ -352,7 +352,7 @@ const VoteColorRouletteScreen = () => {
                 range,
                 selected,
                 id,
-                name,loser
+                name,
               },
               });
               break;

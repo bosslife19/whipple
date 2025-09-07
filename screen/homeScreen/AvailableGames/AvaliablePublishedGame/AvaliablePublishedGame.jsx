@@ -43,6 +43,7 @@ const AvaliablePublishedGame = () => {
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState("All");
   const [gamePlayed, setGamePlayed] = useState(false);
+ 
 
   const normalizedGameName = (game)=>{
     game?.toLowerCase();
@@ -54,7 +55,7 @@ const AvaliablePublishedGame = () => {
 const filteredGames = games?.filter(game => {
   if (selectedTab !== 'All') {
    
-    return game.name.trim().toLowerCase() === selectedTab.trim().toLowerCase();
+    return game?.name.trim().toLowerCase() === selectedTab.trim().toLowerCase();
   }
   return true;
 });
@@ -62,7 +63,10 @@ const filteredGames = games?.filter(game => {
 
 
   const handlePlayNow = (game) => {
+ 
     setGamePlayed(true);
+    
+    
 
     if (
       normalizedGameName(game.name) === "dice roll" ||
@@ -81,12 +85,15 @@ const filteredGames = games?.filter(game => {
           GameName,
           house: game.creator.name,
           result: gameLabel,
+          name:game.name,
+          id: game.id
         },
       });
     } else if (
       normalizedGameName(game.name) === "one number spin" ||
       normalizedGameName(game.name) === "color roulette2"
     ) {
+     
       router.push({
         pathname: "/games/details/gamedetails-without-vote",
         params: {
@@ -96,9 +103,12 @@ const filteredGames = games?.filter(game => {
           GameName,
           range,
           result: gameLabel,
+          name:game.name,
+          id:game.id,
         },
       });
     } else {
+    
       router.push({
         pathname: "/games/details",
         params: {
@@ -108,7 +118,7 @@ const filteredGames = games?.filter(game => {
           name:game.name,
           id: game.id,
           result: game.result,
-          house: game.creator.name,
+          house: game.creator?.name,
           subcategory:game.subcategory
         },
       });
@@ -152,7 +162,7 @@ const filteredGames = games?.filter(game => {
             { paddingHorizontal: 20, paddingTop: 10 },
           ]}
         >
-          Recently Published Games
+          All Published Games
         </Text>
 
         {filteredGames && filteredGames ? (
@@ -166,7 +176,7 @@ const filteredGames = games?.filter(game => {
               <View style={styles.card}>
                 <View style={styles.cardHeader}>
                   <Text style={styles.headerIcon}>🔢</Text>
-                  <Text style={styles.headerText}>{game.name}</Text>
+                  <Text style={styles.headerText}>{game?.name}</Text>
                 </View>
 
                 <View style={styles.cardBody}>
@@ -182,12 +192,12 @@ const filteredGames = games?.filter(game => {
                   </View>
 
                   <Text style={styles.description}>
-                    {game.name} - {game.subcategory}
+                    {game?.name} - {game.subcategory}
                   </Text>
 
                   <View style={styles.row}>
                     <Text style={styles.info}>
-                      <Text style={styles.infoLabel}>House:</Text> {game?.creator.name}
+                      <Text style={styles.infoLabel}>House:</Text> {game?.creator?.name}
                     </Text>
                     <Text style={styles.info}>
                       <Text style={styles.infoLabel}>Status:</Text> Open
@@ -199,8 +209,8 @@ const filteredGames = games?.filter(game => {
                     onPress={()=>handlePlayNow(game)}
                   >
                     <Text style={styles.playButtonText}>
-                      {normalizedGameName(game.name) === "dice roll" ||
-                      normalizedGameName(game.name) === "wheel spin"
+                      {normalizedGameName(game?.name) === "dice roll" ||
+                      normalizedGameName(game?.name) === "wheel spin"
                         ? "Vote Now"
                         : "Play Now"}
                     </Text>
@@ -212,6 +222,9 @@ const filteredGames = games?.filter(game => {
         ) : (
           <Text style={styles.noGameText}>No published game found.</Text>
         )}
+        {
+          filteredGames.length < 1 && <Text style={styles.noGameText}>No published game found.</Text>
+        }
       </View>
     </ScrollView>
   );

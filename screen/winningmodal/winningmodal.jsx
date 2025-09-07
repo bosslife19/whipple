@@ -4,6 +4,7 @@ import bgs from "../../assets/images/icons/Winning Modal.png";
 import creategame from '../../styles/creategame/creategame.styles';
 import closes from "../../assets/images/icons/material-symbols_close.png";
 import maingamess from '../../styles/maingameDetails/maingameDetails.styles';
+import { router } from 'expo-router';
 
 const Winningmodal = ({ visible, closeModal }) => {
   return (
@@ -49,7 +50,7 @@ const Winningmodal = ({ visible, closeModal }) => {
                     paddingVertical: 10,
                     borderRadius: 5,
                   }}
-                    onPress={()=>router.push('/(tabs)/home')}
+                    onPress={()=>router.replace('/(tabs)/home')}
                 >
                   <Text style={maingamess.confirmText}>Go Home</Text>
                 </TouchableOpacity>

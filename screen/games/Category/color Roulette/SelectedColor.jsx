@@ -80,12 +80,20 @@ const ColorRouletteSelect = () => {
         const selected = shuffled.slice(0, 2).map(c => c.id);
         setActiveColors(selected);
 
-         makeRequest('/play-game', {
+        makeRequest('/deduct-balance', {
+          amount: game.stake/game.odds
+        }).then(res=>{
+          if(res.error){
+            return Alert.alert('Sorry', res.error);
+          }
+
+  
+   makeRequest('/play-game', {
                 gameId: id,
                 name,
                 colorSpun: selected[0]
                }).then(res=>{
-                console.log(res);
+                
                   setLoading(false);
                   if(res.error){
                     return Alert.alert('Error', res.error);
@@ -95,10 +103,16 @@ const ColorRouletteSelect = () => {
                   }else{
                     setSuccess(false)
                   }
+                  setModalVisibled(true);
                }).catch((e)=>{
                 console.log(e);
                 
                })
+        }).catch(error=>{
+          console.log(error);
+        })
+
+      
         
         
         setLoading(false);
@@ -119,7 +133,7 @@ const ColorRouletteSelect = () => {
        GameName,
        isGameLost: true, // Flag indicating if the game is lost
      });
-        router.push('/(routes)/games/LostGames/ViewLostGames');
+        router.replace('/(routes)/games/LostGames/ViewLostGames');
       };
   
     const spin = spinValue.interpolate({
@@ -211,8 +225,8 @@ const ColorRouletteSelect = () => {
                        {success === true && ( 
                         <TouchableOpacity
                          style={GoalStyles.button}
-                         onPress={() => router.push('/(routes)/games/category/category-main')}  >
-                         <Text style={styles.buttonText}>Go Back to Games</Text>
+                         onPress={() => router.replace('/(routes)/games/category/category-main')}  >
+                         <Text style={GoalStyles.buttonText}>Go Back to Games</Text>
                         </TouchableOpacity>  )} 
                         {success === null && (
                           <TouchableOpacity

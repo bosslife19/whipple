@@ -19,173 +19,170 @@ const GameDetails = () => {
       
     
       // Navigate based on the selected game
-      switch (normalizedGameName) {
-        case 'lucky number':
-          router.push({
-            pathname: '/games/vote',
-            params: {
-            stake: stake?.toString(),
-            odds,
-             gameLabel,
-            GameName,
-            range, 
-            selected,
-            id,
-            name
-          },
-          });
-          break;
-    
-        case 'flip the coin':
-          router.push({
-            pathname: '/games/vote',
-            params: {
-            stake: stake?.toString(),
-            odds,
-            gameLabel,
-            GameName,
-            range, 
-            selected,
-            id,
-            name
-          },
-          });
-          break;
-           case 'spin the bottle':
-             router.push({
-               pathname: '/games/vote',
-              params: {
-             stake: stake?.toString(),
-            odds,
-            gameLabel,
-            GameName,
-            range,
-            selected,
-            name,
-            id
-             },
-            });
-            break; 
-    
-        case 'color roulette': 
-          router.push({
-            pathname: '/games/vote',
-            params: {
-            stake: stake?.toString(),
-            odds,
-             gameLabel,
-            GameName,
-            range,
-            selected,
-            id,
-            name
-          },
-          });
-          break;
-  
-          case 'mystery box game':
-            router.push({
-            pathname: '/games/vote',
-              params: {
-              stake: stake?.toString(),
-              odds,
-               gameLabel,
-              GameName,
-              range,
-              selected,
-              name,
-              id
-            },
-            });
-            break;
-  
-            case 'goal challenge':
-              router.push({
-            pathname: '/games/vote',
-                params: {
-                stake: stake?.toString(),
-                odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
-                id,
-                name
-              },
-              });
-              break;
-    
-              case 'dice roll':
-              router.push({
-            pathname: '/games/vote',
-                params: {
-                stake: stake?.toString(),
-                odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
-                name, 
-                id,
-              },
-              });
-              break;
-
-               case 'wheel spin':
-              router.push({
-                pathname: '/games/vote',
-                params: {
-                stake: stake?.toString(),
-                odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
-                name,
-                id
-              },
-              });
-              break;
-
-               case 'one number spin':
-              router.push({
-                pathname: '/games/vote',
-                params: {
-                stake: stake?.toString(),
-                odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
-                name,
-                id
+   
+        switch (normalizedGameName) {
+              case 'lucky number':
+                router.push({
+                  pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                  params: {
+                  stake: stake?.toString(),
+                  odds,
+                   gameLabel,
+                  GameName,
+                  range,  
+                  selected,
+                  id,
+                  name,
                 },
-               });
-            
-              break;
-
-               case 'color roulette2':
-              router.push({
-                pathname: '/games/vote',
-                params: {
-                stake: stake?.toString(),
-                odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
-                name,
-                id
+                });
+                break;
+          
+              case 'flip the coin':
+                router.push({
+                  pathname: '/games/availablegames/CoinFLip/confirmFlipCoin',
+                  params: {
+                  stake: stake?.toString(),
+                  odds,
+                  gameLabel,
+                  GameName,
+                  range,
+                  selected,
+                  id,
+                  name
+                  
                 },
-               });
-            
-              break;
-
-        default:
-          // Handle unknown game gracefully
-          console.warn(`[Navigation Error]: Unknown game "${name}" selected.`);
-          alert('An error occurred: Unknown game selected. Please try again.');
-      }
+                });
+                break;
+          
+              case 'color roulette': 
+                router.push({
+                  pathname: '/(routes)/games/category/becomethehouse/colorRoulette/selectedColor',
+                  params: {
+                  stake: stake?.toString(),
+                  odds,
+                   gameLabel,
+                  GameName,
+                  range,
+                  selected,
+                  id,
+                  name
+                },
+                });
+                break;
+        
+                case 'mystery box game':
+                  router.push({
+                    pathname: '/games/category/becomethehouse/mysteryGame/mysterySelect',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                     gameLabel,
+                    GameName,
+                    range,
+                    selected,
+                    name,
+                    id
+                  },
+                  });
+                  break;
+        
+                  case 'goal challenge':
+                    router.push({
+                      pathname: '/games/category/becomethehouse/goal/selectedGoal',
+                      params: {
+                      stake: stake?.toString(),
+                      odds,
+                       gameLabel,
+                      GameName,
+                      range,
+                      selected,
+                      name,
+                      id
+                    },
+                    });
+                    break;
+                      case 'dice roll':
+                         router.push({
+                      pathname: '/games/category/becomethehouse/DiceRoll/selectedDice',
+                      params: {
+                      stake: stake?.toString(),
+                      odds,
+                       gameLabel,
+                      GameName,
+                      range,
+                      selected,
+                      id, name, 
+                    },
+                    });
+                    break;
+                     case 'wheel spin':
+                         router.push({
+                      pathname: '/games/category/becomethehouse/spinwheel/selectedSpin',
+                      params: {
+                      stake: stake?.toString(),
+                      odds,
+                       gameLabel,
+                      GameName,
+                      range,
+                      selected,
+                      name,
+                      id,
+                    },
+                    });
+                    break; 
+                     case 'spin the bottle':
+                         router.push({
+                      pathname: '/games/category/becomethehouse/spindabottle/selectedSpins',
+                      params: {
+                      stake: stake?.toString(),
+                      odds,
+                       gameLabel,
+                      GameName,
+                      range,
+                      selected,
+                      name,
+                      id,
+                      
+                    },
+                    });
+                    break; 
+      
+                    case 'one number spin':
+                    router.push({
+                     pathname: '/games/category/becomethehouse/one-number-spin/number-spin-selected',
+                      params: {
+                      stake: stake?.toString(),
+                      odds,
+                       gameLabel,
+                      GameName,
+                      range,
+                      selected,
+                      id,
+                      name,
+                    },
+                    });
+                    break;
+      
+                     case 'color roulette2':
+                    router.push({
+                     pathname: '/games/category/becomethehouse/colorRoulette2/selectedColor2',
+                      params: {
+                      stake: stake?.toString(),
+                      odds,
+                       gameLabel,
+                      GameName,
+                      range,
+                      selected,
+                      name,
+                      id
+                    },
+                    });
+                    break;
+              default:
+                // Handle unknown game gracefully
+                console.warn(`[Navigation Error]: Unknown game "${GameName}" selected.`);
+                alert('An error occurred: Unknown game selected. Please try again.');
+            }
     };
     return (
         <>
@@ -226,7 +223,7 @@ const GameDetails = () => {
             </View>
             <View>
               <Text style={styles.label}>Required Stake</Text>
-              <Text style={styles.value}>₦{Math.floor(stake / 3)}</Text>
+              <Text style={styles.value}>₦{Math.floor(stake / odds)}</Text>
             </View>
           </View>
 

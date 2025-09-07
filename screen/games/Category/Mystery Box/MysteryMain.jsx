@@ -1,5 +1,5 @@
 // components/MysteryMain.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ImageBackground, ActivityIndicator, TextInput, Alert } from 'react-native';
 // import { Box, Check } from 'lucide-react-native'; // Check icon from lucide-react-native
 // import { useGameContext } from '../../../../context/GameContext'; // Import useGameContext hook
@@ -11,6 +11,7 @@ import { useGameContext } from '../../../../context/AppContext';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import CustomInput from '../../../../components/Input/TextInput';
 import { useRequest } from '../../../../hooks/useRequest';
+import { AuthContext } from '../../../../context/AuthContext';
 
 const MysteryMain = () => {
   const boxes = ['Box 1', 'Box 2', 'Box 3'];
@@ -21,6 +22,7 @@ const MysteryMain = () => {
   const [stake, setStake] = useState(''); // Use game data from context
   const [walletBalance, setWalletBalance] = useState(10000); // Example wallet balance
   const [loading, setLoading] = useState(false);
+  const {userDetails} = useContext(AuthContext)
 
   // Track selected box
   const [selectedBox, setSelectedBox] = useState( null);
@@ -51,6 +53,9 @@ const MysteryMain = () => {
     const mainOdd = '3.003x';
     const GameName = 'Mystery Box';
 
+    if(Number(stake) > userDetails.wallet_balance){
+          return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
+        }
   
     setLoading(true);
 
@@ -65,10 +70,14 @@ const MysteryMain = () => {
   setLoading(false)
     setTimeout(() => {
       // Now navigate to the game page
-      router.push('/(routes)/games/availablegames');
+      router.push('/(tabs)/home');
       setLoading(false);
     }, 2000);
-  return Alert.alert('Success', 'Game Created Successfully');
+   Alert.alert('Success', 'Game Created Successfully');
+   setTimeout(()=>{
+       
+   router.replace( '/(routes)/games/availablegames')
+      }, 2000)
  }else{
   setLoading(false);
   Alert.alert('Error', 'Server Error')
@@ -94,12 +103,7 @@ const MysteryMain = () => {
     }, 2000);
   };
 
-useEffect(() => {
-  // Only update the context if the selectedBox has actually changed
-  if (gameData.selectedBox !== selectedBox) {
-    updateGameData({ selectedBox });
-  }
-}, [selectedBox, gameData.selectedBox, updateGameData]);
+
 
 
   return (

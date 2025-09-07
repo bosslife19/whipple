@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import HeaderBet from '../../../Header/HeaderBet';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useGameContext } from '../../../../context/AppContext';
 import { useRequest } from '../../../../hooks/useRequest';
+import axiosClient from '../../../../axiosClient';
 
 const MyseterySelect = () => {
   // const { selected, GameName } = useLocalSearchParams();
@@ -23,6 +24,17 @@ const MyseterySelect = () => {
       const {  odds,  gameLabel, selected, GameName , stake} = gameData || {};
 
       const {name, id} = useLocalSearchParams()
+      const [game, setGame] = useState(null);
+          useEffect(()=>{
+            const getGame = async ()=>{
+              const res = await axiosClient.get(`/get-game/${id}`);
+      
+              setGame(res.data.game)
+      
+            }
+      
+            getGame();
+          }, [])
 
       const {makeRequest, loading} = useRequest();
      
@@ -38,12 +50,18 @@ const MyseterySelect = () => {
   };
 
   const handleRevealBox = async() => {
+
     if (!selectedBox) {
       alert('Please select a box first!');
       return;
     }
 
-    const res = await makeRequest('/play-game', {
+    try {
+          const resp = await makeRequest('/deduct-balance', {
+      amount: game.stake/game.odds
+    });
+    if(resp.response.status){
+const res = await makeRequest('/play-game', {
     name,
     gameId: id,
     boxSelected:"box"+selectedBox,
@@ -60,6 +78,18 @@ const MyseterySelect = () => {
 
     // setSuccess(selectedBox === selected);
     setModalVisibled(true);
+    }
+    else if(resp.error){
+      return Alert.alert('Sorry', resp.error);
+    }
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Error', 'Server Error');
+    }
+
+
+
+    
   };
 
   const closeModal = () => {

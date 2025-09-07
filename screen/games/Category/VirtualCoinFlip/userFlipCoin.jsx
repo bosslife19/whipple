@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,8 @@ import Winningmodal from '../../../winningmodal/winningmodal';
 import Losingmodal from '../../../loseModal/LoseModal';
 import { useGameContext } from '../../../../context/AppContext';
 import { useRequest } from '../../../../hooks/useRequest';
+import { Alert } from 'react-native';
+import axiosClient from '../../../../axiosClient';
 
 const UserFlipCoin = () => {
   // const {
@@ -29,6 +31,18 @@ const UserFlipCoin = () => {
     const { gameData ,updateGameData } = useGameContext();
     const {  totalOdds = '2.0',  gameLabel, range, GameName ,result: passedResult ,} = gameData || {};
   const {id, name} = useLocalSearchParams();
+  const [game, setGame] = useState(null);
+      useEffect(()=>{
+        const getGame = async ()=>{
+          const res = await axiosClient.get(`/get-game/${id}`);
+         
+          setGame(res.data.game)
+  
+        }
+  
+        getGame();
+      }, [])
+        
   const {makeRequest} = useRequest()
  
   const router = useRouter();
@@ -71,7 +85,15 @@ const UserFlipCoin = () => {
       duration: 1500,
       useNativeDriver: true,
     }).start(() => {
-      makeRequest('/play-game', {
+    
+      makeRequest('/deduct-balance', {
+        amount:game.stake/game.odds
+      }).then(res=>{
+        if(res.error){
+          return Alert.alert('Sorry', res.error)
+        }else{
+
+  makeRequest('/play-game', {
        
         gameId:id,
         choice:choice.toLowerCase(),
@@ -80,7 +102,7 @@ const UserFlipCoin = () => {
         if(res.response.success){
            setIsFlipping(false);
       setFlippingButton(null);
-          setSuccess(false);
+          setSuccess(true);
           setModalVisibled(true)
         }else{
            setIsFlipping(false);
@@ -89,6 +111,9 @@ const UserFlipCoin = () => {
           setModalVisibled(true)
         }
       }).catch(e=>console.log(e));
+        }
+      })
+    
       return
       const randomResult = Math.random() < 0.5 ? 'Tails' : 'Heads';
       setFlipResult(randomResult);

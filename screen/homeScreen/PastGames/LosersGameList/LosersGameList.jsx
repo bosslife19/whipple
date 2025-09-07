@@ -12,14 +12,12 @@ import axiosClient from '../../../../axiosClient';
 
 const LosersGames = () => {
   const router = useRouter();
-  const { gameData } = useGameContext();
-  const { stake, odds, gameLabel, range, selected, GameName, isGameLost } = gameData;
 
-  const [selectedTab, setSelectedTab] = useState('All');
   const {userDetails} = useContext(AuthContext)
 const [lostGames, setLostGames] = useState(null);
-  const isLostAvailable = stake && isGameLost;
-
+const [selectedTab, setSelectedTab] = useState('All')
+  
+let losersGame = true;
 
 
   
@@ -31,190 +29,154 @@ const [lostGames, setLostGames] = useState(null);
         
     
        
-          switch (normalizedGameName) {
-        case 'lucky number':
-          router.push({
-            pathname: '/games/vote',
-            params: {
-            stake: stake?.toString(),
-            odds,
-             gameLabel,
-            GameName,
-            range, 
-            selected,
-            id,
-            name,
-            losersGame:true
-          },
-          });
-          break;
-    
-        case 'flip the coin':
-          router.push({
-            pathname: '/games/vote',
-            params: {
-            stake: stake?.toString(),
-            odds,
-            gameLabel,
-            GameName,
-            range, 
-            selected,
-            id,
-            name,
-            losersGame:true
-          },
-          });
-          break;
-           case 'spin the bottle':
-             router.push({
-               pathname: '/games/vote',
-              params: {
-             stake: stake?.toString(),
-            odds,
-            gameLabel,
-            GameName,
-            range,
-            selected,
-            name,
-            id,
-            losersGame:true
-             },
-            });
-            break; 
-    
-        case 'color roulette': 
-          router.push({
-            pathname: '/games/vote',
-            params: {
-            stake: stake?.toString(),
-            odds,
-             gameLabel,
-            GameName,
-            range,
-            selected,
-            id,
-            name,
-            losersGame:true
-          },
-          });
-          break;
-  
-          case 'mystery box game':
-            router.push({
-            pathname: '/games/vote',
-              params: {
-              stake: stake?.toString(),
-              odds,
-               gameLabel,
-              GameName,
-              range,
-              selected,
-              name,
-              id,
-              losersGame:true
-            },
-            });
-            break;
-  
-            case 'goal challenge':
+ switch (normalizedGameName) {
+            case 'lucky number':
               router.push({
-            pathname: '/games/vote',
+                pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
                 params: {
                 stake: stake?.toString(),
                 odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
+                
+                id,
+                name,
+                losersGame
+              },
+              });
+              break;
+        
+            case 'flip the coin':
+              router.push({
+               pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                params: {
+                stake: stake?.toString(),
+                odds,
+               
+                id,
+                name,
+                losersGame:true
+                
+              },
+              });
+              break;
+        
+            case 'color roulette': 
+              router.push({
+                pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                params: {
+                stake: stake?.toString(),
+                odds,
+                
                 id,
                 name,
                 losersGame:true
               },
               });
               break;
-    
-              case 'dice roll':
-              router.push({
-            pathname: '/games/vote',
-                params: {
-                stake: stake?.toString(),
-                odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
-                name, 
-                id,
-                losersGame:true
-              },
-              });
-              break;
-
-               case 'wheel spin':
-              router.push({
-                pathname: '/games/vote',
-                params: {
-                stake: stake?.toString(),
-                odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
-                name,
-                id,
-                losersGame:true
-              },
-              });
-              break;
-
-               case 'one number spin':
-              router.push({
-                pathname: '/games/vote',
-                params: {
-                stake: stake?.toString(),
-                odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
-                name,
-                id,
-                losersGame:true
+      
+              case 'mystery box game':
+                router.push({
+                 pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                  params: {
+                  stake: stake?.toString(),
+                  odds,
+                 
+                  name,
+                  id,
+                  losersGame:true
                 },
-               });
-            
-              break;
+                });
+                break;
+      
+                case 'goal challenge':
+                  router.push({
+                    pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
 
-               case 'color roulette2':
-              router.push({
-                pathname: '/games/vote',
-                params: {
-                stake: stake?.toString(),
-                odds,
-                 gameLabel,
-                GameName,
-                range,
-                selected,
-                name,
-                id,
-                losersGame:true
-                },
-               });
-            
-              break;
+                    name,
+                    id,
+                    losersGame:true
+                  },
+                  });
+                  break;
+                    case 'dice roll':
+                       router.push({
+                    pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                    
+                    id, name,
+                    losersGame:true
+                  },
+                  });
+                  break;
+                   case 'wheel spin':
+                       router.push({
+                    pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                   
+                    name,
+                    id,
+                    losersGame:true
+                  },
+                  });
+                  break; 
+                   case 'spin the bottle':
+                       router.push({
+                    pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
 
-        default:
-          // Handle unknown game gracefully
-          console.warn(`[Navigation Error]: Unknown game "${name}" selected.`);
-          alert('An error occurred: Unknown game selected. Please try again.');
-      }
+                    name,
+                    id,
+                    losersGame:true
+                  },
+                  });
+                  break; 
+    
+                  case 'one number spin':
+                  router.push({
+                  pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+
+                    id,
+                    name,
+                    losersGame:true
+                  },
+                  });
+                  break;
+    
+                   case 'color roulette2':
+                  router.push({
+                   pathname: '/games/availablegames/luckynumbers/confirmLuckyNumbers',
+                    params: {
+                    stake: stake?.toString(),
+                    odds,
+                    
+                    name,
+                    id,
+                    losersGame:true
+                  },
+                  });
+                  break;
+            default:
+              // Handle unknown game gracefully
+              console.warn(`[Navigation Error]: Unknown game "${GameName}" selected.`);
+              alert('An error occurred: Unknown game selected. Please try again.');
+          }
        
          
    
   };
 
-  const shouldDisplayGame =
-    selectedTab === 'All' || selectedTab.toLowerCase().includes(GameName?.toLowerCase());
+
 
   // if (!lostGames) {
   //   return (
@@ -283,7 +245,7 @@ setLostGames(res.data.games);
                 <Text style={LosersGameList.description}>
                   {/* {game.name} - {gameLabel}  */}
                   {/* this range is for lucky numbers */}
-                  {range}
+                  
                 </Text>
 
                 <View style={LosersGameList.row}>

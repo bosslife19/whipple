@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ import FLipCoin from "../../../../styles/flipcoin/flipCoin";
 import { useGameContext } from "../../../../context/AppContext";
 import CustomInput from "../../../../components/Input/TextInput";
 import { useRequest } from "../../../../hooks/useRequest";
+import { AuthContext } from "../../../../context/AuthContext";
 // import { useGameContext } from '../../../../context/AppContext';
 // import { useGameContext } from '../../../../context/AppContext';
 
@@ -34,7 +35,7 @@ const FlipTheCoin = () => {
   const [stake, setStake] = useState("");
   const [walletBalance] = useState(150000);
   const [quickAmounts] = useState([200, 500, 1000, 2000, 5000, 10000]);
-
+const {userDetails} = useContext(AuthContext);
   const rotation = useRef(new Animated.Value(0)).current;
 
   const handleFlip = () => {
@@ -93,6 +94,10 @@ const FlipTheCoin = () => {
     const gameLabel = flipResult;
     const range = "";
     const selectedNumbers = [];
+
+    if(Number(stake) > userDetails.wallet_balance){
+      return Alert.alert('Sorry', 'You do not have sufficient funds. Please deposit and try again');
+    }
     
     const res = await makeRequest('/create-game', {
       name: 'Flip The Coin',
@@ -102,7 +107,11 @@ const FlipTheCoin = () => {
 
     })
   if(res.response){
-    return Alert.alert('Success', 'Game Created Successfully');
+   Alert.alert('Success', 'Game Created Successfully');
+   setTimeout(()=>{
+       
+   router.replace( '/(tabs)/home')
+      }, 2000)
   }
   if(res.error){
     return Alert.alert('Error', res.error);
@@ -213,11 +222,11 @@ const FlipTheCoin = () => {
             />
 
             <TouchableOpacity
-              style={[FLipCoin.button, { marginTop: 16 }]}
+              style={[FLipCoin.button, { marginTop: 16, alignItems:"center", justifyContent:'center' }]}
               onPress={handlePublish}
             >
               {loading ? (
-                <ActivityIndicator size={20} color="white" />
+                <ActivityIndicator size={20} color="white" style={{alignSelf:'center'}}/>
               ) : (
                 <Text style={FLipCoin.buttonText}>Publish Game</Text>
               )}

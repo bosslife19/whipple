@@ -30,6 +30,7 @@ const segmentWidth = screenWidth - 70;
 const GoalSelected = () => {
   const ballBottom = useRef(new Animated.Value(24)).current;
   const ballLeft = useRef(new Animated.Value(segmentWidth / 2 - 0)).current;
+  const [gameWon, setGameWon] = useState(false);
 
   const {id, name} = useLocalSearchParams();
 
@@ -65,19 +66,40 @@ useEffect(()=>{
       Alert.alert('Choose Direction', 'Please select Left, Center, or Right first.');
       return;
     }
-
-    const res = await makeRequest('/play-game',{
-      name: game.name,
-      direction: selectedGuess.toLowerCase(),
-      gameId: game.id
+// try {
+//    const resp = await makeRequest('/deduct-balance', {
+//       amount: game.stake/game.odds
+//     });
+//     if(resp.response.status){
+// const res = await makeRequest('/play-game',{
+//       name: game.name,
+//       direction: selectedGuess.toLowerCase(),
+//       gameId: game.id
       
 
 
-    } )
+//     } )
+//      if(res.error){
+//       return Alert.alert('Error', res.error);
+//     }
+//     if(res.response.success){
+//         setGameWon(true)
+//       }else{
+//         setGameWon(false);
+//       }
+//     }
+//     if(resp.error){
+//       return Alert.alert('Sorry', resp.error)
+//     }
+// } catch (error) {
+//   console.log(error);
+//   Alert.alert('Error', 'Server Error');
+// }
+   
 
-    if(res.error){
-      return Alert.alert('Error', res.error);
-    }
+    
+
+   
 
     
 
@@ -104,23 +126,39 @@ useEffect(()=>{
       }),
     ]).start(() => {
       setIsBallUp(true);
+      makeRequest('/deduct-balance', {
+      amount: game.stake/game.odds
+    }).then(res=>{
+      if(res.response.status){
+        makeRequest('/play-game',{
+      name: game.name,
+      direction: selectedGuess.toLowerCase(),
+      gameId: game.id
+      
+
+
+    } ).then(res=>{
+      if(res.error){
+        return Alert.alert('Sorry', res.error);
+      }
       if(res.response.success){
-        setSuccess(true)
+        setSuccess(true);
       }else{
-        setSuccess(false);
+        setSuccess(false)
       }
       setModalVisibled(true);
+    })
+      }
+      if(res.error){
+        return Alert.alert('Sorry', res.error);
+      }
+    });
+
     });
   };
 
   const lostGame = () =>{
-      updateGameData({
-            stake ,
-            odds,
-            gameLabel ,
-            GameName,
-           isGameLost: true,
-          });
+     
             router.push('/(routes)/games/LostGames/ViewLostGames');
           }
   

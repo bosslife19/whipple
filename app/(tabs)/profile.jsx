@@ -14,6 +14,7 @@ const settingsItems = [
   { id: '9', label: 'Logout', icon: () => <AntDesign name="logout" size={24} color="#FF0000" />, noArrow: true ,handOnclick: async () => {
     try {
         await AsyncStorage.removeItem('userDetails');
+        await AsyncStorage.removeItem('authToken');
         router.replace('/auth/login'); // redirect to login screen
       } catch (error) {
         console.error('Error logging out:', error);
