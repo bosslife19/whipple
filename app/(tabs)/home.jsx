@@ -118,6 +118,13 @@ const [user, setUser] = useState(null);
                    
             </TouchableOpacity>
          </View>
+         <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+            <TouchableOpacity onPress={()=>router.push('/(routes)/skillquiz')} style={[Homes.flexD,{ width: 150, paddingHorizontal:"5%",paddingVertical:14, backgroundColor:"#0A1931",borderRadius:20,gap:8}]}>
+            <Text style={[Homes.imageText,{ color:"#fff",fontFamily:"Grotesk",fontSize:14}]}>
+              Play SkillQuiz Pro
+            </Text>
+            </TouchableOpacity>
+          </View>
           {/* Available Games */}
           <AvailableGamesList/>
         </View>
