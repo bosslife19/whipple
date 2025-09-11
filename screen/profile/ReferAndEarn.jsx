@@ -4,7 +4,7 @@ import Profilescs from '../../styles/profileScren.styles'
 import Header from '../Header/Header'
 import { router } from 'expo-router'
 import {AuthContext} from '../../context/AuthContext'
-import * as Clipboard from "expo-clipboard";
+// import * as Clipboard from "expo-clipboard";
 
 export default function ReferAndEarn() {
   const {userDetails} = useContext(AuthContext)
@@ -26,12 +26,12 @@ export default function ReferAndEarn() {
           <View style={Profilescs.referralRow}>
             <Text style={Profilescs.referralCode}>{userDetails?.referral_code}</Text>
             <TouchableOpacity style={Profilescs.copyButton} 
-              onPress={async () => {
-                if (userDetails?.referral_code) {
-                  await Clipboard.setStringAsync(userDetails.referral_code);
-                  Alert.alert("Copied", "Referral code copied to clipboard!");
-                }
-              }}
+              // onPress={async () => {
+              //   if (userDetails?.referral_code) {
+              //     await Clipboard.setStringAsync(userDetails.referral_code);
+              //     Alert.alert("Copied", "Referral code copied to clipboard!");
+              //   }
+              // }}
             >
               <Text>Copy</Text>
             </TouchableOpacity>
