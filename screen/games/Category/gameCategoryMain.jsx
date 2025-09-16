@@ -2,19 +2,19 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
+ 
   Image,
   TouchableOpacity,
   ScrollView,
   TextInput,
-  Dimensions,
+
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { router } from 'expo-router';
 
 // Components
-import HeaderBet from '../../Header/HeaderBet';
-import SlideShowBet from '../../../features/slideshow/slideshowBet';
+// import HeaderBet from '../../Header/HeaderBet';
+
 import gameCates from '../../../styles/gameCate.styles';
 
 // Assets
@@ -23,7 +23,7 @@ import virtualcoins from '../../../assets/images/games/coinflip.jpg';
 import cube from '../../../assets/images/games/cube.png';
 import spin from '../../../assets/images/games/spin2win.png';
 import color from '../../../assets/images/games/spinningcolo.avif';
-import choose from '../../../assets/images/games/soccerbg.avif';
+ import choose from '../../../assets/images/games/soccerbg.avif';
 import mystry from '../../../assets/images/games/mys.jpg';
 import spins from  '../../../assets/images/games/Rectangle 98.png';
 import colors from  '../../../assets/images/games/colod.png';
@@ -151,59 +151,111 @@ const GameCategoryMain = () => {
     //   window.scrollTo(0, 0);
     // }, []);
 
-  const renderGameSection = (title, games) => (
-    <View key={title} style={gameCates.section}>
-      <Text style={gameCates.sectionTitle}>{title}</Text>
-      <View style={gameCates.row}> 
-        {games.map((game, index) => (
-          <View key={index} style={gameCates.card} >
-            <View style={gameCates.imageWrapper}>
-              {title === 'Top Games' && (
-                <Text style={gameCates.imageBadge}>{index + 1}</Text>
+const renderGameSection = (title, games) => (
+  <View key={title} style={gameCates.section}>
+    <Text style={gameCates.sectionTitle}>{title}</Text>
+    <View style={gameCates.row}>
+      {games.map((game, index) => {
+        try {
+          return (
+            <View key={index} style={gameCates.card}>
+              <View style={gameCates.imageWrapper}>
+                {title === "Top Games" && (
+                  <Text style={gameCates.imageBadge}>{index + 1}</Text>
+                )}
+
+                {/* Safe image render with fallback */}
+                {game.image ? (
+                  <Image source={game.image} style={gameCates.image} />
+                ) : (
+                  <Image
+                    source={require("../../../assets/images/placeholder.png")}
+                    style={gameCates.image}
+                  />
+                )}
+              </View>
+
+              <Text style={gameCates.gameTitle}>
+                {game.title || "Untitled Game"}
+              </Text>
+              <Text style={gameCates.description}>
+                {game.description || "No description available."}
+              </Text>
+
+              <Text style={gameCates.variantLabel}>Variants:</Text>
+              {Array.isArray(game.variants) && game.variants.length > 0 ? (
+                game.variants.map((variant, idx) => (
+                  <Text key={idx} style={gameCates.variantText}>
+                    • {variant}
+                  </Text>
+                ))
+              ) : (
+                <Text style={gameCates.variantText}>• None</Text>
               )}
-              <Image source={game.image} style={gameCates.image} />
+
+              <TouchableOpacity
+                style={gameCates.btn}
+                onPress={
+                  typeof game.handleNavigate === "function"
+                    ? game.handleNavigate
+                    : () => console.log("No navigation set")
+                }
+              >
+                <Text
+                  style={[
+                    gameCates.gameTitle,
+                    { textAlign: "center", color: "#fff" },
+                  ]}
+                >
+                  Create Game
+                </Text>
+              </TouchableOpacity>
             </View>
-            
-            <Text style={gameCates.gameTitle}>{game.title}</Text>
-            <Text style={gameCates.description}>{game.description}</Text>
-            <Text style={gameCates.variantLabel}>Variants:</Text>
-            {game.variants.map((variant, idx) => (
-              <Text key={idx} style={gameCates.variantText}>•  {variant}</Text>
-            ))}
-            <TouchableOpacity style={gameCates.btn} onPress={game.handleNavigate}>
-              <Text style={[gameCates.gameTitle,{textAlign:"center",color:"#fff"}]}>Create Game</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </View>
+          );
+        } catch (error) {
+          console.error("Error rendering game card:", error);
+          return (
+            <View key={`error-${index}`} style={gameCates.card}>
+              <Text style={{ color: "red" }}>⚠ Error loading game</Text>
+            </View>
+          );
+        }
+      })}
     </View>
-  );
+  </View>
+);
+
 
   const renderSections = () => {
-    if (searchQuery.trim() !== '') {
-      return filteredGames.length > 0
-        ? renderGameSection('Search Results', filteredGames)
-        : <Text style={gameCates.noResults}>No results found.</Text>;
-    }
+  if (searchQuery.trim() !== '') {
+    return Array.isArray(filteredGames) && filteredGames.length > 0 ? (
+      renderGameSection('Search Results', filteredGames)
+    ) : (
+      <Text style={gameCates.noResults}>No results found.</Text>
+    );
+  }
 
-    if (selectedCategory === 'Home') {
-      return (
-        <>
-          {renderGameSection('Top Games', topGames)}
-          {renderGameSection('Popular Games', popularGames)}
-          {renderGameSection('Quick Games', quickGames)}
-        </>
-      );
-    }
+  if (selectedCategory === 'Home') {
+    return (
+      <View>
+        {renderGameSection('Top Games', topGames)}
+        {renderGameSection('Popular Games', popularGames)}
+        {renderGameSection('Quick Games', quickGames)}
+      </View>
+    );
+  }
 
-    return filteredGames.length > 0
-      ? renderGameSection(selectedCategory, filteredGames)
-      : <Text style={gameCates.noResults}>No results found.</Text>;
-  };
+  return Array.isArray(filteredGames) && filteredGames.length > 0 ? (
+    renderGameSection(selectedCategory, filteredGames)
+  ) : (
+    <Text style={gameCates.noResults}>No results found.</Text>
+  );
+};
+
 
   return (
     <>
-      <HeaderBet arrow name="Become The House" backgroundColor="#A8BFED" amount={200} />
+      {/* <HeaderBet arrow name="Become The House" backgroundColor="#A8BFED" amount={200} /> */}
       <View style={gameCates.main}>
         {/* <SlideShowBet /> */}
 

@@ -46,6 +46,7 @@ export default function RootLayout() {
     if (!fontsLoaded && Platform.OS !== "ios") {
       return null;
     }
+
   
 
   return (

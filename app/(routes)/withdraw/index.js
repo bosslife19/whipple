@@ -142,6 +142,7 @@ export default function WithdrawScreen() {
       <StepBox>
         <StepText>1) Enter the amount you wish to withdraw</StepText>
         <StepText>2) Choose a registered bank account</StepText>
+        
         <StepText>3) Verify with SMS or Email OTP</StepText>
       </StepBox>
       <FormCard>
