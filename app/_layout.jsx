@@ -10,7 +10,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { Platform } from 'react-native';
 import { GameProvider } from '../context/AppContext.js'; // adjust path
 import {AuthProvider} from '../context/AuthContext.js'
-import { PaystackProvider } from 'react-native-paystack-webview';
+import { PaystackProvider} from 'react-native-paystack-webview';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
