@@ -29,7 +29,7 @@ const ColorRouletteGame = () => {
   const [stake, setStake] = useState('');
   const [admissionFee, setAdmissionFee] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
-  const [walletBalance, setWalletBalance] = useState(150000); // Example balance
+  const [walletBalance, setWalletBalance] = useState(userDetails?.wallet_balance); // Example balance
 
   const [isPublishEnabled, setIsPublishEnabled] = useState(false); // Track if publish button should be enabled
 

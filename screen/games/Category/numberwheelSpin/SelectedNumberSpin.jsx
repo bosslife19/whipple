@@ -18,6 +18,7 @@ import { useGameContext } from '../../../../context/AppContext';
 import Losingmodal from '../../../loseModal/LoseModal';
 import Winningmodal from '../../../winningmodal/winningmodal';
 import { useRequest } from '../../../../hooks/useRequest';
+import axiosClient from '../../../../axiosClient';
 
 const SelectedNumberSpinWheel = () => {
   const spinValue = useRef(new Animated.Value(0)).current;

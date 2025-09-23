@@ -18,11 +18,11 @@ const MysteryMain = () => {
 
   // Access game data from context
   const { gameData, updateGameData } = useGameContext();
-
-  const [stake, setStake] = useState(''); // Use game data from context
-  const [walletBalance, setWalletBalance] = useState(10000); // Example wallet balance
-  const [loading, setLoading] = useState(false);
   const {userDetails} = useContext(AuthContext)
+  const [stake, setStake] = useState(''); // Use game data from context
+  const [walletBalance, setWalletBalance] = useState(userDetails.wallet_balance); // Example wallet balance
+  const [loading, setLoading] = useState(false);
+
 
   // Track selected box
   const [selectedBox, setSelectedBox] = useState( null);

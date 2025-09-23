@@ -75,10 +75,10 @@ const [user, setUser] = useState(null);
 
 
           {/* Notification Icon */}
-          <TouchableOpacity onPress={()=> router.push("/(routes)/notifications")} style={Homes.notificationContainer}>
+          {/* <TouchableOpacity onPress={()=> router.push("/(routes)/notifications")} style={Homes.notificationContainer}>
             <Notification />
             <View style={Homes.notificationDot} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <ScrollView contentContainerStyle={Homes.scrollViewContainer}>
         <SlideShowBet />
@@ -151,7 +151,7 @@ const [user, setUser] = useState(null);
         {/* Features */}
         <FeaturesSection/>
       </ScrollView>
-      <FloatingMessage/>
+      {/* <FloatingMessage/> */}
     </View>
   );
 }

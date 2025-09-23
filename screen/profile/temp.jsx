@@ -16,10 +16,10 @@ const Support = () => {
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
   const [faqState, setFaqstate] = useState({
-    one:true,
-    two:true,
-    three:true, 
-    four:true
+    one:false,
+    two:false,
+    three:false, 
+    four:false
   })
 
   // const toggleFAQ = (index) => {
@@ -45,15 +45,15 @@ const Support = () => {
             <View style={styles.accordion}>
               <TouchableOpacity
               
-               onPress={() => setFaqstate(prev=>({...prev, one: !faqState.one}))}
+              // onPress={() => toggleFAQ(index)}
                style={styles.accordionHeader}>
                 <Text style={styles.accordionText}>What is the Quiz about?
 </Text>
                 <Text style={styles.accordionToggle}>
-                  {faqState.one ? '+' : '-'}
+                  {faqState.one ? '-' : '+'}
                 </Text>
               </TouchableOpacity>
-              <Collapsible collapsed={faqState.one}>
+              <Collapsible collapsed={true}>
                 <Text style={styles.accordionContent}>The platform offers a 40 questions quiz that will be answered under 5 seconds per question to earn 2 points per correct question answered with a maximum of 80 points valid every 24 hours. Questions span general knowledge 
 
 </Text>
@@ -63,64 +63,20 @@ const Support = () => {
              <View style={styles.accordion}>
               <TouchableOpacity 
               // onPress={() => toggleFAQ(index)} 
-               onPress={() => setFaqstate(prev=>({...prev, two: !faqState.two}))}
               style={styles.accordionHeader}>
                 <Text style={styles.accordionText}>How do I become the House?
 
 </Text>
                 <Text style={styles.accordionToggle}>
-                  {faqState.two ? '+' : '-'}
+                  {faqState.two ? '-' : '+'}
                 </Text>
               </TouchableOpacity>
-              <Collapsible collapsed={faqState.two}>
+              <Collapsible collapsed={true}>
                 <Text style={styles.accordionContent}>You can become the House by creating games. Go to the TOP GAMES PAGE or BECOME THE HOUSE page to create any games of your choice. There is a 25% admission fee to create a game.
 
 Why 25%?  To create balance ⚖. We want more players than Houses, thus the threshold to become The House is high
 There is also a 1% deposit fee and 2.5% withdrawal fee(waivable depending on your points) to handle the Cost of our payment partners.
  
-
-</Text>
-              </Collapsible>
-            </View>
-
-             <View style={styles.accordion}>
-              <TouchableOpacity
-              
-               onPress={() => setFaqstate(prev=>({...prev, three: !faqState.three}))}
-               style={styles.accordionHeader}>
-                <Text style={styles.accordionText}>How do I compete against The House?
-
-
-</Text>
-                <Text style={styles.accordionToggle}>
-                  {faqState.three ? '+' : '-'}
-                </Text>
-              </TouchableOpacity>
-              <Collapsible collapsed={faqState.three}>
-                <Text style={styles.accordionContent}>Go to the AVAILABLE GAMES page, check for games published by The House that you would be interested in playing, then use your accumulated points and try to match the House's results for the House's Prize
-
-
-</Text>
-              </Collapsible>
-            </View>
-
-             <View style={styles.accordion}>
-              <TouchableOpacity
-              
-               onPress={() => setFaqstate(prev=>({...prev, four: !faqState.four}))}
-               style={styles.accordionHeader}>
-                <Text style={styles.accordionText}>What is Losers' Game?
-
-
-
-</Text>
-                <Text style={styles.accordionToggle}>
-                  {faqState.four ? '+' : '-'}
-                </Text>
-              </TouchableOpacity>
-              <Collapsible collapsed={faqState.four}>
-                <Text style={styles.accordionContent}>Losers' Game gives you the opportunity to reclaim your game after losing the first time. It is as expected, competitive
-
 
 </Text>
               </Collapsible>
@@ -132,7 +88,7 @@ There is also a 1% deposit fee and 2.5% withdrawal fee(waivable depending on you
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Contact Support</Text>
 
-          {/* <Text style={styles.label}>Subject</Text>
+          <Text style={styles.label}>Subject</Text>
           <TextInput
             style={styles.input}
             placeholder="Issue topic"
@@ -154,12 +110,12 @@ There is also a 1% deposit fee and 2.5% withdrawal fee(waivable depending on you
 
           <TouchableOpacity style={styles.submitButton}>
             <Text style={styles.submitText}>Submit Ticket</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
 
           <View style={styles.contactInfo}>
             <Text style={styles.contactText}>For urgent matters, contact us directly:</Text>
-            <Text style={styles.contactText}>📧 support@mywhipple.com</Text>
-            <Text style={styles.contactText}>📞 +234 9079141911</Text>
+            <Text style={styles.contactText}>📧 support@whipple.com</Text>
+            <Text style={styles.contactText}>📞 +234 800 WHIPPLE</Text>
           </View>
         </View>
       </ScrollView>

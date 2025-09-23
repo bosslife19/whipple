@@ -32,8 +32,8 @@ const PreBetActivities = () => {
 
   return (
     <View style={{height:'100%'}}>
-   
-    <ScrollView contentContainerStyle={styles.container}>
+   <Text>Coming Soon</Text>
+    {/* <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
           <Animated.View style={{ transform: [{ translateY: bounceAnim }] }}>
         <View style={styles.iconContainer}>
@@ -108,7 +108,7 @@ const PreBetActivities = () => {
           <Text style={styles.buttonText}>Start Predicting</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </ScrollView> */}
      </View>
   );
 };
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginTop: 4,
     color: '#111827',
-        // fontFamily:'PoppinsReg',
+       
 
   },
   buttonContainer: {
