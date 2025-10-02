@@ -7,7 +7,7 @@ const FeaturesSection = () => {
   useEffect(()=>{
     const getLeaderBoard = async ()=>{
       const res = await axiosClient.get('/leaderboard');
-      console.log(res.data.winners);
+     
       setLeaderBoard(res.data.winners)
     }
     getLeaderBoard()

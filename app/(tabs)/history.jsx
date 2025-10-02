@@ -6,6 +6,7 @@ import { useGameContext } from '../../context/AppContext';
 import Goalstyles from '../../styles/Goal.styles';
 import axiosClient from '../../axiosClient';
 import { AuthContext } from '../../context/AuthContext';
+import {formatDate} from '../../utlils/formatDate';
 
 
 
@@ -70,8 +71,9 @@ const [playedGames, setPlayedGames] = useState([]);
 
   useEffect(()=>{
     const getMyPlayedGames = async ()=>{
-      const res = await axiosClient.get('/get-my-played-games');
       
+      const res = await axiosClient.get('/get-my-played-games');
+    
       setPlayedGames(res.data);
 
     }
@@ -111,6 +113,8 @@ const [playedGames, setPlayedGames] = useState([]);
       <View style={styles.details}>
         <Text style={styles.label}>Odds:</Text>
         <Text style={styles.value}>{item.odds}</Text>
+                <Text style={styles.label}>Created at:</Text>
+        <Text style={styles.value}>{formatDate(item.created_at)}</Text>
 
         {/* <Text style={[styles.label,{maxWidth:"77%"}]}>Left, right, or center? Choose where to shoot!</Text> */}
         <Text style={styles.value}>Status: {item.status}</Text>
@@ -146,6 +150,7 @@ const [playedGames, setPlayedGames] = useState([]);
 
         {/* <Text style={[styles.label,{maxWidth:"77%"}]}>Left, right, or center? Choose where to shoot!</Text> */}
         <Text style={styles.value}>Status: {item.status}</Text>
+        <Text style={styles.value}>Time of Play: {formatDate(item.played_at)}</Text>
         <Text style={styles.label}>House: {item.creator}</Text>
 
       </View>
@@ -160,7 +165,7 @@ const [playedGames, setPlayedGames] = useState([]);
       >
         {item.stake}
       </Text>
-
+        <Text>{item.created_at}</Text>
       </View>
       </View>
       <TouchableOpacity
