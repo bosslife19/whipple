@@ -29,7 +29,7 @@ export default function DiceGameScreen() {
   const [face1, setFace1] = useState(1);
   const [face2, setFace2] = useState(1);
   const {userDetails} = useContext(AuthContext);
-  const walletBalance = 150000;
+  const walletBalance = userDetails?.wallet_balance;
   const admissionFee = Number(stake) * 0.25;
   const totalAmount = Number(stake) + admissionFee;
 

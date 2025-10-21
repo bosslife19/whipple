@@ -75,10 +75,10 @@ const [user, setUser] = useState(null);
 
 
           {/* Notification Icon */}
-          <TouchableOpacity onPress={()=> router.push("/(routes)/notifications")} style={Homes.notificationContainer}>
+          {/* <TouchableOpacity onPress={()=> router.push("/(routes)/notifications")} style={Homes.notificationContainer}>
             <Notification />
             <View style={Homes.notificationDot} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <ScrollView contentContainerStyle={Homes.scrollViewContainer}>
         <SlideShowBet />
@@ -118,10 +118,15 @@ const [user, setUser] = useState(null);
                    
             </TouchableOpacity>
          </View>
-         <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+         <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-around'}}>
             <TouchableOpacity onPress={()=>router.push('/(routes)/skillquiz')} style={[Homes.flexD,{ width: 150, paddingHorizontal:"5%",paddingVertical:14, backgroundColor:"#0A1931",borderRadius:20,gap:8}]}>
             <Text style={[Homes.imageText,{ color:"#fff",fontFamily:"Grotesk",fontSize:14}]}>
               Play SkillQuiz Pro
+            </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>router.push('/(routes)/skillgame')} style={[Homes.flexD,{ width: 150, paddingHorizontal:"5%",paddingVertical:14, backgroundColor:"#0A1931",borderRadius:20,gap:8}]}>
+            <Text style={[Homes.imageText,{ color:"#fff",fontFamily:"Grotesk",fontSize:14}]}>
+              Play Skill Game
             </Text>
             </TouchableOpacity>
           </View>
@@ -151,7 +156,7 @@ const [user, setUser] = useState(null);
         {/* Features */}
         <FeaturesSection/>
       </ScrollView>
-      <FloatingMessage/>
+      {/* <FloatingMessage/> */}
     </View>
   );
 }

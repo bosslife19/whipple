@@ -34,13 +34,14 @@ const ColorRouletteGame2 = () => {
   const [activeColors, setActiveColors] = useState([]);
   const [loading, setLoading] = useState(false);
   const { makeRequest } = useRequest();
+  const {userDetails} = useContext(AuthContext)
   // New state for stake, admission fee, and total amount
   const [stake, setStake] = useState("");
   const [admissionFee, setAdmissionFee] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
-  const [walletBalance, setWalletBalance] = useState(150000); // Example balance
+  const [walletBalance, setWalletBalance] = useState(userDetails.wallet_balance); // Example balance
   const { name, id } = useLocalSearchParams();
-const {userDetails} = useContext(AuthContext)
+
   const [isPublishEnabled, setIsPublishEnabled] = useState(false); // Track if publish button should be enabled
 
   // Function to update stake and calculate admission fee and total amount

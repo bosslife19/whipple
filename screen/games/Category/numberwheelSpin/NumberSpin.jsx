@@ -200,7 +200,7 @@ const NumberSpinWheel = () => {
                 </View>
                 <View style={WheelSPins.wallet}>
                   <Text style={WheelSPins.walletText}>
-                    Your wallet balance: <Text style={WheelSPins.walletAmount}>₦150,000</Text>
+                    Your wallet balance: <Text style={WheelSPins.walletAmount}>₦{userDetails?.wallet_balance}</Text>
                   </Text>
                 </View>
                 <TouchableOpacity

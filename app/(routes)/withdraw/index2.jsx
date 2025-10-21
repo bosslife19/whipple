@@ -113,21 +113,7 @@ export default function WithdrawScreen() {
           <Picker.Item label="Zenith - 1234" value="1234" />
         </Picker>
       </FormCard>
-      <OTPSelector>
-        <OTPButton
-          selected={otpMethod === 'sms'}
-          onPress={() => setOtpMethod('sms')}
-        >
-          <OTPText>SMS OTP</OTPText>
-        </OTPButton>
-        <OTPButton
-          selected={otpMethod === 'email'}
-          isLast
-          onPress={() => setOtpMethod('email')}
-        >
-          <OTPText>Email OTP</OTPText>
-        </OTPButton>
-      </OTPSelector>
+      
       <WithdrawButton onPress={() => {/* handle withdrawal logic */}}>
         <WithdrawText>Request Withdrawal</WithdrawText>
       </WithdrawButton>

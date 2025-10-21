@@ -130,7 +130,7 @@ export default function WithdrawScreen() {
       if (error) {
         return Alert.alert("Error", error?.message);
       }
-      Alert.alert("Success", "Withdrawal request sent successfully!");
+      Alert.alert("Success", "Withdrawal  successful. Please check your bank account!");
     } catch (err) {
       Alert.alert("Error", "Unable to withdrawal request");
     }
@@ -201,7 +201,7 @@ export default function WithdrawScreen() {
             )}
         </View>
       </FormCard>
-      <OTPSelector>
+      {/* <OTPSelector>
         <OTPButton
           selected={otpMethod === 'sms'}
           onPress={() => setOtpMethod('sms')}
@@ -215,7 +215,7 @@ export default function WithdrawScreen() {
         >
           <OTPText>Email OTP</OTPText>
         </OTPButton>
-      </OTPSelector>
+      </OTPSelector> */}
       <TouchableOpacity 
         onPress={handleWithdrawalRequest} 
         disabled={!amount || !bankId || loading} 
@@ -227,7 +227,7 @@ export default function WithdrawScreen() {
             opacity: (!amount || !bankId || loading) ? 0.5 : 1 
         }}
         >
-        <WithdrawText>{loading ? "Processing..." : "Request Withdrawal"}</WithdrawText>
+        <WithdrawText>{loading ? "Processing..." : "Withdraw"}</WithdrawText>
        </TouchableOpacity>
 
         {/* <WithdrawButton>

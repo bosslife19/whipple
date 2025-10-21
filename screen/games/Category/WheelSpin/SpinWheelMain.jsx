@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import { useGameContext } from '../../../../context/AppContext';
 import CustomInput from '../../../../components/Input/TextInput';
 import { useRequest } from '../../../../hooks/useRequest';
 import axiosClient from '../../../../axiosClient';
+import { AuthContext } from '../../../../context/AuthContext';
 
 const SpinTheWheel = () => {
   const spinValue = useRef(new Animated.Value(0)).current;
@@ -29,7 +30,7 @@ const SpinTheWheel = () => {
   const [loading, setLoading] = useState(false);
   const [winningNumbers, setWinningNumbers] = useState([]);
   const [showResult, setShowResult] = useState(false);
-  const { makeRequest} = useRequest()
+  const {userDetails} = useContext(AuthContext)
 
   // Calculate admissionFee and stake from totalAmount
   const totalAmount = parseFloat(totalInput) || 0;
@@ -195,7 +196,7 @@ const SpinTheWheel = () => {
                 </View>
                 <View style={WheelSPins.wallet}>
                   <Text style={WheelSPins.walletText}>
-                    Your wallet balance: <Text style={WheelSPins.walletAmount}>₦150,000</Text>
+                    Your wallet balance: <Text style={WheelSPins.walletAmount}>₦{userDetails?.wallet_balance}</Text>
                   </Text>
                 </View>
                 <TouchableOpacity

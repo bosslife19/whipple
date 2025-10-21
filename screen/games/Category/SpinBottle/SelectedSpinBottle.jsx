@@ -82,7 +82,7 @@ const SelectedSpinBottle = () => {
                 name,
                 direction: direction.toLowerCase()
                }).then(res=>{
-                console.log(res);
+              
                  
                   if(res.error){
                     return Alert.alert('Error', res.error);
