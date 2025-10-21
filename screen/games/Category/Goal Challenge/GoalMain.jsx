@@ -236,7 +236,7 @@ const{userDetails} = useContext(AuthContext);
               <View style={WheelSPins.wallet}>
                 <Text style={WheelSPins.walletText}>
                   Your wallet balance:{' '}
-                  <Text style={WheelSPins.walletAmount}>₦150,000</Text>
+                  <Text style={WheelSPins.walletAmount}>₦{userDetails?.wallet_balance}</Text>
                 </Text>
               </View>
               <TouchableOpacity

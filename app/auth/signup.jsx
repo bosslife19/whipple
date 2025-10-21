@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { useRequest } from "../../hooks/useRequest";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -129,7 +129,10 @@ const Signup = () => {
           </TouchableOpacity>
           <Text style={styles.termsText}>
             I have read and agree to the{" "}
-            <Text style={styles.termsLink}>Terms and Conditions</Text>
+            <Link href={'https://mywhipple.com/terms-and-conditions'}>
+             <Text style={styles.termsLink}>Terms and Conditions</Text>
+            </Link>
+           
           </Text>
         </View>
 

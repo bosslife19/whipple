@@ -4,13 +4,13 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import 'react-native-reanimated';
+// import 'react-native-reanimated';
 // import AppProvider from "../context/AppContext"
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Platform } from 'react-native';
 import { GameProvider } from '../context/AppContext.js'; // adjust path
 import {AuthProvider} from '../context/AuthContext.js'
-import { PaystackProvider } from 'react-native-paystack-webview';
+import { PaystackProvider} from 'react-native-paystack-webview';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -52,7 +52,7 @@ export default function RootLayout() {
   return (
   <AuthProvider>
     <GameProvider>
-      <PaystackProvider publicKey={process.env.EXPO_PUBLIC_PAYSTACK_LIVE}>
+      <PaystackProvider publicKey={process.env.EXPO_PUBLIC_PAYSTACK_LIVE} defaultChannels={['card','bank_transfer','mobile_money','ussd','bank']}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
         </Stack>

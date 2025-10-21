@@ -51,6 +51,7 @@ export default function NormalDeposit({ amount, setAmount }) {
             }
           ]
         },
+        
         onSuccess: (res) => handleVerifyPayment(res),
         onCancel: () => console.log('User cancelled'),
         onLoad: (res) => console.log('WebView Loaded:', res),

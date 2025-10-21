@@ -28,14 +28,15 @@ const FlipTheCoin = () => {
   const { updateGameData } = useGameContext();
   const { makeRequest, loading } = useRequest();
   const GameName = "Flip The Coin";
+  const {userDetails} = useContext(AuthContext)
 
   const router = useRouter();
   const [flipResult, setFlipResult] = useState(null);
   const [isFlipping, setIsFlipping] = useState(false);
   const [stake, setStake] = useState("");
-  const [walletBalance] = useState(150000);
+  const [walletBalance] = useState(userDetails?.wallet_balance);
   const [quickAmounts] = useState([200, 500, 1000, 2000, 5000, 10000]);
-const {userDetails} = useContext(AuthContext);
+
   const rotation = useRef(new Animated.Value(0)).current;
 
   const handleFlip = () => {
