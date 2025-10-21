@@ -52,7 +52,7 @@ export default function RootLayout() {
   return (
   <AuthProvider>
     <GameProvider>
-      <PaystackProvider publicKey={process.env.EXPO_PUBLIC_PAYSTACK_LIVE}>
+      <PaystackProvider publicKey={process.env.EXPO_PUBLIC_PAYSTACK_LIVE} defaultChannels={["card", "bank", "ussd", "mobile_money", "bank_transfer"]}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
         </Stack>
