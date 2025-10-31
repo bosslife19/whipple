@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useContext } from "react";
 import {
   View,
   Text,
@@ -10,15 +10,28 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { ArrowLeft, Trophy, Medal } from "lucide-react-native";
 import { router } from 'expo-router';
+import axiosClient from "../../../../axiosClient";
+import Toast from '../../../../components/Toast';
+import {AuthContext} from '../../../../context/AuthContext'
+import { useRequest } from "../../../../hooks/useRequest";
 
 export default function TapRush() {
+  const {userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails} = useContext(AuthContext)
+  const { loading, makeRequest } = useRequest();
+  const [gameId, setGameId] = useState();
   const [gameState, setGameState] = useState("waiting");
   const [matchmakingTimer, setMatchmakingTimer] = useState(30);
   const [countdownTimer, setCountdownTimer] = useState(5);
   const [timeLeft, setTimeLeft] = useState(30);
   const [tapCount, setTapCount] = useState(0);
-  const [playersReady, setPlayersReady] = useState(1);
-  const [players, setPlayers] = useState([{ id: 1, name: "You", taps: 0 }]);
+  const [winnings, setWinnings] = useState(0);
+  const [playersReady, setPlayersReady] = useState();
+  const [players, setPlayers] = useState([]);
+  const [isMounted, setIsMounted] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastType, setToastType] = useState("info");
+  const [toastTitle, setToastTitle] = useState("info");
+  const [toastMessage, setToastMessage] = useState("info");
 
   const glowAnim = useRef(new Animated.Value(0)).current;
 
@@ -61,27 +74,151 @@ export default function TapRush() {
     }),
   };
 
+  const getMatchingJoining = async () => { 
+    try {
+      const res = await axiosClient.get("/skillgame/matches/join/tap_rush");
+      setUserBalanceGen(res?.data.user_balance)
+      setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
+      setGameId(res.data.match.id)
+    } catch (error) {  
+      // console.error('Error fetching admin parameter:', error);
+      setToastVisible(true)
+      setToastType("error")
+      setToastTitle("Insufficient balance")
+      setToastMessage("Your balance is too low for this game.")
+      setTimeout(() => {
+        router.push(`/(routes)/skillgame`)
+      }, 5000);
+    } finally { 
+      // setLoader("");
+    }
+  };
+
+  const getMatchingPlayer = async () => { 
+    try {
+      const res = await axiosClient.get(`/skillgame/matches/status/${gameId}`);
+      // console.log(res.data.players)
+      setPlayers((prev) => {
+      const existingIds = new Set(prev.map((p) => p.id));
+      const newPlayers = res.data.players.filter((p) => !existingIds.has(p.id));
+      
+      return [
+        ...prev,
+        ...newPlayers.map((player) => ({
+          id: player.id,
+          name: player.user_id,
+          taps: player.score,
+        })),
+      ];
+    });
+    setPlayersReady(res.data.playerCount);
+
+    // Start countdown
+    if (playersReady >= 4 || newTimer === 0) {
+      getMatchingUpdate()
+      setGameState("countdown");
+      setCountdownTimer(5);
+    }
+      
+    } catch (error) {  
+     
+    } finally { 
+      
+    }
+  };
+
+  const getMatchingUpdate = async () => { 
+    try {
+      const { error, response }  = await makeRequest("/skillgame/matches/updateScore", {   
+          matchId: gameId,
+          score: tapCount,
+        });
+        
+        if(response){
+          setPlayers(
+            response?.leaderboard.map((player) => ({
+              id: player.id,
+              name: player.name,
+              taps: player.score,
+            }))
+          );
+        }    
+      
+    } catch (error) {  } finally {  }
+  };
+
+  const getMatchingComplete = async () => { 
+    try {
+      const { error, response }  = await makeRequest("/skillgame/matches/complete", {   
+          matchId: gameId,
+          score: tapCount,
+          time: countdownTimer
+        });    
+      
+    } catch (error) {  } finally {  }
+  };
+
+  const getMatchingEndUpdate = async () => { 
+    try {
+      const res = await axiosClient.get(`/skillgame/matches/checkStatus/${gameId}`);
+      
+      if(res.data.results){
+        setWinnings(response?.data.user_winning)
+        setUserBalanceGen(response?.data.user_balance)
+        setUserDetails(prev=>({...prev, wallet_balance:response?.data.user_balance}));
+        setPlayers(
+            res.data.results.map((player) => ({
+              id: player.rank,
+              name: player.name,
+              taps: player.score,
+              win: player.winnings,
+            }))
+          );
+          setIsMounted(false)
+      }
+      
+    } catch (error) {  
+     
+    } finally { 
+      
+    }
+  };
+
+  useEffect(() => {
+    getMatchingJoining();
+  }, []);
+
+ useEffect(() => {
+  let interval;
+
+  if (isMounted) {
+    // Run once immediately
+    getMatchingEndUpdate();
+
+    // Start polling
+    interval = setInterval(() => {
+      if (isMounted) {
+        getMatchingEndUpdate();
+      }
+    }, 5000);
+  }
+
+  // Cleanup when unmounting or when isMounted becomes false
+  return () => {
+    if (interval) clearInterval(interval);
+  };
+}, [isMounted]);
+
+
+
   // Matchmaking timer
   useEffect(() => {
     if (gameState === "waiting" && matchmakingTimer > 0) {
       const timer = setTimeout(() => {
         const newTimer = matchmakingTimer - 1;
         setMatchmakingTimer(newTimer);
-
-        // Simulate other players joining
-        if (playersReady < 4 && Math.random() > 0.7) {
-          const newId = playersReady + 1;
-          setPlayersReady(newId);
-          setPlayers((prev) => [
-            ...prev,
-            { id: newId, name: `Player ${newId}`, taps: 0 },
-          ]);
-        }
-
-        // Start countdown
-        if (playersReady >= 4 || newTimer === 0) {
-          setGameState("countdown");
-          setCountdownTimer(5);
+        if(gameId){          
+          getMatchingPlayer()
         }
       }, 1000);
       return () => clearTimeout(timer);
@@ -101,18 +238,9 @@ export default function TapRush() {
   // Simulate other players tapping
   useEffect(() => {
     if (gameState === "playing") {
-      const interval = setInterval(() => {
-        setPlayers((prev) =>
-          prev.map((p) =>
-            p.id === 1
-              ? p
-              : { ...p, taps: p.taps + Math.floor(Math.random() * 3) + 1 }
-          )
-        );
-      }, 200);
-      return () => clearInterval(interval);
+      getMatchingUpdate()
     }
-  }, [gameState]);
+  }, [gameState, tapCount]);
 
   // Game timer
   useEffect(() => {
@@ -128,31 +256,32 @@ export default function TapRush() {
     setGameState("playing");
     setTapCount(0);
     setTimeLeft(30);
-    setPlayers((prev) => prev.map((p) => ({ ...p, taps: 0 })));
+    // setPlayers((prev) => prev.map((p) => ({ ...p, taps: 0 })));
   };
 
   const resetMatchmaking = () => {
     setGameState("waiting");
     setMatchmakingTimer(30);
-    setPlayersReady(1);
-    setPlayers([{ id: 1, name: "You", taps: 0 }]);
+    setPlayersReady(0);
+    setPlayers([]);
+    router.push(`/(routes)/skillgame/handspeed`)
   };
 
-  const handleTap = useCallback(() => {
+    const handleTap = useCallback(() => {
     if (gameState === "playing") {
       setTapCount((prev) => prev + 1);
-      setPlayers((prev) =>
-        prev.map((p) =>
-          p.id === 1 ? { ...p, taps: p.taps + 1 } : p
-        )
-      );
+      // setPlayers((prev) =>
+      //   prev.map((p) =>
+      //     p.id === 1 ? { ...p, taps: p.taps + 1 } : p
+      //   )
+      // );
     }
-  }, [gameState]);
+  }, [gameState]);   
 
   const endGame = () => {
     setGameState("finished");
-    const sorted = [...players].sort((a, b) => b.taps - a.taps);
-    setPlayers(sorted);
+    setIsMounted(true)
+    getMatchingComplete();
   };
 
   const renderLeaderboardItem = ({ item, index }) => (
@@ -304,6 +433,16 @@ export default function TapRush() {
           </View>
         </View>
       )}
+
+      <Toast
+        visible={toastVisible}
+        type={toastType}
+        title={toastTitle}
+        message={toastMessage}
+        position="bottom"
+        duration={3000}
+        onHide={() => setToastVisible(false)}
+      />
     </View>
   );
 }

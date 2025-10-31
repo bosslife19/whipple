@@ -9,6 +9,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Zap, Brain, Target, Trophy } from "lucide-react-native";
 import { router } from 'expo-router';
+import { Entypo, MaterialIcons } from '@expo/vector-icons';
 
 const games = [
   {
@@ -87,6 +88,9 @@ export default function Skillgame() {
             colors={["#14222D", "#22182B", "#21172A"]}
             style={styles.heroGradient}
           >
+            <TouchableOpacity onPress={() => router.replace('/(tabs)/home')}>
+            <Entypo name="cross" size={64} color="#fff" />            
+            </TouchableOpacity>
             <Text style={styles.heroTitle}>WHIPPLE</Text>
             <Text style={styles.heroSubtitle}>SKILL GAMES</Text>
             <Text style={styles.heroDesc}>

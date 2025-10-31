@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useContext } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,10 @@ import {
 } from 'react-native';
 import { ArrowLeft, Trophy, Medal } from "lucide-react-native";
 import { router } from 'expo-router';
+import axiosClient from "../../../../axiosClient";
+import Toast from '../../../../components/Toast';
+import {AuthContext} from '../../../../context/AuthContext'
+import { useRequest } from "../../../../hooks/useRequest";
 
 export default function MathClash() {
   const [gameState, setGameState] = useState('waiting');
@@ -16,12 +20,158 @@ export default function MathClash() {
   const [countdownTimer, setCountdownTimer] = useState(5);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
+  const [avgTime, setAvgTime] = useState(0);
   const [timeLeft, setTimeLeft] = useState(3);
   const [question, setQuestion] = useState(null);
   const [responseTimes, setResponseTimes] = useState([]);
   const [questionStartTime, setQuestionStartTime] = useState(0);
   const [playersReady, setPlayersReady] = useState(1);
-  const [players, setPlayers] = useState([{ id: 1, name: 'You', score: 0, avgTime: 0 }]);
+  const [players, setPlayers] = useState([]);
+
+  const [isMounted, setIsMounted] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastType, setToastType] = useState("info");
+  const [toastTitle, setToastTitle] = useState("info");
+  const [toastMessage, setToastMessage] = useState("info");
+  const [winnings, setWinnings] = useState(0);
+  const {userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails} = useContext(AuthContext)
+  const { loading, makeRequest } = useRequest();
+  const [gameId, setGameId] = useState();
+
+
+  const getMatchingJoining = async () => { 
+    try {
+      const res = await axiosClient.get("/skillgame/matches/join/math_clash");
+      setUserBalanceGen(res?.data.user_balance)
+      setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
+      setGameId(res.data.match.id)
+    } catch (error) {  
+      // console.error('Error fetching admin parameter:', error);
+      setToastVisible(true)
+      setToastType("error")
+      setToastTitle("Insufficient balance")
+      setToastMessage("Your balance is too low for this game.")
+      setTimeout(() => {
+        router.push(`/(routes)/skillgame`)
+      }, 5000);
+    } finally { 
+      // setLoader("");
+    }
+  };
+
+  const getMatchingPlayer = async () => { 
+    try {
+      const res = await axiosClient.get(`/skillgame/matches/status/${gameId}`);
+      // console.log(res.data.players)
+      setPlayers((prev) => {
+      const existingIds = new Set(prev.map((p) => p.id));
+      const newPlayers = res.data.players.filter((p) => !existingIds.has(p.id));
+      
+      return [
+        ...prev,
+        ...newPlayers.map((player) => ({
+          id: player.id,
+          name: player.user_id,
+          score: player.score,
+        })),
+      ];
+    });
+    setPlayersReady(res.data.playerCount);
+
+    // Start countdown
+    if (playersReady >= 4 || newTimer === 0) {
+      getMatchingUpdate()
+      setGameState("countdown");
+      setCountdownTimer(5);
+    }
+      
+    } catch (error) {  
+     
+    } finally { 
+      
+    }
+  };
+
+  const getMatchingUpdate = async () => { 
+    try {
+      const { error, response }  = await makeRequest("/skillgame/matches/updateScore", {   
+          matchId: gameId,
+          score: score,
+        });
+        
+        if(response){
+          setPlayers(
+            response?.leaderboard.map((player) => ({
+              id: player.id,
+              name: player.name,
+              score: player.score,
+            }))
+          );
+        }    
+      
+    } catch (error) {  } finally {  }
+  };
+
+  const getMatchingComplete = async () => { 
+    try {
+      const { error, response }  = await makeRequest("/skillgame/matches/complete", {   
+          matchId: gameId,
+          score: score,
+          time: avgTime
+        });    
+      
+    } catch (error) {  } finally {  }
+  };
+
+  const getMatchingEndUpdate = async () => { 
+    try {
+      const res = await axiosClient.get(`/skillgame/matches/checkStatus/${gameId}`);
+      
+      if(res.data.results){
+        setWinnings(response?.data.user_winning)
+        setUserBalanceGen(response?.data.user_balance)
+        setUserDetails(prev=>({...prev, wallet_balance:response?.data.user_balance}));
+        setPlayers(
+            res.data.results.map((player) => ({
+              id: player.rank,
+              name: player.name,
+              score: player.score,
+              win: player.winnings,
+            }))
+          );
+          setIsMounted(false)
+      }
+      
+    } catch (error) {  
+     
+    } finally { 
+      
+    }
+  };
+
+  useEffect(() => {
+      getMatchingJoining();
+    }, []);
+  
+   useEffect(() => {
+    let interval;
+    
+      if (isMounted) {
+        // Run once immediately
+        getMatchingEndUpdate();
+    
+        // Start polling
+        interval = setInterval(() => {
+          if (isMounted) {
+            getMatchingEndUpdate();
+          }
+        }, 5000);
+      }
+      // Cleanup when unmounting or when isMounted becomes false
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isMounted]);
 
   const glowAnim = useRef(new Animated.Value(0)).current;
   
@@ -106,16 +256,8 @@ export default function MathClash() {
       const timer = setTimeout(() => {
         const newTimer = matchmakingTimer - 1;
         setMatchmakingTimer(newTimer);
-
-        if (playersReady < 4 && Math.random() > 0.7) {
-          const newId = playersReady + 1;
-          setPlayersReady(newId);
-          setPlayers(prev => [...prev, { id: newId, name: `Player ${newId}`, score: 0, avgTime: 0 }]);
-        }
-
-        if (playersReady >= 4 || newTimer === 0) {
-          setGameState('countdown');
-          setCountdownTimer(5);
+        if(gameId){          
+          getMatchingPlayer()
         }
       }, 1000);
       return () => clearTimeout(timer);
@@ -134,19 +276,9 @@ export default function MathClash() {
 
   // Simulate opponents answering
   useEffect(() => {
-    if (gameState === 'playing' && currentQuestion < 10) {
+    if (gameState === 'playing' && currentQuestion < 20) {
       const timeout = setTimeout(() => {
-        setPlayers(prev =>
-          prev.map(p => {
-            if (p.id === 1) return p;
-            const correct = Math.random() > 0.3;
-            return {
-              ...p,
-              score: correct ? p.score + 10 : p.score,
-              avgTime: p.avgTime + Math.random() * 2 + 0.5,
-            };
-          }),
-        );
+        getMatchingUpdate()
       }, Math.random() * 2000 + 500);
       return () => clearTimeout(timeout);
     }
@@ -179,11 +311,13 @@ export default function MathClash() {
 
     if (ans === question.answer) {
       setScore(s => s + 10);
-      setPlayers(prev =>
-        prev.map(p => (p.id === 1 ? { ...p, score: p.score + 10, avgTime: p.avgTime + t } : p)),
-      );
+      setAvgTime(s => s + t);
+      // setPlayers(prev =>
+      //   prev.map(p => (p.id === 1 ? { ...p, score: p.score + 10, avgTime: p.avgTime + t } : p)),
+      // );
     } else {
-      setPlayers(prev => prev.map(p => (p.id === 1 ? { ...p, avgTime: p.avgTime + t } : p)));
+      setAvgTime(s => s + t);
+      // setPlayers(prev => prev.map(p => (p.id === 1 ? { ...p, avgTime: p.avgTime + t } : p)));
     }
 
     nextQuestion();
@@ -191,12 +325,13 @@ export default function MathClash() {
 
   const handleTimeout = () => {
     setResponseTimes(prev => [...prev, 3]);
-    setPlayers(prev => prev.map(p => (p.id === 1 ? { ...p, avgTime: p.avgTime + 3 } : p)));
+    setAvgTime(s => s + 3);
+    // setPlayers(prev => prev.map(p => (p.id === 1 ? { ...p, avgTime: p.avgTime + 3 } : p)));
     nextQuestion();
   };
 
   const nextQuestion = () => {
-    if (currentQuestion + 1 >= 10) return endGame();
+    if (currentQuestion + 1 >= 20) return endGame();
     setCurrentQuestion(currentQuestion + 1);
     const q = generateQuestion();
     setQuestion(q);
@@ -206,21 +341,24 @@ export default function MathClash() {
 
   const endGame = () => {
     setGameState('finished');
-    const avgTime =
-      responseTimes.length > 0
-        ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
-        : 0;
-    const sorted = [...players]
-      .map(p => (p.id === 1 ? { ...p, avgTime } : { ...p, avgTime: p.avgTime / 10 }))
-      .sort((a, b) => b.score - a.score || a.avgTime - b.avgTime);
-    setPlayers(sorted);
+    setIsMounted(true)
+    getMatchingComplete();
+    // const avgTime =
+    //   responseTimes.length > 0
+    //     ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
+    //     : 0;
+    // const sorted = [...players]
+    //   .map(p => (p.id === 1 ? { ...p, avgTime } : { ...p, avgTime: p.avgTime / 10 }))
+    //   .sort((a, b) => b.score - a.score || a.avgTime - b.avgTime);
+    // setPlayers(sorted);
   };
 
   const reset = () => {
     setGameState('waiting');
     setMatchmakingTimer(30);
-    setPlayersReady(1);
-    setPlayers([{ id: 1, name: 'You', score: 0, avgTime: 0 }]);
+    setPlayersReady(0);
+    setPlayers([]);
+    router.push(`/(routes)/skillgame/mathclash`)
   };
 
   // --- UI Render States ---
@@ -253,9 +391,9 @@ export default function MathClash() {
                 <View style={{marginTop: 20}}>
                     <Text style={[styles.smallText, {textAlign: "center", fontWeight: 'bold', fontSize: 18}]}>Players Ready: {playersReady}/4</Text>
                     <View style={styles.playersContainer}>
-                        {players.map(p => (
+                        {players.map((p, ind) => (
                             <View key={p.id} style={styles.playerCard}>
-                            <Text style={styles.playerNumber}>{p.id}</Text>
+                            <Text style={styles.playerNumber}>{ind+1}</Text>
                             <Text style={styles.playerName}>{p.name}</Text>
                             </View>
                         ))}
@@ -276,7 +414,7 @@ export default function MathClash() {
         {gameState === 'playing' && question &&  (
             <View>
                 <View style={styles.topRow}>
-                <Text style={styles.sub}>Question {currentQuestion + 1}/10</Text>
+                <Text style={styles.sub}>Question {currentQuestion + 1}/20</Text>
                 <Text style={styles.timer}>{timeLeft}s</Text>
                 <Text style={styles.sub}>Score: {score}</Text>
                 </View>
@@ -358,6 +496,16 @@ export default function MathClash() {
                 </View>
             </View>
         )}
+
+        <Toast
+          visible={toastVisible}
+          type={toastType}
+          title={toastTitle}
+          message={toastMessage}
+          position="bottom"
+          duration={3000}
+          onHide={() => setToastVisible(false)}
+        />
       </View>
     );
 

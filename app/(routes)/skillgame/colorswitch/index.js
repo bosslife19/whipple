@@ -1,8 +1,12 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Animated, ScrollView  } from 'react-native';
 import { LinearGradient } from "expo-linear-gradient";
 import { ArrowLeft, Trophy, Medal } from "lucide-react-native";
 import { router } from 'expo-router';
+import axiosClient from "../../../../axiosClient";
+import Toast from '../../../../components/Toast';
+import {AuthContext} from '../../../../context/AuthContext'
+import { useRequest } from "../../../../hooks/useRequest";
 
 const COLORS = [
   { name: 'RED', value: '#EF4444' },
@@ -13,14 +17,158 @@ const COLORS = [
 
 export default function ColorSwitchReflex() {
   const [gameState, setGameState] = useState('waiting');
-  const [matchmakingTimer, setMatchmakingTimer] = useState(10);
+  const [matchmakingTimer, setMatchmakingTimer] = useState(30);
   const [countdownTimer, setCountdownTimer] = useState(5);
   const [round, setRound] = useState(0);
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(3);
+  const [timeLeft, setTimeLeft] = useState(2);
   const [challenge, setChallenge] = useState(null);
   const [playersReady, setPlayersReady] = useState(1);
-  const [players, setPlayers] = useState([{ id: 1, name: 'You', score: 0 }]);
+  const [players, setPlayers] = useState([]);
+
+  const [isMounted, setIsMounted] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastType, setToastType] = useState("info");
+  const [toastTitle, setToastTitle] = useState("info");
+  const [toastMessage, setToastMessage] = useState("info");
+  const [winnings, setWinnings] = useState(0);
+  const {userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails} = useContext(AuthContext)
+  const { loading, makeRequest } = useRequest();
+  const [gameId, setGameId] = useState();
+
+  const getMatchingJoining = async () => { 
+    try {
+      const res = await axiosClient.get("/skillgame/matches/join/color_switch");
+      setUserBalanceGen(res?.data.user_balance)
+      setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
+      setGameId(res.data.match.id)
+    } catch (error) {  
+      // console.error('Error fetching admin parameter:', error);
+      setToastVisible(true)
+      setToastType("error")
+      setToastTitle("Insufficient balance")
+      setToastMessage("Your balance is too low for this game.")
+      setTimeout(() => {
+        router.push(`/(routes)/skillgame`)
+      }, 5000);
+    } finally { 
+      // setLoader("");
+    }
+  };
+
+  const getMatchingPlayer = async () => { 
+    try {
+      const res = await axiosClient.get(`/skillgame/matches/status/${gameId}`);
+      // console.log(res.data.players)
+      setPlayers((prev) => {
+      const existingIds = new Set(prev.map((p) => p.id));
+      const newPlayers = res.data.players.filter((p) => !existingIds.has(p.id));
+      
+      return [
+        ...prev,
+        ...newPlayers.map((player) => ({
+          id: player.id,
+          name: player.user_id,
+          score: player.score,
+        })),
+      ];
+    });
+    setPlayersReady(res.data.playerCount);
+
+    // Start countdown
+    if (playersReady >= 4 || newTimer === 0) {
+      getMatchingUpdate()
+      setGameState("countdown");
+      setCountdownTimer(5);
+    }
+      
+    } catch (error) {  
+     
+    } finally { 
+      
+    }
+  };
+
+  const getMatchingUpdate = async () => { 
+    try {
+      const { error, response }  = await makeRequest("/skillgame/matches/updateScore", {   
+          matchId: gameId,
+          score: score,
+        });
+        
+        if(response){
+          setPlayers(
+            response?.leaderboard.map((player) => ({
+              id: player.id,
+              name: player.name,
+              score: player.score,
+            }))
+          );
+        }    
+      
+    } catch (error) {  } finally {  }
+  };
+
+  const getMatchingComplete = async () => { 
+    try {
+      const { error, response }  = await makeRequest("/skillgame/matches/complete", {   
+          matchId: gameId,
+          score: score,
+          time: countdownTimer
+        });    
+      
+    } catch (error) {  } finally {  }
+  };
+
+  const getMatchingEndUpdate = async () => { 
+    try {
+      const res = await axiosClient.get(`/skillgame/matches/checkStatus/${gameId}`);
+      
+      if(res.data.results){
+        setWinnings(response?.data.user_winning)
+        setUserBalanceGen(response?.data.user_balance)
+        setUserDetails(prev=>({...prev, wallet_balance:response?.data.user_balance}));
+        setPlayers(
+            res.data.results.map((player) => ({
+              id: player.rank,
+              name: player.name,
+              score: player.score,
+              win: player.winnings,
+            }))
+          );
+          setIsMounted(false)
+      }
+      
+    } catch (error) {  
+     
+    } finally { 
+      
+    }
+  };
+
+  useEffect(() => {
+      getMatchingJoining();
+    }, []);
+  
+   useEffect(() => {
+    let interval;
+    
+      if (isMounted) {
+        // Run once immediately
+        getMatchingEndUpdate();
+    
+        // Start polling
+        interval = setInterval(() => {
+          if (isMounted) {
+            getMatchingEndUpdate();
+          }
+        }, 5000);
+      }
+      // Cleanup when unmounting or when isMounted becomes false
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isMounted]);
 
   const glowAnim = useRef(new Animated.Value(0)).current;
   
@@ -81,14 +229,8 @@ export default function ColorSwitchReflex() {
       const timer = setTimeout(() => {
         const newTime = matchmakingTimer - 1;
         setMatchmakingTimer(newTime);
-        if (playersReady < 4 && Math.random() > 0.6) {
-          const id = playersReady + 1;
-          setPlayersReady(id);
-          setPlayers((prev) => [...prev, { id, name: `Player ${id}`, score: 0 }]);
-        }
-        if (playersReady >= 4 || newTime === 0) {
-          setGameState('countdown');
-          setCountdownTimer(5);
+        if(gameId){          
+          getMatchingPlayer()
         }
       }, 1000);
       return () => clearTimeout(timer);
@@ -110,16 +252,7 @@ export default function ColorSwitchReflex() {
     if (gameState === 'playing' && timeLeft > 0) {
       const timer = setTimeout(() => {
         setTimeLeft(timeLeft - 1)
-        setPlayers(prev =>
-          prev.map(p => {
-            if (p.id === 1) return p;
-            const correct = Math.random() > 0.3;
-            return {
-              ...p,
-              score: correct ? p.score + 5 : p.score,
-            };
-          }),
-        );
+        getMatchingUpdate()
       }, 1000);
       return () => clearTimeout(timer);
     } else if (timeLeft === 0 && gameState === 'playing') {
@@ -132,7 +265,7 @@ export default function ColorSwitchReflex() {
     setRound(0);
     setScore(0);
     setChallenge(generateChallenge());
-    setTimeLeft(3);
+    setTimeLeft(2);
     Animated.loop(
       Animated.sequence([
         Animated.timing(fadeAnim, { toValue: 0.5, duration: 300, useNativeDriver: true }),
@@ -146,28 +279,30 @@ export default function ColorSwitchReflex() {
     const isCorrect = colorName === challenge.correctAnswer;
     if(isCorrect){
         setScore((prev) => Math.max(0, prev + 5));
-      setPlayers(prev =>
-        prev.map(p => (p.id === 1 ? { ...p, score: p.score + 5 } : p)),
-      );
+      // setPlayers(prev =>
+      //   prev.map(p => (p.id === 1 ? { ...p, score: p.score + 5 } : p)),
+      // );
     }else{
         setScore((prev) => Math.max(0, prev -2));
-        setPlayers(prev =>
-            prev.map(p => (p.id === 1 ? { ...p, score: p.score - 2 } : p)),
-        );
+        // setPlayers(prev =>
+        //     prev.map(p => (p.id === 1 ? { ...p, score: p.score - 2 } : p)),
+        // );
     }
     
     nextRound(true);
   };
 
   const nextRound = (isNext = true) => {
-    if (round + 1 >= 10) {
+    if (round + 1 >= 20) {
       setGameState('finished');
-      const sorted = [...players].sort((a, b) => b.score - a.score);
-      setPlayers(sorted);
+      setIsMounted(true)
+      getMatchingComplete();
+      // const sorted = [...players].sort((a, b) => b.score - a.score);
+      // setPlayers(sorted);
     } else {
       setRound(round + 1);
       setChallenge(generateChallenge());
-      setTimeLeft(3);
+      setTimeLeft(2);
     }
   };
 
@@ -261,7 +396,7 @@ export default function ColorSwitchReflex() {
       {gameState === 'playing' && challenge && (
         <View style={styles.center}>
           <View style={styles.topBar}>
-            <Text style={styles.label}>Round {round + 1}/10</Text>
+            <Text style={styles.label}>Round {round + 1}/20</Text>
             <Text style={[styles.label, { color: '#F87171' }]}>{timeLeft}s</Text>
             <Text style={styles.label}>Score: {score}</Text>
           </View>
@@ -333,7 +468,13 @@ export default function ColorSwitchReflex() {
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.playBtn}
-                    onPress={() => setGameState('waiting')}
+                    onPress={() => {
+                      setGameState('waiting')
+                      setMatchmakingTimer(10);
+                      setPlayersReady(1);
+                      setPlayers([]);
+                      router.push(`/(routes)/skillgame/colorswitch`)
+                    }}
                 >
                     <Text style={{ color: '#fff', fontWeight: 'bold' }}>Play Again</Text>
                 </TouchableOpacity>
