@@ -76,7 +76,8 @@ export default function ColorSwitchReflex() {
     setPlayersReady(res.data.playerCount);
 
     // Start countdown
-    if (playersReady >= 4 || newTimer === 0) {
+    // if (playersReady >= 4 || newTimer === 0) {
+    if (res.data.match.status === "started") {
       getMatchingUpdate()
       setGameState("countdown");
       setCountdownTimer(5);
@@ -116,6 +117,7 @@ export default function ColorSwitchReflex() {
           score: score,
           time: countdownTimer
         });    
+        setGameState("completed");
       
     } catch (error) {  } finally {  }
   };
@@ -125,9 +127,9 @@ export default function ColorSwitchReflex() {
       const res = await axiosClient.get(`/skillgame/matches/checkStatus/${gameId}`);
       
       if(res.data.results){
-        setWinnings(response?.data.user_winning)
-        setUserBalanceGen(response?.data.user_balance)
-        setUserDetails(prev=>({...prev, wallet_balance:response?.data.user_balance}));
+        setWinnings(res?.data.user_winning)
+        setUserBalanceGen(res?.data.user_balance)
+        setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
         setPlayers(
             res.data.results.map((player) => ({
               id: player.rank,
@@ -137,6 +139,7 @@ export default function ColorSwitchReflex() {
             }))
           );
           setIsMounted(false)
+          setGameState("finished")
       }
       
     } catch (error) {  
@@ -294,7 +297,7 @@ export default function ColorSwitchReflex() {
 
   const nextRound = (isNext = true) => {
     if (round + 1 >= 20) {
-      setGameState('finished');
+      // setGameState('finished');
       setIsMounted(true)
       getMatchingComplete();
       // const sorted = [...players].sort((a, b) => b.score - a.score);
@@ -424,6 +427,16 @@ export default function ColorSwitchReflex() {
                 keyExtractor={(item) => item.id.toString()}
             />
           </View>
+        </View>
+      )}
+
+      {/* completed */}
+      {gameState === "completed" && (
+        <View style={styles.centerBox}>
+          <Animated.View style={[styles.card, animatedStyle]}>
+            <Text style={styles.bigText}>Completed</Text>
+          <Text style={styles.subText}>Waiting for result!</Text>
+          </Animated.View>
         </View>
       )}
 

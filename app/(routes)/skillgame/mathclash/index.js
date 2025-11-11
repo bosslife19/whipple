@@ -79,7 +79,8 @@ export default function MathClash() {
     setPlayersReady(res.data.playerCount);
 
     // Start countdown
-    if (playersReady >= 4 || newTimer === 0) {
+    // if (playersReady >= 4 || newTimer === 0) {
+    if (res.data.match.status === "started") {
       getMatchingUpdate()
       setGameState("countdown");
       setCountdownTimer(5);
@@ -118,7 +119,8 @@ export default function MathClash() {
           matchId: gameId,
           score: score,
           time: avgTime
-        });    
+        });
+        setGameState("completed");    
       
     } catch (error) {  } finally {  }
   };
@@ -128,9 +130,9 @@ export default function MathClash() {
       const res = await axiosClient.get(`/skillgame/matches/checkStatus/${gameId}`);
       
       if(res.data.results){
-        setWinnings(response?.data.user_winning)
-        setUserBalanceGen(response?.data.user_balance)
-        setUserDetails(prev=>({...prev, wallet_balance:response?.data.user_balance}));
+        setWinnings(res?.data.user_winning)
+        setUserBalanceGen(res?.data.user_balance)
+        setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
         setPlayers(
             res.data.results.map((player) => ({
               id: player.rank,
@@ -140,6 +142,7 @@ export default function MathClash() {
             }))
           );
           setIsMounted(false)
+          setGameState("finished")
       }
       
     } catch (error) {  
@@ -340,7 +343,7 @@ export default function MathClash() {
   };
 
   const endGame = () => {
-    setGameState('finished');
+    // setGameState('finished');
     setIsMounted(true)
     getMatchingComplete();
     // const avgTime =
@@ -448,6 +451,16 @@ export default function MathClash() {
                         />
                 </View>
             </View>
+        )}
+
+        {/* completed */}
+        {gameState === "completed" && (
+          <View style={styles.centerBox}>
+            <Animated.View style={[styles.card, animatedStyle]}>
+              <Text style={styles.bigText}>Completed</Text>
+            <Text style={styles.subText}>Waiting for result!</Text>
+            </Animated.View>
+          </View>
         )}
 
         { gameState === 'finished' && (

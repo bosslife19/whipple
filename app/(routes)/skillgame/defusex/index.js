@@ -160,6 +160,7 @@ export default function DefuseX() {
           time: completion
         }); 
         // console.log([total, completion])   
+        setPhase("completed");
       
     } catch (error) {  } finally {  }
   };
@@ -169,9 +170,9 @@ export default function DefuseX() {
       const res = await axiosClient.get(`/skillgame/matches/checkStatus/${gameId}`);
       
       if(res.data.results){
-        setWinnings(response?.data.user_winning)
-        setUserBalanceGen(response?.data.user_balance)
-        setUserDetails(prev=>({...prev, wallet_balance:response?.data.user_balance}));
+        setWinnings(res?.data.user_winning)
+        setUserBalanceGen(res?.data.user_balance)
+        setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
         setPlayers(
             res.data.results.map((player) => ({
               id: player.rank,
@@ -182,6 +183,7 @@ export default function DefuseX() {
             }))
           );
           setIsMounted(false)
+          setPhase("finished")
       }
       
     } catch (error) {  
@@ -597,7 +599,7 @@ useEffect(() => {
     //       : { ...pl, total: Math.floor(Math.random() * 400), time: Math.random() * 60 + 10 }
     //   )
     // );
-    setPhase("finished");
+    // setPhase("finished");
 
     // sort and show result messages after slight delay
     // setTimeout(() => {
@@ -909,6 +911,16 @@ useEffect(() => {
           )}
 
         </ScrollView>
+
+        {/* completed */}
+        {phase === "completed" && (
+          <View style={styles.centerBox}>
+            <Animated.View style={[styles.card, animatedStyle]}>
+              <Text style={styles.bigText}>Completed</Text>
+            <Text style={styles.subText}>Waiting for result!</Text>
+            </Animated.View>
+          </View>
+        )}
         {/* finished */}
         {phase === "finished" && (
           <>

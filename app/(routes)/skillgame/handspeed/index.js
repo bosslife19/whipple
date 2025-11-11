@@ -114,10 +114,11 @@ export default function TapRush() {
     setPlayersReady(res.data.playerCount);
 
     // Start countdown
-    if (playersReady >= 4 || newTimer === 0) {
+    // if (playersReady >= 4 || newTimer === 0) {
+    if (res.data.match.status === "started") {
       getMatchingUpdate()
       setGameState("countdown");
-      setCountdownTimer(5);
+      setCountdownTimer(2);
     }
       
     } catch (error) {  
@@ -153,7 +154,8 @@ export default function TapRush() {
           matchId: gameId,
           score: tapCount,
           time: countdownTimer
-        });    
+        });  
+        setGameState("completed");  
       
     } catch (error) {  } finally {  }
   };
@@ -162,10 +164,10 @@ export default function TapRush() {
     try {
       const res = await axiosClient.get(`/skillgame/matches/checkStatus/${gameId}`);
       
-      if(res.data.results){
-        setWinnings(response?.data.user_winning)
-        setUserBalanceGen(response?.data.user_balance)
-        setUserDetails(prev=>({...prev, wallet_balance:response?.data.user_balance}));
+      if(res.data.status === "finished"){
+        setWinnings(res?.data.user_winning)
+        setUserBalanceGen(res?.data.user_balance)
+        setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
         setPlayers(
             res.data.results.map((player) => ({
               id: player.rank,
@@ -175,12 +177,12 @@ export default function TapRush() {
             }))
           );
           setIsMounted(false)
+          setGameState("finished");
       }
       
     } catch (error) {  
-     
+     console.log(error)
     } finally { 
-      
     }
   };
 
@@ -199,8 +201,8 @@ export default function TapRush() {
     interval = setInterval(() => {
       if (isMounted) {
         getMatchingEndUpdate();
-      }
-    }, 5000);
+      }   
+    }, 2000);
   }
 
   // Cleanup when unmounting or when isMounted becomes false
@@ -279,7 +281,6 @@ export default function TapRush() {
   }, [gameState]);   
 
   const endGame = () => {
-    setGameState("finished");
     setIsMounted(true)
     getMatchingComplete();
   };
@@ -382,6 +383,16 @@ export default function TapRush() {
             renderItem={renderLeaderboardItem}
             keyExtractor={(item) => item.id.toString()}
           />
+        </View>
+      )}
+
+      {/* completed */}
+      {gameState === "completed" && (
+        <View style={styles.centerBox}>
+          <Animated.View style={[styles.card, animatedStyle]}>
+            <Text style={styles.bigText}>Completed</Text>
+          <Text style={styles.subText}>Waiting for result!</Text>
+          </Animated.View>
         </View>
       )}
 
