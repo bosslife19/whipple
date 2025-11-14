@@ -59,6 +59,39 @@ export default function MathClash() {
     }
   };
 
+  const getMatchingStart = async () => { 
+    try {
+      const res = await axiosClient.get(`/skillgame/matches/start/${gameId}`);
+      setPlayers((prev) => {
+      const existingIds = new Set(prev.map((p) => p.id));
+      const newPlayers = res.data.players.filter((p) => !existingIds.has(p.id));
+      
+      return [
+        ...prev,
+        ...newPlayers.map((player) => ({
+          id: player.id,
+          name: player.user_id,
+          taps: player.score,
+        })),
+      ];
+    });
+    setPlayersReady(res.data.playerCount);
+
+    // Start countdown
+    // if (playersReady >= 4 || newTimer === 0) {
+    if (res.data.match.status === "started") {
+      getMatchingUpdate()
+      startGame();
+      // setCountdownTimer(5);
+    }
+      
+    } catch (error) {  
+     
+    } finally { 
+      
+    }
+  };
+
   const getMatchingPlayer = async () => { 
     try {
       const res = await axiosClient.get(`/skillgame/matches/status/${gameId}`);
@@ -82,8 +115,8 @@ export default function MathClash() {
     // if (playersReady >= 4 || newTimer === 0) {
     if (res.data.match.status === "started") {
       getMatchingUpdate()
-      setGameState("countdown");
-      setCountdownTimer(5);
+      startGame();
+      // setCountdownTimer(5);
     }
       
     } catch (error) {  
@@ -218,40 +251,57 @@ export default function MathClash() {
     };
 
   const generateQuestion = useCallback(() => {
-    const operations = ['+', '-', '×'];
-    const op = operations[Math.floor(Math.random() * operations.length)];
-    let num1 = Math.floor(Math.random() * 12) + 1;
-    let num2 = Math.floor(Math.random() * 12) + 1;
-    let answer = 0;
+  const operations = ['+', '-', '×', '/'];
+  const op = operations[Math.floor(Math.random() * operations.length)];
 
-    switch (op) {
-      case '+':
-        answer = num1 + num2;
-        break;
-      case '-':
-        if (num1 < num2) [num1, num2] = [num2, num1];
-        answer = num1 - num2;
-        break;
-      case '×':
-        answer = num1 * num2;
-        break;
+  let num1 = Math.floor(Math.random() * 12) + 1;
+  let num2 = Math.floor(Math.random() * 12) + 1;
+  let answer = 0;
+
+  switch (op) {
+    case '+':
+      answer = num1 + num2;
+      break;
+
+    case '-':
+      if (num1 < num2) [num1, num2] = [num2, num1]; // avoid negative results
+      answer = num1 - num2;
+      break;
+
+    case '×':
+      answer = num1 * num2;
+      break;
+
+    case '/':
+      // Ensure perfect division (no decimals)
+      // 1. Choose divisor
+      num2 = Math.floor(Math.random() * 11) + 1; // 1–12
+      // 2. Choose a random multiplier so num1 is divisible by num2
+      const multiplier = Math.floor(Math.random() * 12) + 1;
+      num1 = num2 * multiplier;
+      answer = num1 / num2;
+      break;
+  }
+
+  // Generate 3 wrong options
+  const options = [answer];
+  while (options.length < 4) {
+    const wrong = answer + Math.floor(Math.random() * 10) - 5;
+    if (wrong !== answer && wrong > 0 && !options.includes(wrong)) {
+      options.push(wrong);
     }
+  }
 
-    const options = [answer];
-    while (options.length < 4) {
-      const wrong = answer + Math.floor(Math.random() * 10) - 5;
-      if (wrong !== answer && wrong > 0 && !options.includes(wrong)) {
-        options.push(wrong);
-      }
-    }
-    options.sort(() => Math.random() - 0.5);
+  // Shuffle options
+  options.sort(() => Math.random() - 0.5);
 
-    return {
-      question: `${num1} ${op} ${num2}`,
-      answer,
-      options,
-    };
-  }, []);
+  return {
+    question: `${num1} ${op} ${num2}`,
+    answer,
+    options,
+  };
+}, []);
+
 
   // Matchmaking countdown
   useEffect(() => {
@@ -264,16 +314,25 @@ export default function MathClash() {
         }
       }, 1000);
       return () => clearTimeout(timer);
+    }else if (matchmakingTimer === 0 && gameState === "waiting") {
+      // Force start the game
+      setGameState("countdown");
+      getMatchingStart();
     }
   }, [gameState, matchmakingTimer, playersReady]);
 
   // Countdown before game start
   useEffect(() => {
     if (gameState === 'countdown' && countdownTimer > 0) {
-      const timer = setTimeout(() => setCountdownTimer(countdownTimer - 1), 1000);
+      const timer = setTimeout(() => {
+        setCountdownTimer(countdownTimer - 1)
+        if(gameId){          
+          getMatchingPlayer()
+        }
+      }, 1000);
       return () => clearTimeout(timer);
     } else if (gameState === 'countdown' && countdownTimer === 0) {
-      startGame();
+      getMatchingPlayer()
     }
   }, [gameState, countdownTimer]);
 
@@ -457,8 +516,8 @@ export default function MathClash() {
         {gameState === "completed" && (
           <View style={styles.centerBox}>
             <Animated.View style={[styles.card, animatedStyle]}>
-              <Text style={styles.bigText}>Completed</Text>
-            <Text style={styles.subText}>Waiting for result!</Text>
+              <Text style={[styles.bigText, {color: "#fff"}]}>Completed</Text>
+            <Text style={[styles.subText, {color: "#fff"}]}>Waiting for result!</Text>
             </Animated.View>
           </View>
         )}

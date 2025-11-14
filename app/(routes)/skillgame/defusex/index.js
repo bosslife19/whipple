@@ -54,7 +54,7 @@ const WIRE_COLORS = [
 export default function DefuseX() {
   // Game state variables
   const [phase, setPhase] = useState("waiting"); // waiting, countdown, phase1, phase1-input, phase2, phase3, finished
-  const [matchTimer, setMatchTimer] = useState(12);
+  const [matchTimer, setMatchTimer] = useState(30);
   const [countdown, setCountdown] = useState(5);
   const [phase1Sequence, setPhase1Sequence] = useState([]);
   const [playerSequence, setPlayerSequence] = useState([]);
@@ -81,7 +81,7 @@ export default function DefuseX() {
 
   const getMatchingJoining = async () => { 
     try {
-      const res = await axiosClient.get("/skillgame/matches/join/math_clash");
+      const res = await axiosClient.get("/skillgame/matches/join/defuse_x");
       setUserBalanceGen(res?.data.user_balance)
       setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
       setGameId(res.data.match.id)
@@ -96,6 +96,39 @@ export default function DefuseX() {
       }, 5000);
     } finally { 
       // setLoader("");
+    }
+  };
+
+  const getMatchingStart = async () => { 
+    try {
+      const res = await axiosClient.get(`/skillgame/matches/start/${gameId}`);
+      setPlayers((prev) => {
+      const existingIds = new Set(prev.map((p) => p.id));
+      const newPlayers = res.data.players.filter((p) => !existingIds.has(p.id));
+      
+      return [
+        ...prev,
+        ...newPlayers.map((player) => ({
+          id: player.id,
+          name: player.user_id,
+          taps: player.score,
+        })),
+      ];
+    });
+    setPlayersReady(res.data.playerCount);
+
+    // Start countdown
+    // if (playersReady >= 4 || newTimer === 0) {
+    if (res.data.match.status === "started") {
+      getMatchingUpdate()
+      startGame();
+      setCountdownTimer(5);
+    }
+      
+    } catch (error) {  
+     
+    } finally { 
+      
     }
   };
 
@@ -123,6 +156,11 @@ export default function DefuseX() {
     // if (playersReady >= 4 || newTimer === 0) {
     //   getMatchingUpdate()
     // }
+    if (res.data.match.status === "started") {
+      getMatchingUpdate()
+      startGame();
+      // setCountdownTimer(5);
+    }
       
     } catch (error) {  
      
@@ -326,7 +364,8 @@ useEffect(() => {
     if (matchTimer <= 0) {
       // start countdown
       setPhase("countdown");
-      setCountdown(4);
+      getMatchingStart();
+      setCountdown(5);
       return;
     }
     const t = setTimeout(() => {
@@ -360,10 +399,16 @@ useEffect(() => {
   useEffect(() => {
     if (phase !== "countdown") return;
     if (countdown <= 0) {
-      startGame();
+      // startGame();
+      if(gameId){          
+          getMatchingPlayer()
+        };
       return;
     }
-    const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    const t = setTimeout(() => {
+      setCountdown((c) => c - 1)
+      getMatchingPlayer()
+      }, 1000);
     return () => clearTimeout(t);
   }, [countdown, phase]);
 
@@ -465,7 +510,7 @@ useEffect(() => {
     setTimeout(() => {
       setShowSeq(false);
       setPhase("phase1-input");
-      setTimeLeft(20);
+      setTimeLeft(5);
       alert("info", "Now repeat the sequence!");
     }, 3000);
   }
@@ -506,7 +551,7 @@ useEffect(() => {
     setCutWires(new Set());
     setPhase2Score(0);
     setPhase("phase2");
-    setTimeLeft(20);
+    setTimeLeft(3);
     alert("info", "Phase 2: Cut only stable wires!");
   }
 
@@ -543,7 +588,7 @@ useEffect(() => {
   function startPhase3() {
     setPhase3Score(0);
     setPhase("phase3");
-    setTimeLeft(20);
+    setTimeLeft(5);
     const idx = Math.floor(Math.random() * phase1Sequence.length);
     const clueIndexName = ["first", "second", "third", "fourth"][idx];
     const clue = `Cut the wire that blinked ${clueIndexName} in Phase 1`;
@@ -625,7 +670,7 @@ useEffect(() => {
 
   function resetMatchmaking() {
     setPhase("waiting");
-    setMatchTimer(12);
+    setMatchTimer(30);
     setPlayersReady(1);
     setPlayers([]);
     setPhase1Score(0);
@@ -916,8 +961,8 @@ useEffect(() => {
         {phase === "completed" && (
           <View style={styles.centerBox}>
             <Animated.View style={[styles.card, animatedStyle]}>
-              <Text style={styles.bigText}>Completed</Text>
-            <Text style={styles.subText}>Waiting for result!</Text>
+              <Text style={[styles.bigText, {color: "#fff"}]}>Completed</Text>
+            <Text style={[styles.subText, {color: "#fff"}]}>Waiting for result!</Text>
             </Animated.View>
           </View>
         )}
@@ -951,7 +996,10 @@ useEffect(() => {
                           <Text style={styles.smallMeta}>{item.time ? `Time ${item.time}s` : "Eliminated"  }</Text>
                         </View>
                       </View>
-                      <Text style={styles.playerScore}>{item.score}</Text>
+                      <View>
+                        <Text style={styles.playerScore}>{item.score}</Text>
+                        {/* <Text style={styles.smallMeta}>{item.winnings ?? 0}</Text> */}
+                      </View>
                     </View>
                   );
                 }}

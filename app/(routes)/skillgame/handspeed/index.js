@@ -94,6 +94,39 @@ export default function TapRush() {
     }
   };
 
+  const getMatchingStart = async () => { 
+    try {
+      const res = await axiosClient.get(`/skillgame/matches/start/${gameId}`);
+      setPlayers((prev) => {
+      const existingIds = new Set(prev.map((p) => p.id));
+      const newPlayers = res.data.players.filter((p) => !existingIds.has(p.id));
+      
+      return [
+        ...prev,
+        ...newPlayers.map((player) => ({
+          id: player.id,
+          name: player.user_id,
+          taps: player.score,
+        })),
+      ];
+    });
+    setPlayersReady(res.data.playerCount);
+
+    // Start countdown
+    // if (playersReady >= 4 || newTimer === 0) {
+    if (res.data.match.status === "started") {
+      getMatchingUpdate()
+      startGame();
+      // setCountdownTimer(5);
+    }
+      
+    } catch (error) {  
+     
+    } finally { 
+      
+    }
+  };
+
   const getMatchingPlayer = async () => { 
     try {
       const res = await axiosClient.get(`/skillgame/matches/status/${gameId}`);
@@ -117,7 +150,7 @@ export default function TapRush() {
     // if (playersReady >= 4 || newTimer === 0) {
     if (res.data.match.status === "started") {
       getMatchingUpdate()
-      setGameState("countdown");
+      startGame();
       setCountdownTimer(2);
     }
       
@@ -128,11 +161,12 @@ export default function TapRush() {
     }
   };
 
-  const getMatchingUpdate = async () => { 
+  const getMatchingUpdate = async (ingame = 'game') => { 
     try {
       const { error, response }  = await makeRequest("/skillgame/matches/updateScore", {   
           matchId: gameId,
           score: tapCount,
+          ingame: ingame,
         });
         
         if(response){
@@ -224,16 +258,25 @@ export default function TapRush() {
         }
       }, 1000);
       return () => clearTimeout(timer);
+    }else if (matchmakingTimer === 0 && gameState === "waiting") {
+      // Force start the game
+      setGameState("countdown");
+      getMatchingStart();
     }
   }, [gameState, matchmakingTimer, playersReady]);
 
   // Countdown timer
   useEffect(() => {
     if (gameState === "countdown" && countdownTimer > 0) {
-      const timer = setTimeout(() => setCountdownTimer(countdownTimer - 1), 1000);
+      const timer = setTimeout(() => {  
+         setCountdownTimer(countdownTimer - 1)
+         if(gameId){          
+          getMatchingPlayer()
+        }
+      }, 1000);
       return () => clearTimeout(timer);
     } else if (gameState === "countdown" && countdownTimer === 0) {
-      startGame();
+      getMatchingPlayer()
     }
   }, [gameState, countdownTimer]);
 
@@ -247,7 +290,10 @@ export default function TapRush() {
   // Game timer
   useEffect(() => {
     if (gameState === "playing" && timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      const timer = setTimeout(() => {
+        setTimeLeft(timeLeft - 1)
+        getMatchingUpdate("ingame")
+      }, 1000);
       return () => clearTimeout(timer);
     } else if (timeLeft === 0 && gameState === "playing") {
       endGame();

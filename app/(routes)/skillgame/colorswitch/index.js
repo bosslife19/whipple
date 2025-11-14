@@ -56,6 +56,39 @@ export default function ColorSwitchReflex() {
     }
   };
 
+  const getMatchingStart = async () => { 
+      try {
+        const res = await axiosClient.get(`/skillgame/matches/start/${gameId}`);
+        setPlayers((prev) => {
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newPlayers = res.data.players.filter((p) => !existingIds.has(p.id));
+        
+        return [
+          ...prev,
+          ...newPlayers.map((player) => ({
+            id: player.id,
+            name: player.user_id,
+            taps: player.score,
+          })),
+        ];
+      });
+      setPlayersReady(res.data.playerCount);
+  
+      // Start countdown
+      // if (playersReady >= 4 || newTimer === 0) {
+      if (res.data.match.status === "started") {
+        getMatchingUpdate()
+        startGame();
+        setCountdownTimer(5);
+      }
+        
+      } catch (error) {  
+       
+      } finally { 
+        
+      }
+    };
+
   const getMatchingPlayer = async () => { 
     try {
       const res = await axiosClient.get(`/skillgame/matches/status/${gameId}`);
@@ -79,8 +112,8 @@ export default function ColorSwitchReflex() {
     // if (playersReady >= 4 || newTimer === 0) {
     if (res.data.match.status === "started") {
       getMatchingUpdate()
-      setGameState("countdown");
-      setCountdownTimer(5);
+      startGame();
+      // setCountdownTimer(5);
     }
       
     } catch (error) {  
@@ -90,11 +123,12 @@ export default function ColorSwitchReflex() {
     }
   };
 
-  const getMatchingUpdate = async () => { 
+  const getMatchingUpdate = async (ingame = 'game') => { 
     try {
       const { error, response }  = await makeRequest("/skillgame/matches/updateScore", {   
           matchId: gameId,
           score: score,
+          ingame: ingame,
         });
         
         if(response){
@@ -237,16 +271,25 @@ export default function ColorSwitchReflex() {
         }
       }, 1000);
       return () => clearTimeout(timer);
+    }else if (matchmakingTimer === 0 && gameState === "waiting") {
+      // Force start the game
+      setGameState("countdown");
+      getMatchingStart();
     }
   }, [gameState, matchmakingTimer, playersReady]);
 
   // Countdown before start
   useEffect(() => {
     if (gameState === 'countdown' && countdownTimer > 0) {
-      const timer = setTimeout(() => setCountdownTimer(countdownTimer - 1), 1000);
+      const timer = setTimeout(() => {
+        setCountdownTimer(countdownTimer - 1)
+        if(gameId){          
+          getMatchingPlayer()
+        }
+      }, 1000);
       return () => clearTimeout(timer);
     } else if (gameState === 'countdown' && countdownTimer === 0) {
-      startGame();
+      getMatchingPlayer()
     }
   }, [gameState, countdownTimer]);
 
@@ -434,8 +477,8 @@ export default function ColorSwitchReflex() {
       {gameState === "completed" && (
         <View style={styles.centerBox}>
           <Animated.View style={[styles.card, animatedStyle]}>
-            <Text style={styles.bigText}>Completed</Text>
-          <Text style={styles.subText}>Waiting for result!</Text>
+            <Text style={[styles.bigText, {color: "#fff"}]}>Completed</Text>
+          <Text style={[styles.subText, {color: "#fff"}]}>Waiting for result!</Text>
           </Animated.View>
         </View>
       )}

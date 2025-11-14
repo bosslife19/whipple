@@ -126,7 +126,7 @@ const [user, setUser] = useState(null);
             </TouchableOpacity>
             <TouchableOpacity onPress={()=>router.push('/(routes)/skillgame')} style={[Homes.flexD,{ width: 150, paddingHorizontal:"5%",paddingVertical:14, backgroundColor:"#0A1931",borderRadius:20,gap:8}]}>
             <Text style={[Homes.imageText,{ color:"#fff",fontFamily:"Grotesk",fontSize:14}]}>
-              Play Skill Game
+              Play Game Rush
             </Text>
             </TouchableOpacity>
           </View>
