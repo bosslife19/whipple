@@ -111,14 +111,6 @@ export default function TapRush() {
       ];
     });
     setPlayersReady(res.data.playerCount);
-
-    // Start countdown
-    // if (playersReady >= 4 || newTimer === 0) {
-    if (res.data.match.status === "started") {
-      getMatchingUpdate()
-      startGame();
-      // setCountdownTimer(5);
-    }
       
     } catch (error) {  
      
@@ -151,7 +143,8 @@ export default function TapRush() {
     if (res.data.match.status === "started") {
       getMatchingUpdate()
       startGame();
-      setCountdownTimer(2);
+      setIsMounted(false)
+      // setCountdownTimer(2);
     }
       
     } catch (error) {  
@@ -189,7 +182,6 @@ export default function TapRush() {
           score: tapCount,
           time: countdownTimer
         });  
-        setGameState("completed");  
       
     } catch (error) {  } finally {  }
   };
@@ -229,12 +221,20 @@ export default function TapRush() {
 
   if (isMounted) {
     // Run once immediately
-    getMatchingEndUpdate();
+    if(gameState === "countdown" && countdownTimer === 0){
+      getMatchingPlayer()
+    }else{
+       getMatchingEndUpdate();
+    }
 
     // Start polling
     interval = setInterval(() => {
       if (isMounted) {
-        getMatchingEndUpdate();
+        if(gameState === "countdown" && countdownTimer === 0){
+          getMatchingPlayer()
+        }else{
+           getMatchingEndUpdate();
+        }
       }   
     }, 2000);
   }
@@ -244,7 +244,6 @@ export default function TapRush() {
     if (interval) clearInterval(interval);
   };
 }, [isMounted]);
-
 
 
   // Matchmaking timer
@@ -261,7 +260,6 @@ export default function TapRush() {
     }else if (matchmakingTimer === 0 && gameState === "waiting") {
       // Force start the game
       setGameState("countdown");
-      getMatchingStart();
     }
   }, [gameState, matchmakingTimer, playersReady]);
 
@@ -276,7 +274,9 @@ export default function TapRush() {
       }, 1000);
       return () => clearTimeout(timer);
     } else if (gameState === "countdown" && countdownTimer === 0) {
-      getMatchingPlayer()
+      getMatchingPlayer()      
+      getMatchingStart();
+      setIsMounted(true)
     }
   }, [gameState, countdownTimer]);
 
@@ -296,6 +296,7 @@ export default function TapRush() {
       }, 1000);
       return () => clearTimeout(timer);
     } else if (timeLeft === 0 && gameState === "playing") {
+      setGameState("completed");  
       endGame();
     }
   }, [gameState, timeLeft]);
@@ -305,14 +306,6 @@ export default function TapRush() {
     setTapCount(0);
     setTimeLeft(30);
     // setPlayers((prev) => prev.map((p) => ({ ...p, taps: 0 })));
-  };
-
-  const resetMatchmaking = () => {
-    setGameState("waiting");
-    setMatchmakingTimer(30);
-    setPlayersReady(0);
-    setPlayers([]);
-    router.push(`/(routes)/skillgame/handspeed`)
   };
 
     const handleTap = useCallback(() => {
@@ -344,11 +337,25 @@ export default function TapRush() {
     </View>
   );
 
+  
+  const resetMatchmaking = (bckclc) => {
+    setGameState("waiting");
+    setMatchmakingTimer(30);
+    setPlayersReady(0);
+    setPlayers([]);
+    setIsMounted(false)
+    if(bckclc){
+      router.push(`/(routes)/skillgame/handspeed`)
+    }else{
+      router.push("/(routes)/skillgame")
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={()=> router.push("/(routes)/skillgame")} style={styles.backBtn}>
+        <TouchableOpacity onPress={()=> resetMatchmaking(false)} style={styles.backBtn}>
           <ArrowLeft size={20} color="#fff" />
           <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
@@ -402,7 +409,7 @@ export default function TapRush() {
       {gameState === "countdown" && (
         <View style={styles.centerBox}>
           <Animated.View style={[styles.card, animatedStyle]}>
-            <Text style={styles.bigText}>{countdownTimer}s</Text>
+            <Text style={styles.bigText}>{countdownTimer ? `${countdownTimer}s` : 'Waiting'}</Text>
           <Text style={styles.subText}>Get Ready!</Text>
           </Animated.View>
         </View>
@@ -417,7 +424,7 @@ export default function TapRush() {
             <TouchableOpacity onPress={handleTap}>
               <LinearGradient
                 colors={["#4c6ef5", "#15aabf"]}
-                style={styles.tapButton}
+                style={styles.tapButton}    
               >
                 <Text style={styles.tapText}>TAP!</Text>
               </LinearGradient>
@@ -430,10 +437,10 @@ export default function TapRush() {
             keyExtractor={(item) => item.id.toString()}
           />
         </View>
-      )}
+      ) }
 
       {/* completed */}
-      {gameState === "completed" && (
+      {gameState === 'completed' && (
         <View style={styles.centerBox}>
           <Animated.View style={[styles.card, animatedStyle]}>
             <Text style={styles.bigText}>Completed</Text>
@@ -483,7 +490,7 @@ export default function TapRush() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.playAgain}
-              onPress={resetMatchmaking}
+              onPress={()=> resetMatchmaking(true)}
             >
               <Text style={styles.playAgainText}>Play Again</Text>
             </TouchableOpacity>

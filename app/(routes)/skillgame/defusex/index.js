@@ -116,14 +116,6 @@ export default function DefuseX() {
       ];
     });
     setPlayersReady(res.data.playerCount);
-
-    // Start countdown
-    // if (playersReady >= 4 || newTimer === 0) {
-    if (res.data.match.status === "started") {
-      getMatchingUpdate()
-      startGame();
-      setCountdownTimer(5);
-    }
       
     } catch (error) {  
      
@@ -159,6 +151,7 @@ export default function DefuseX() {
     if (res.data.match.status === "started") {
       getMatchingUpdate()
       startGame();
+      setIsMounted(false)
       // setCountdownTimer(5);
     }
       
@@ -364,7 +357,6 @@ useEffect(() => {
     if (matchTimer <= 0) {
       // start countdown
       setPhase("countdown");
-      getMatchingStart();
       setCountdown(5);
       return;
     }
@@ -402,6 +394,8 @@ useEffect(() => {
       // startGame();
       if(gameId){          
           getMatchingPlayer()
+          getMatchingStart();
+          setIsMounted(true)
         };
       return;
     }
@@ -668,7 +662,7 @@ useEffect(() => {
     // }, 3500);
   }
 
-  function resetMatchmaking() {
+  function resetMatchmaking(bckclc) {
     setPhase("waiting");
     setMatchTimer(30);
     setPlayersReady(1);
@@ -676,7 +670,12 @@ useEffect(() => {
     setPhase1Score(0);
     setPhase2Score(0);
     setPhase3Score(0);
-    router.push(`/(routes)/skillgame/defusex`)
+    setIsMounted(false)
+    if(bckclc){
+      router.push(`/(routes)/skillgame/defusex`)
+    }else{
+      router.push("/(routes)/skillgame")
+    }
   }
 
   // Live leaderboard render
@@ -747,7 +746,7 @@ useEffect(() => {
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity
-              onPress={()=> router.push("/(routes)/skillgame")}
+              onPress={()=> {()=> resetMatchmaking(false)}}
               style={[styles.backBtn, {flexDirection: "row", justifyContent: "flex-start"}]}
             >
               <ArrowLeft size={20} color="#fff" />
@@ -818,7 +817,7 @@ useEffect(() => {
           {/* countdown */}
           {phase === "countdown" && (
             <View style={[styles.card, { alignItems: "center", marginTop: 40 }]}>
-              <Text style={styles.bigTimer}>{countdown}</Text>
+              <Text style={styles.bigTimer}>{countdown ? `${countdown}s` : 'Waiting'}</Text>
               <Text style={styles.cardSub}>Game starting...</Text>
             </View>
           )}
@@ -1010,7 +1009,7 @@ useEffect(() => {
               <TouchableOpacity style={[styles.actionBtn, { backgroundColor: "#FFD04C" }]} onPress={()=> router.push("/(routes)/skillgame")}>
                 <Text style={{ color: "#fff" }}>Back to Lobby</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: "#0EA5E9" }]} onPress={resetMatchmaking}>
+              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: "#0EA5E9" }]} onPress={() => resetMatchmaking(true)}>
                 <Text style={{ color: "#fff" }}>Play Again</Text>
               </TouchableOpacity>
             </View>

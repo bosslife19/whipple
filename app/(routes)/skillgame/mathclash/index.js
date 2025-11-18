@@ -76,14 +76,6 @@ export default function MathClash() {
       ];
     });
     setPlayersReady(res.data.playerCount);
-
-    // Start countdown
-    // if (playersReady >= 4 || newTimer === 0) {
-    if (res.data.match.status === "started") {
-      getMatchingUpdate()
-      startGame();
-      // setCountdownTimer(5);
-    }
       
     } catch (error) {  
      
@@ -116,6 +108,7 @@ export default function MathClash() {
     if (res.data.match.status === "started") {
       getMatchingUpdate()
       startGame();
+      setIsMounted(false)
       // setCountdownTimer(5);
     }
       
@@ -317,7 +310,6 @@ export default function MathClash() {
     }else if (matchmakingTimer === 0 && gameState === "waiting") {
       // Force start the game
       setGameState("countdown");
-      getMatchingStart();
     }
   }, [gameState, matchmakingTimer, playersReady]);
 
@@ -333,6 +325,8 @@ export default function MathClash() {
       return () => clearTimeout(timer);
     } else if (gameState === 'countdown' && countdownTimer === 0) {
       getMatchingPlayer()
+      getMatchingStart();
+      setIsMounted(true)
     }
   }, [gameState, countdownTimer]);
 
@@ -415,12 +409,17 @@ export default function MathClash() {
     // setPlayers(sorted);
   };
 
-  const reset = () => {
+  const resetMatchmaking = (bckclc) => {
     setGameState('waiting');
     setMatchmakingTimer(30);
     setPlayersReady(0);
     setPlayers([]);
-    router.push(`/(routes)/skillgame/mathclash`)
+    setIsMounted(false)
+    if(bckclc){
+      router.push(`/(routes)/skillgame/mathclash`)
+    }else{
+      router.push("/(routes)/skillgame")
+    }
   };
 
   // --- UI Render States ---
@@ -428,7 +427,7 @@ export default function MathClash() {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-            <TouchableOpacity onPress={()=> router.push("/(routes)/skillgame")} style={styles.backBtn}>
+            <TouchableOpacity onPress={()=> resetMatchmaking(false)} style={styles.backBtn}>
             <ArrowLeft size={20} color="#fff" />
             <Text style={styles.backText}>Back</Text>
             </TouchableOpacity>
@@ -467,7 +466,7 @@ export default function MathClash() {
         {gameState === 'countdown' &&  (
         <View style={styles.centerBox}>
             <Animated.View style={[styles.card, animatedStyle]}>
-            <Text style={styles.bigCountdown}>{countdownTimer}s</Text>
+            <Text style={styles.bigCountdown}>{countdownTimer ? `${countdownTimer}s` : 'Waiting'}</Text>
             <Text style={styles.subtitle}>Game starting...</Text>
             </Animated.View>
         </View>
@@ -561,7 +560,7 @@ export default function MathClash() {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.btn}
-                        onPress={reset}
+                        onPress={() => resetMatchmaking(true)}
                     >
                         <Text style={styles.btnText}>Play Again</Text>
                     </TouchableOpacity>

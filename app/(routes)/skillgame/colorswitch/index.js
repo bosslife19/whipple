@@ -75,12 +75,6 @@ export default function ColorSwitchReflex() {
       setPlayersReady(res.data.playerCount);
   
       // Start countdown
-      // if (playersReady >= 4 || newTimer === 0) {
-      if (res.data.match.status === "started") {
-        getMatchingUpdate()
-        startGame();
-        setCountdownTimer(5);
-      }
         
       } catch (error) {  
        
@@ -113,6 +107,7 @@ export default function ColorSwitchReflex() {
     if (res.data.match.status === "started") {
       getMatchingUpdate()
       startGame();
+      setIsMounted(false)
       // setCountdownTimer(5);
     }
       
@@ -274,7 +269,6 @@ export default function ColorSwitchReflex() {
     }else if (matchmakingTimer === 0 && gameState === "waiting") {
       // Force start the game
       setGameState("countdown");
-      getMatchingStart();
     }
   }, [gameState, matchmakingTimer, playersReady]);
 
@@ -290,6 +284,8 @@ export default function ColorSwitchReflex() {
       return () => clearTimeout(timer);
     } else if (gameState === 'countdown' && countdownTimer === 0) {
       getMatchingPlayer()
+      getMatchingStart();
+      setIsMounted(true)
     }
   }, [gameState, countdownTimer]);
 
@@ -365,12 +361,25 @@ export default function ColorSwitchReflex() {
       </View>
     );
 
+  const resetMatchmaking = (bckclc) => {
+      setGameState('waiting')
+      setMatchmakingTimer(10);
+      setPlayersReady(1);
+      setPlayers([]);
+      setIsMounted(false)
+      if(bckclc){
+        router.push(`/(routes)/skillgame/colorswitch`)
+      }else{
+        router.push("/(routes)/skillgame")
+      }
+    };
+
   return (
     <View style={styles.container}>
       {/* Top Header */}
 
       <View style={styles.header}>
-        <TouchableOpacity onPress={()=> router.push("/(routes)/skillgame")} style={styles.backBtn}>
+        <TouchableOpacity onPress={()=> resetMatchmaking(false)} style={styles.backBtn}>
         <ArrowLeft size={20} color="#fff" />
         <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
@@ -432,7 +441,7 @@ export default function ColorSwitchReflex() {
       {gameState === 'countdown' && (
         <View style={styles.centerBox}>
             <Animated.View style={[styles.card, animatedStyle]}>
-            <Text style={styles.bigText}>{countdownTimer}s</Text>
+            <Text style={styles.bigText}>{countdownTimer ? `${countdownTimer}s` : 'Waiting'}</Text>
             <Text style={styles.subText}>Get Ready...</Text>
             </Animated.View>
         </View>
@@ -524,13 +533,7 @@ export default function ColorSwitchReflex() {
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.playBtn}
-                    onPress={() => {
-                      setGameState('waiting')
-                      setMatchmakingTimer(10);
-                      setPlayersReady(1);
-                      setPlayers([]);
-                      router.push(`/(routes)/skillgame/colorswitch`)
-                    }}
+                    onPress={() => resetMatchmaking(true)}
                 >
                     <Text style={{ color: '#fff', fontWeight: 'bold' }}>Play Again</Text>
                 </TouchableOpacity>
