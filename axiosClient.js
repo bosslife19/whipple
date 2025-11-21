@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 
 const axiosClient = axios.create({
     // baseURL:  `${process.env.EXPO_PUBLIC_BASE_URL}/api`,
-    baseURL:  `https://8cff28f08634.ngrok-free.app/api`,
+    baseURL:  `https://8105f3811be9.ngrok-free.app/api`,
     headers: {
         'Content-Security-Policy': "default-src 'self'; img-src https://*; script-src 'self';"
       }

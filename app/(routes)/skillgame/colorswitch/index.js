@@ -56,9 +56,20 @@ export default function ColorSwitchReflex() {
     }
   };
 
+  const handleNetworkError = () => {
+    setToastVisible(true)
+    setToastType("error")
+    setToastTitle("Network error")
+    setToastMessage("Please try again!")
+    resetMatchmaking(false)
+  }
+
   const getMatchingStart = async () => { 
       try {
         const res = await axiosClient.get(`/skillgame/matches/start/${gameId}`);
+        if(res.data.status == "error"){
+          handleNetworkError()
+        }
         setPlayers((prev) => {
         const existingIds = new Set(prev.map((p) => p.id));
         const newPlayers = res.data.players.filter((p) => !existingIds.has(p.id));
