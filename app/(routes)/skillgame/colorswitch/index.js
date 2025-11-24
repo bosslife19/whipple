@@ -42,7 +42,7 @@ export default function ColorSwitchReflex() {
       setUserBalanceGen(res?.data.user_balance)
       setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
       setGameId(res.data.match.id)
-    } catch (error) {  
+    } catch (error) { handleNetworkError  
       // console.error('Error fetching admin parameter:', error);
       setToastVisible(true)
       setToastType("error")
@@ -72,11 +72,11 @@ export default function ColorSwitchReflex() {
         }
         setPlayers((prev) => {
         const existingIds = new Set(prev.map((p) => p.id));
-        const newPlayers = res.data.players.filter((p) => !existingIds.has(p.id));
+        const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
         
         return [
           ...prev,
-          ...newPlayers.map((player) => ({
+          ...newPlayers?.map((player) => ({
             id: player.id,
             name: player.user_id,
             taps: player.score,
@@ -87,7 +87,7 @@ export default function ColorSwitchReflex() {
   
       // Start countdown
         
-      } catch (error) {  
+      } catch (error) { handleNetworkError  
        
       } finally { 
         
@@ -100,11 +100,11 @@ export default function ColorSwitchReflex() {
       // console.log(res.data.players)
       setPlayers((prev) => {
       const existingIds = new Set(prev.map((p) => p.id));
-      const newPlayers = res.data.players.filter((p) => !existingIds.has(p.id));
+      const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
       
       return [
         ...prev,
-        ...newPlayers.map((player) => ({
+        ...newPlayers?.map((player) => ({
           id: player.id,
           name: player.user_id,
           score: player.score,
@@ -122,7 +122,7 @@ export default function ColorSwitchReflex() {
       // setCountdownTimer(5);
     }
       
-    } catch (error) {  
+    } catch (error) { handleNetworkError  
      
     } finally { 
       
@@ -147,7 +147,7 @@ export default function ColorSwitchReflex() {
           );
         }    
       
-    } catch (error) {  } finally {  }
+    } catch (error) { handleNetworkError  } finally {  }
   };
 
   const getMatchingComplete = async () => { 
@@ -159,7 +159,7 @@ export default function ColorSwitchReflex() {
         });    
         setGameState("completed");
       
-    } catch (error) {  } finally {  }
+    } catch (error) { handleNetworkError  } finally {  }
   };
 
   const getMatchingEndUpdate = async () => { 
@@ -182,7 +182,7 @@ export default function ColorSwitchReflex() {
           setGameState("finished")
       }
       
-    } catch (error) {  
+    } catch (error) { handleNetworkError  
      
     } finally { 
       
@@ -198,14 +198,22 @@ export default function ColorSwitchReflex() {
     
       if (isMounted) {
         // Run once immediately
-        getMatchingEndUpdate();
-    
+        if(gameState === "countdown" && countdownTimer === 0){
+          getMatchingPlayer()
+        }else{
+          getMatchingEndUpdate();
+        }
+
         // Start polling
         interval = setInterval(() => {
           if (isMounted) {
-            getMatchingEndUpdate();
-          }
-        }, 5000);
+            if(gameState === "countdown" && countdownTimer === 0){
+              getMatchingPlayer()
+            }else{
+              getMatchingEndUpdate();
+            }
+          }   
+        }, 2000);
       }
       // Cleanup when unmounting or when isMounted becomes false
     return () => {
@@ -374,13 +382,14 @@ export default function ColorSwitchReflex() {
 
   const resetMatchmaking = (bckclc) => {
       setGameState('waiting')
-      setMatchmakingTimer(10);
-      setPlayersReady(1);
+      setPlayersReady(0);
       setPlayers([]);
       setIsMounted(false)
       if(bckclc){
+        setMatchmakingTimer(30);
         router.push(`/(routes)/skillgame/colorswitch`)
       }else{
+        setMatchmakingTimer(0);
         router.push("/(routes)/skillgame")
       }
     };
@@ -497,7 +506,7 @@ export default function ColorSwitchReflex() {
       {gameState === "completed" && (
         <View style={styles.centerBox}>
           <Animated.View style={[styles.card, animatedStyle]}>
-            <Text style={[styles.bigText, {color: "#fff"}]}>Completed</Text>
+            <Text style={[styles.bigText, {color: "#fff", fontSize: 52}]}>Completed</Text>
           <Text style={[styles.subText, {color: "#fff"}]}>Waiting for result!</Text>
           </Animated.View>
         </View>
@@ -538,7 +547,7 @@ export default function ColorSwitchReflex() {
             <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-around", marginVertical: 20}}>
                 <TouchableOpacity
                     style={[styles.playBtn, {backgroundColor: "#FFD04C"}]}
-                    onPress={()=> router.push("/(routes)/skillgame")}
+                    onPress={()=> resetMatchmaking(false)}
                 >
                     <Text style={{ color: '#fff', fontWeight: 'bold' }}>Back to Lobby</Text>
                 </TouchableOpacity>

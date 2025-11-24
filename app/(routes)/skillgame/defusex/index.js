@@ -115,11 +115,11 @@ export default function DefuseX() {
       }
       setPlayers((prev) => {
       const existingIds = new Set(prev.map((p) => p.id));
-      const newPlayers = res.data.players.filter((p) => !existingIds.has(p.id));
+      const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
       
       return [
         ...prev,
-        ...newPlayers.map((player) => ({
+        ...newPlayers?.map((player) => ({
           id: player.id,
           name: player.user_id,
           taps: player.score,
@@ -129,7 +129,7 @@ export default function DefuseX() {
     setPlayersReady(res.data.playerCount);
       
     } catch (error) {  
-     
+     handleNetworkError
     } finally { 
       
     }
@@ -141,11 +141,11 @@ export default function DefuseX() {
       // console.log(res.data.players)
       setPlayers((prev) => {
       const existingIds = new Set(prev.map((p) => p.id));
-      const newPlayers = res.data.players.filter((p) => !existingIds.has(p.id));
+      const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
       
       return [
         ...prev,
-        ...newPlayers.map((player) => ({
+        ...newPlayers?.map((player) => ({
           id: player.id,
           name: player.user_id,
           score: player.score,
@@ -167,17 +167,18 @@ export default function DefuseX() {
     }
       
     } catch (error) {  
-     
+     handleNetworkError
     } finally { 
       
     }
   };
 
-  const getMatchingUpdate = async () => { 
+  const getMatchingUpdate = async (ingame = 'game') => { 
     try {
       const { error, response }  = await makeRequest("/skillgame/matches/updateScore", {   
           matchId: gameId,
           score: phase1Score + phase2Score + phase3Score,
+          ingame: ingame,
         });
         
         if(response){
@@ -191,7 +192,7 @@ export default function DefuseX() {
           );
         }    
       
-    } catch (error) {  } finally {  }
+    } catch (error) { handleNetworkError } finally {  }
   };
 
   const getMatchingComplete = async (total, completion) => { 
@@ -204,7 +205,7 @@ export default function DefuseX() {
         // console.log([total, completion])   
         setPhase("completed");
       
-    } catch (error) {  } finally {  }
+    } catch (error) { handleNetworkError } finally {  }
   };
 
   const getMatchingEndUpdate = async () => { 
@@ -229,7 +230,7 @@ export default function DefuseX() {
       }
       
     } catch (error) {  
-     
+     handleNetworkError
     } finally { 
       
     }
@@ -275,14 +276,22 @@ useEffect(() => {
     
       if (isMounted) {
         // Run once immediately
-        getMatchingEndUpdate();
-    
+        if(phase === "countdown" && countdown === 0){
+          getMatchingPlayer()
+        }else{
+          getMatchingEndUpdate();
+        }
+
         // Start polling
         interval = setInterval(() => {
           if (isMounted) {
-            getMatchingEndUpdate();
-          }
-        }, 5000);
+            if(phase === "countdown" && countdown === 0){
+              getMatchingPlayer()
+            }else{
+              getMatchingEndUpdate();
+            }
+          }   
+        }, 2000);
       }
       // Cleanup when unmounting or when isMounted becomes false
     return () => {
@@ -673,18 +682,19 @@ useEffect(() => {
     // }, 3500);
   }
 
-  function resetMatchmaking(bckclc) {
+  const resetMatchmaking = (bckclc) => {
     setPhase("waiting");
-    setMatchTimer(30);
-    setPlayersReady(1);
+    setPlayersReady(0);
     setPlayers([]);
-    setPhase1Score(0);
+    setPhase1Score(0); 
     setPhase2Score(0);
     setPhase3Score(0);
     setIsMounted(false)
-    if(bckclc){
+    if(bckclc){      
+      setMatchTimer(30);
       router.push(`/(routes)/skillgame/defusex`)
     }else{
+      setMatchTimer(0);
       router.push("/(routes)/skillgame")
     }
   }
@@ -757,11 +767,11 @@ useEffect(() => {
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity
-              onPress={()=> {()=> resetMatchmaking(false)}}
+              onPress={()=> resetMatchmaking(false)}
               style={[styles.backBtn, {flexDirection: "row", justifyContent: "flex-start"}]}
             >
               <ArrowLeft size={20} color="#fff" />
-              <Text style={styles.backText}> Back</Text>
+              <Text style={styles.backText}> Back </Text>
             </TouchableOpacity>
 
             <View style={{ alignItems: "center" }}>
@@ -971,7 +981,7 @@ useEffect(() => {
         {phase === "completed" && (
           <View style={styles.centerBox}>
             <Animated.View style={[styles.card, animatedStyle]}>
-              <Text style={[styles.bigText, {color: "#fff"}]}>Completed</Text>
+              <Text style={{color: "#fff", fontSize: 52}}>Completed</Text>
             <Text style={[styles.subText, {color: "#fff"}]}>Waiting for result!</Text>
             </Animated.View>
           </View>
@@ -1002,7 +1012,7 @@ useEffect(() => {
                         <Medal color="#adb5bd" size={20} />
                         ) : null}
                         <View style={{ marginLeft: 8 }}>
-                          <Text style={styles.playerName}>{item.name} {isUser ? "(You)" : ""}</Text>
+                          <Text style={styles.playerName}>{item.name}</Text>
                           <Text style={styles.smallMeta}>{item.time ? `Time ${item.time}s` : "Eliminated"  }</Text>
                         </View>
                       </View>
@@ -1017,7 +1027,7 @@ useEffect(() => {
             </View>
 
             <View style={{ flexDirection: "row", marginTop: 40, gap: 12 }}>
-              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: "#FFD04C" }]} onPress={()=> router.push("/(routes)/skillgame")}>
+              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: "#FFD04C" }]} onPress={()=> resetMatchmaking(false)}>
                 <Text style={{ color: "#fff" }}>Back to Lobby</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.actionBtn, { backgroundColor: "#0EA5E9" }]} onPress={() => resetMatchmaking(true)}>

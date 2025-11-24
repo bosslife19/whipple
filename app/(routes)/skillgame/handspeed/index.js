@@ -80,7 +80,7 @@ export default function TapRush() {
       setUserBalanceGen(res?.data.user_balance)
       setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
       setGameId(res.data.match.id)
-    } catch (error) {  
+    } catch (error) { handleNetworkError  
       // console.error('Error fetching admin parameter:', error);
       setToastVisible(true)
       setToastType("error")
@@ -110,11 +110,11 @@ export default function TapRush() {
       }
       setPlayers((prev) => {
       const existingIds = new Set(prev.map((p) => p.id));
-      const newPlayers = res.data.players.filter((p) => !existingIds.has(p.id));
+      const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
       
       return [
         ...prev,
-        ...newPlayers.map((player) => ({
+        ...newPlayers?.map((player) => ({
           id: player.id,
           name: player.user_id,
           taps: player.score,
@@ -123,7 +123,7 @@ export default function TapRush() {
     });
     setPlayersReady(res.data.playerCount);
       
-    } catch (error) {  
+    } catch (error) { handleNetworkError  
      
     } finally { 
       
@@ -136,11 +136,11 @@ export default function TapRush() {
       // console.log(res.data.players)
       setPlayers((prev) => {
       const existingIds = new Set(prev.map((p) => p.id));
-      const newPlayers = res.data.players.filter((p) => !existingIds.has(p.id));
+      const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
       
       return [
         ...prev,
-        ...newPlayers.map((player) => ({
+        ...newPlayers?.map((player) => ({
           id: player.id,
           name: player.user_id,
           taps: player.score,
@@ -158,7 +158,7 @@ export default function TapRush() {
       // setCountdownTimer(2);
     }
       
-    } catch (error) {  
+    } catch (error) { handleNetworkError  
      
     } finally { 
       
@@ -183,7 +183,7 @@ export default function TapRush() {
           );
         }    
       
-    } catch (error) {  } finally {  }
+    } catch (error) { handleNetworkError  } finally {  }
   };
 
   const getMatchingComplete = async () => { 
@@ -194,7 +194,7 @@ export default function TapRush() {
           time: countdownTimer
         });  
       
-    } catch (error) {  } finally {  }
+    } catch (error) { handleNetworkError  } finally {  }
   };
 
   const getMatchingEndUpdate = async () => { 
@@ -217,8 +217,8 @@ export default function TapRush() {
           setGameState("finished");
       }
       
-    } catch (error) {  
-     console.log(error)
+    } catch (error) { handleNetworkError  
+     
     } finally { 
     }
   };
@@ -351,13 +351,14 @@ export default function TapRush() {
   
   const resetMatchmaking = (bckclc) => {
     setGameState("waiting");
-    setMatchmakingTimer(30);
     setPlayersReady(0);
     setPlayers([]);
     setIsMounted(false)
     if(bckclc){
+      setMatchmakingTimer(30);
       router.push(`/(routes)/skillgame/handspeed`)
     }else{
+      setMatchmakingTimer(0);
       router.push("/(routes)/skillgame")
     }
   };
@@ -495,7 +496,7 @@ export default function TapRush() {
           <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-around", marginTop: 20, marginBottom: 20}}>
             <TouchableOpacity
               style={[styles.playAgain, {backgroundColor: "#FFD04C"}]}
-              onPress={()=> router.push("/(routes)/skillgame")}
+              onPress={()=> resetMatchmaking(false)}
             >
               <Text style={styles.playAgainText}>Back to Lobby</Text>
             </TouchableOpacity>
