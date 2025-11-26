@@ -51,9 +51,7 @@ export default function MathClash() {
       setToastType("error")
       setToastTitle("Insufficient balance")
       setToastMessage("Your balance is too low for this game.")
-      setTimeout(() => {
-        router.push(`/(routes)/skillgame`)
-      }, 5000);
+      resetMatchmaking(false)
     } finally { 
       // setLoader("");
     }
