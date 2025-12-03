@@ -87,7 +87,29 @@ const Questions = ({ questions = [], userBalance = 0, onPointsUpdate, onQuizEnd,
     <View style={{ flex: 1 }}>
       {fund && (<Text style={{ fontSize: 18, color: '#f00', fontWeight: "600", textAlign: "center" }}>⚡Insufficient balance</Text>)}
       <ScrollView style={{ padding: 20 }}>
-        <Text style={{ fontSize: 18, marginBottom: 10 }}>Question {currentIndex + 1} / {paramters?.no_question}</Text>
+        <View
+          style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 10
+        }}
+        >
+          <Text style={{ fontSize: 16, fontWeight: "800" }}>Question {currentIndex + 1} / {paramters?.no_question}</Text>
+          <TouchableOpacity
+            onPress={handleBoostTime}
+            style={{
+              backgroundColor: boostUsed ? "#ccc" : "#007BFF",
+              paddingVertical: 10,
+              paddingHorizontal: 16,
+              borderRadius: 8,
+            }}
+          >
+            <Text style={{ color: "#fff", fontWeight: "600", fontSize: 12 }}>
+              Boost Time (-₦{paramters?.boost_time_amount})
+            </Text>
+          </TouchableOpacity>
+        </View>
         <Text style={{ fontSize: 16, marginBottom: 20 }}>{currentQuestion.question}</Text>
         <View style={{marginBottom: 50}}>
           {currentQuestion.options.map((option, idx) => {
@@ -123,30 +145,19 @@ const Questions = ({ questions = [], userBalance = 0, onPointsUpdate, onQuizEnd,
       <View
         style={{
           flexDirection: "row",
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "center",
           padding: 15,
           borderTopWidth: 1,
           borderColor: "#ddd",
           backgroundColor: "#f9f9f9",
+          marginBottom: 10
         }}
       >
         <Text style={{ fontSize: 16, fontWeight: "600" }}>
           ⏳ Time Left: {timeLeft}s
         </Text>
-        <TouchableOpacity
-          onPress={handleBoostTime}
-          style={{
-            backgroundColor: boostUsed ? "#ccc" : "#007BFF",
-            paddingVertical: 10,
-            paddingHorizontal: 16,
-            borderRadius: 8,
-          }}
-        >
-          <Text style={{ color: "#fff", fontWeight: "600" }}>
-            Boost Time (-₦{paramters?.boost_time_amount})
-          </Text>
-        </TouchableOpacity>
+        
       </View>
     </View>
   );

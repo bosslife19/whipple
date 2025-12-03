@@ -20,7 +20,8 @@ const games = [
     skill: "Hand Speed",
     icon: Zap,
     colors: ["#06b6d4", "#2563eb"], // cyan → blue
-    screen: "handspeed"
+    screen: "handspeed",
+    winner: "75%"
   },
   {
     id: "math-clash",
@@ -30,7 +31,8 @@ const games = [
     skill: "Mental Arithmetic",
     icon: Brain,
     colors: ["#a855f7", "#ec4899"], // purple → pink
-    screen: "mathclash"
+    screen: "mathclash",
+    winner: "75%"
   },
   {
     id: "color-switch",
@@ -40,7 +42,8 @@ const games = [
     skill: "Attention + Reaction",
     icon: Target,
     colors: ["#fb923c", "#dc2626"], // orange → red
-    screen: "colorswitch"
+    screen: "colorswitch",
+    winner: "75%"
   },
   {
     id: "defuse-x",
@@ -50,7 +53,8 @@ const games = [
     skill: "Memory + Logic",
     icon: Trophy,
     colors: ["#f59e0b", "#eab308"], // amber → yellow
-    screen: "defusex"
+    screen: "defusex",
+    winner: "100%"
   },
 ];
 
@@ -134,6 +138,10 @@ export default function Skillgame() {
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Duration:</Text>
                   <Text style={styles.infoValue}>{item.duration}</Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Winner Takes:</Text>
+                  <Text style={styles.infoValue}>{item.winner}</Text>
                 </View>
 
                 <TouchableOpacity

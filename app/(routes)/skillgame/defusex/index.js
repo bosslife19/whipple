@@ -793,17 +793,17 @@ useEffect(() => {
                 <View style={styles.phaseGrid}>
                   <View style={styles.phaseBox}>
                     <Text style={styles.phaseTitle}>PHASE 1</Text>
-                    <Text style={styles.phaseDesc}>Memory - 20s</Text>
+                    <Text style={styles.phaseDesc}>Memory - 3s</Text>
                     <Text style={styles.phaseSmall}>50 pts</Text>
                   </View>
                   <View style={styles.phaseBox}>
                     <Text style={[styles.phaseTitle, {color: "#B447EB"}]}>PHASE 2</Text>
-                    <Text style={styles.phaseDesc}>Stability - 20s</Text>
+                    <Text style={styles.phaseDesc}>Stability - 5s</Text>
                     <Text style={styles.phaseSmall}>100 pts</Text>
                   </View>
                   <View style={styles.phaseBox}>
                     <Text style={[styles.phaseTitle, {color: "#FFBB33"}]}>PHASE 3</Text>
-                    <Text style={styles.phaseDesc}>Recall - 20s</Text>
+                    <Text style={styles.phaseDesc}>Recall - 3s</Text>
                     <Text style={styles.phaseSmall}>200 pts</Text>
                   </View>
                 </View>
