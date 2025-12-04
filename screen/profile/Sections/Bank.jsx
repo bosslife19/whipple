@@ -89,8 +89,8 @@ const BankInfoScreen = () => {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Saved Bank Accounts</Text>
-        {bankAccounts.map((item) => (
-          <View key={item.id} style={styles.accountCard}>
+        {bankAccounts.map((item, index) => (
+          <View key={index} style={styles.accountCard}>
             <Text style={styles.bankName}>{item.bank_name}</Text>
             <Text style={styles.accountNumber}>{item.account_number}</Text>
           </View>

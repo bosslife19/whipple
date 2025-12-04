@@ -87,7 +87,7 @@ export default function WithdrawScreen() {
   const [bankAccount, setBankAccount] = React.useState([]);
   const [otpMethod, setOtpMethod] = React.useState('sms');
   const [selectedBank, setSelectedBank] = useState("");
-  const [bankId, setBankId] = useState("");
+  const [bankCode, setBankCode] = useState("");
   const [pin, setPin] = useState('');
   const [searchText, setSearchText] = useState("");
   const [loader, setLoader] = useState("");
@@ -101,9 +101,10 @@ export default function WithdrawScreen() {
     try {
       setLoader("bank");
       const res = await axiosClient.get("/bank-list");
+      
       setBankAccount(res.data.data ?? []); // assuming API returns array of transactions
     } catch (error) {
-      console.error('Error fetching bank:', error);
+      console.log('Error fetching bank:', error);
     } finally {
       setLoader("");
     }
@@ -117,13 +118,13 @@ export default function WithdrawScreen() {
     if (!amount || parseFloat(amount) < 100) {
         return Alert.alert("Invalid Amount", "Please enter a valid amount (min. 100)");
     }
-    if (!bankId) {
+    if (!bankCode) {
       return Alert.alert("Error", "Please select a bank account");
     }
-
+//  return console.log(bankCode, amount, pin);
     try {
       const { error, response }  = await makeRequest("/withdraw/request", {   
-        bank_id: bankId,
+        bank_code: bankCode,
         amount: amount,
         pin: pin
       });
@@ -181,19 +182,19 @@ export default function WithdrawScreen() {
                 <Picker
                     selectedValue={selectedBank}
                     onValueChange={(itemValue) => {
-                    const bank = bankAccount.find((b) => b.bank_id === itemValue);
+                    const bank = bankAccount.find((b) => b.bank_code === itemValue);
                     if (bank) {
                         setSelectedBank(itemValue);
-                        setBankId(bank.bank_id);
+                        setBankCode(bank.bank_code);
                     }
                     }}
                 >
                     <Picker.Item label="Select a bank" value="" />
                     {filteredBanks.map((bank) => (
                     <Picker.Item
-                        key={bank.bank_id}
+                        key={bank.bank_code}
                         label={bank.bank_name + " - " + bank.account_number}
-                        value={bank.bank_id}
+                        value={bank.bank_code}
                     />
                     ))}
                 </Picker>
@@ -218,13 +219,13 @@ export default function WithdrawScreen() {
       </OTPSelector> */}
       <TouchableOpacity 
         onPress={handleWithdrawalRequest} 
-        disabled={!amount || !bankId || loading} 
+        disabled={!amount || !bankCode || loading} 
         style={{ 
             backgroundColor: "#00cc44", 
             padding: 16, 
             borderRadius: 8, 
             alignItems: "center", 
-            opacity: (!amount || !bankId || loading) ? 0.5 : 1 
+            opacity: (!amount || !bankCode || loading) ? 0.5 : 1 
         }}
         >
         <WithdrawText>{loading ? "Processing..." : "Withdraw"}</WithdrawText>
