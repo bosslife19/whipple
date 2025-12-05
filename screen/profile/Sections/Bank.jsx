@@ -30,6 +30,7 @@ const BankInfoScreen = () => {
     try {
       setLoading(true);
       const res = await axiosClient.get("/paystack/getbank");
+     
       setBanks(res.data.banks.map((bank, index) => ({
         key: index.toString(), // unique key for each item
         label: bank.name, // for dropdown

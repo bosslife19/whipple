@@ -133,7 +133,7 @@ export default function WithdrawScreen() {
       }
       Alert.alert("Success", "Withdrawal  successful. Please check your bank account!");
     } catch (err) {
-      Alert.alert("Error", "Unable to withdrawal request");
+      Alert.alert("Error", "Withdrawal failed. Please try again.");
     }
   };
 
