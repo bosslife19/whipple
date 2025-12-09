@@ -92,6 +92,7 @@ export default function WithdrawScreen() {
   const [searchText, setSearchText] = useState("");
   const [loader, setLoader] = useState("");
   const { loading, makeRequest } = useRequest();
+  const [accountNumber, setAccountNumber] = useState("");
 
   const filteredBanks = bankAccount.filter((b) =>
     b.bank_name.toLowerCase().includes(searchText.toLowerCase())
@@ -126,7 +127,8 @@ export default function WithdrawScreen() {
       const { error, response }  = await makeRequest("/withdraw/request", {   
         bank_code: bankCode,
         amount: amount,
-        pin: pin
+        pin: pin, 
+        accountNumber: accountNumber,
       });
       if (error) {
         return Alert.alert("Error", error?.message);
@@ -136,7 +138,7 @@ export default function WithdrawScreen() {
       Alert.alert("Error", "Withdrawal failed. Please try again.");
     }
   };
-
+ 
   return (
     <Container>
       <Header>Withdraw</Header>
@@ -183,9 +185,12 @@ export default function WithdrawScreen() {
                     selectedValue={selectedBank}
                     onValueChange={(itemValue) => {
                     const bank = bankAccount.find((b) => b.bank_code === itemValue);
+                    
                     if (bank) {
+                      
                         setSelectedBank(itemValue);
                         setBankCode(bank.bank_code);
+                        setAccountNumber(bank.account_number);
                     }
                     }}
                 >
