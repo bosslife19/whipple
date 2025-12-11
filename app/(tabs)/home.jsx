@@ -85,7 +85,7 @@ const [user, setUser] = useState(null);
         <View style={Homes.imageBackground}>
           <Text style={[Homes.imageText,{ fontSize:14,fontWeight:500,textAlign:"center",fontFamily:"Grotesk",paddingVertical:4}]}>Available Balance </Text>
          
-             <Text style={[Homes.imageText,{ textAlign:"center",fontFamily:"Poppins",fontSize:24,paddingVertical:14}]}>NGN {formatCurrency(user?.wallet_balance) || formatCurrency(userDetails.wallet_balance) ||'0.00'}</Text>
+             <Text style={[Homes.imageText,{ textAlign:"center",fontFamily:"Poppins",fontSize:24,paddingVertical:14}]}>NGN {formatCurrency(user?.wallet_balance) || formatCurrency(userDetails?.wallet_balance) ||'0.00'}</Text>
              
               <View style={[Homes.flexD,{justifyContent:"space-between"}]}>
               <TouchableOpacity onPress={()=> router.push("/(routes)/deposit")} style={[Homes.flexD,{paddingHorizontal:"14%",paddingVertical:14, backgroundColor:"#0A1931",borderRadius:20,gap:8}]}>

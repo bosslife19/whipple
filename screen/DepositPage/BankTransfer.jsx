@@ -7,33 +7,31 @@ export default function BankTransfer({ selectedBank, setSelectedBank, banks }) {
   return (
     <View>
       <Text style={styles.label}>Select a Bank</Text>
-      <View style={styles.bankRow}>
+      {/* <View style={styles.bankRow}>
         {banks.map((bank) => (
           <TouchableOpacity key={bank.id} onPress={() => setSelectedBank(bank.id)} style={styles.bankCard}>
             <Image source={bank.logo} style={styles.bankLogo} />
-            {/* <Text>{bank.name}</Text> */}
+
           </TouchableOpacity>
         ))}
-      </View>
+      </View> */}
 
-      {selected && (
-  <View style={styles.instructionsBox}>
-    <Text style={styles.instructionsTitle}>{selected.name} Transfer Instructions</Text>
     
-    <Text style={styles.instructionStep}>1. Open the {selected.name} mobile app and log in to your account.</Text>
+  <View style={styles.instructionsBox}>
+    <Text style={styles.instructionsTitle}>Bank Transfer Instructions</Text>
+    
+    <Text style={styles.instructionStep}>1. Open the Whipple mobile app and log in to your account.</Text>
     <Text style={styles.instructionStep}>2. From the home screen, navigate to the "Pay Bills" section.</Text>
     <Text style={styles.instructionStep}>3. Choose your preferred payment category.</Text>
     <Text style={styles.instructionStep}>4. Select our app as both the "Biller" and the "Product".</Text>
     <Text style={styles.instructionStep}>5. Enter the amount you wish to deposit.</Text>
-    <Text style={styles.instructionStep}>
-      6. Provide your unique Client ID: <Text style={styles.customerId}>{selected.customerId}</Text>
-    </Text>
+    
 
     <Text style={styles.instructionStep}>
       Once the payment is confirmed, the funds will be instantly credited to your Bet9ja wallet.
     </Text>
   </View>
-)}
+
 
     </View>
   );
