@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Text,
   TextInput,
@@ -7,159 +7,330 @@ import {
   StyleSheet,
   ScrollView,
   Platform,
-} from 'react-native';
-import Collapsible from 'react-native-collapsible';
-import Header from '../Header/Header';
- 
+  Linking,
+} from "react-native";
+import Collapsible from "react-native-collapsible";
+import Header from "../Header/Header";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+
 const Support = () => {
   const [activeFAQ, setActiveFAQ] = useState(null);
-  const [subject, setSubject] = useState('');
-  const [description, setDescription] = useState('');
+  const [subject, setSubject] = useState("");
+  const [description, setDescription] = useState("");
   const [faqState, setFaqstate] = useState({
-    one:true,
-    two:true,
-    three:true, 
-    four:true
-  })
+    one: true,
+    two: true,
+    three: true,
+    four: true,
+    five: true,
+    six: true,
+    seven: true,
+    eight: true,
+    nine:true,
+    ten:true
+  });
 
   // const toggleFAQ = (index) => {
   //   setActiveFAQ(activeFAQ === index ? null : index);
   // };
 
-  const faqs = [
-    'How do I become The House?',
-    'What is the German Juice fee?',
-    'How does voting work?',
-    "What is the Losers' Game?",
-  ];
+  
+  const openEmailApp = () => {
+    const email = "support@mywhipple.com";
+    Linking.openURL(`mailto:${email}`);
+  };
+
+  const openWhatsapp = () => {
+    const whatsapp = "https://wa.link/h9umoe";
+    Linking.openURL(whatsapp);
+  };
 
   return (
-    <View style={{backgroundColor: '#f9f9fb',height:'100%' }}>
+    <View style={{ backgroundColor: "#f9f9fb", height: "100%" }}>
       <Header name="Support" />
-      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
         {/* FAQ Section */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Frequently Asked Questions</Text>
           {/* {faqs.map((faq, index) => ( */}
-            <View style={styles.accordion}>
-              <TouchableOpacity
-              
-               onPress={() => setFaqstate(prev=>({...prev, one: !faqState.one}))}
-               style={styles.accordionHeader}>
-                <Text style={styles.accordionText}>What is the Quiz about?
-</Text>
-                <Text style={styles.accordionToggle}>
-                  {faqState.one ? '+' : '-'}
-                </Text>
-              </TouchableOpacity>
-              <Collapsible collapsed={faqState.one}>
-                <Text style={styles.accordionContent}>The platform offers a 40 questions quiz that will be answered under 5 seconds per question to earn 2 points per correct question answered with a maximum of 80 points valid every 24 hours. Questions span general knowledge 
+          <View style={styles.accordion}>
+            <TouchableOpacity
+              onPress={() =>
+                setFaqstate((prev) => ({ ...prev, one: !faqState.one }))
+              }
+              style={styles.accordionHeader}
+            >
+              <Text style={styles.accordionText}>What is the Quiz about?</Text>
+              <Text style={styles.accordionToggle}>
+                {faqState.one ? "+" : "-"}
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={faqState.one}>
+              <Text style={styles.accordionContent}>
+                The platform offers a 40 questions quiz that will be answered
+                under 5 seconds per question to earn 2 points per correct
+                question answered with a maximum of 80 points valid every 24
+                hours. Questions span general knowledge
+              </Text>
+            </Collapsible>
+          </View>
 
-</Text>
-              </Collapsible>
-            </View>
+          <View style={styles.accordion}>
+            <TouchableOpacity
+              // onPress={() => toggleFAQ(index)}
+              onPress={() =>
+                setFaqstate((prev) => ({ ...prev, two: !faqState.two }))
+              }
+              style={styles.accordionHeader}
+            >
+              <Text style={styles.accordionText}>
+                How do I become the House?
+              </Text>
+              <Text style={styles.accordionToggle}>
+                {faqState.two ? "+" : "-"}
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={faqState.two}>
+              <Text style={styles.accordionContent}>
+                You can become the House by creating games. Go to the TOP GAMES
+                PAGE or BECOME THE HOUSE page to create any games of your
+                choice. There is a 25% admission fee to create a game. Why 25%?
+                To create balance ⚖. We want more players than Houses, thus the
+                threshold to become The House is high There is also a 1% deposit
+                fee and 2.5% withdrawal fee(waivable depending on your points)
+                to handle the Cost of our payment partners.
+              </Text>
+            </Collapsible>
+          </View>
 
-             <View style={styles.accordion}>
-              <TouchableOpacity 
-              // onPress={() => toggleFAQ(index)} 
-               onPress={() => setFaqstate(prev=>({...prev, two: !faqState.two}))}
-              style={styles.accordionHeader}>
-                <Text style={styles.accordionText}>How do I become the House?
+          <View style={styles.accordion}>
+            <TouchableOpacity
+              onPress={() =>
+                setFaqstate((prev) => ({ ...prev, three: !faqState.three }))
+              }
+              style={styles.accordionHeader}
+            >
+              <Text style={styles.accordionText}>
+                How do I compete against The House?
+              </Text>
+              <Text style={styles.accordionToggle}>
+                {faqState.three ? "+" : "-"}
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={faqState.three}>
+              <Text style={styles.accordionContent}>
+                Go to the AVAILABLE GAMES page, check for games published by The
+                House that you would be interested in playing, then use your
+                accumulated points and try to match the House's results for the
+                House's Prize
+              </Text>
+            </Collapsible>
+          </View>
 
-</Text>
-                <Text style={styles.accordionToggle}>
-                  {faqState.two ? '+' : '-'}
-                </Text>
-              </TouchableOpacity>
-              <Collapsible collapsed={faqState.two}>
-                <Text style={styles.accordionContent}>You can become the House by creating games. Go to the TOP GAMES PAGE or BECOME THE HOUSE page to create any games of your choice. There is a 25% admission fee to create a game.
+          <View style={styles.accordion}>
+            <TouchableOpacity
+              onPress={() =>
+                setFaqstate((prev) => ({ ...prev, four: !faqState.four }))
+              }
+              style={styles.accordionHeader}
+            >
+              <Text style={styles.accordionText}>What is Losers' Game?</Text>
+              <Text style={styles.accordionToggle}>
+                {faqState.four ? "+" : "-"}
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={faqState.four}>
+              <Text style={styles.accordionContent}>
+                Losers' Game gives you the opportunity to reclaim your game
+                after losing the first time. It is as expected, competitive
+              </Text>
+            </Collapsible>
+          </View>
+          <View style={styles.accordion}>
+            <TouchableOpacity
+              onPress={() =>
+                setFaqstate((prev) => ({ ...prev, five: !faqState.five }))
+              }
+              style={styles.accordionHeader}
+            >
+              <Text style={styles.accordionText}>What is Tap Rush?</Text>
+              <Text style={styles.accordionToggle}>
+                {faqState.five ? "+" : "-"}
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={faqState.five}>
+              <Text style={styles.accordionContent}>
+                Tap Rush is a competition where users try to OUT-TAP each other
+                under a 30 seconds window. The person with the highest taps
+                wins, and goes with 75% of the prize, while the runner up is
+                awarded the remaining 25%. The PRIZE 🏆 depends on how many
+                players matched to play that particular game. There is a 20%
+                platform fee deduction applicable before awarding Prizes. A
+                minimum of two players and a maximum of 4 players are matched
+                LIVE within a 30 seconds countdown timer, to compete against
+                each other
+              </Text>
+            </Collapsible>
+          </View>
 
-Why 25%?  To create balance ⚖. We want more players than Houses, thus the threshold to become The House is high
-There is also a 1% deposit fee and 2.5% withdrawal fee(waivable depending on your points) to handle the Cost of our payment partners.
- 
+           <View style={styles.accordion}>
+            <TouchableOpacity
+              onPress={() =>
+                setFaqstate((prev) => ({ ...prev, six: !faqState.six }))
+              }
+              style={styles.accordionHeader}
+            >
+              <Text style={styles.accordionText}>What is Math Clash? </Text>
+              <Text style={styles.accordionToggle}>
+                {faqState.five ? "+" : "-"}
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={faqState.six}>
+              <Text style={styles.accordionContent}>
+                Math Clash is a competition where users solve 20 simple arithmetic questions under a 3 Seconds per question time limit. The person with the highest score wins, and goes with 75% of the prize, while the runner up is awarded the remaining 25%. The PRIZE 🏆 depends on how many players matched to play that particular game. There is a 20% platform fee deduction applicable before awarding Prizes. A minimum of two players and a maximum of 4 players are matched LIVE within a 30 seconds countdown timer, to compete against each other
+              </Text>
+            </Collapsible>
+          </View>
 
-</Text>
-              </Collapsible>
-            </View>
+                     <View style={styles.accordion}>
+            <TouchableOpacity
+              onPress={() =>
+                setFaqstate((prev) => ({ ...prev, seven: !faqState.seven }))
+              }
+              style={styles.accordionHeader}
+            >
+              <Text style={styles.accordionText}>What is Color Switch Reflex?</Text>
+              <Text style={styles.accordionToggle}>
+                {faqState.seven ? "+" : "-"}
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={faqState.seven}>
+              <Text style={styles.accordionContent}>
+                Color Switch Reflex is a competition where users match the color(in words) that pops up, against the color it appears in. For example, if RED(the word) appears in GREEN( the color), the user will click on GREEN( the color) to gain points. These pop ups will come up 20 times within a time frame of 2 seconds per pop up, and the player has to match the WORD against the COLOR it appears in. The person with the highest score wins, and goes with 75% of the prize, while the runner up is awarded the remaining 25%. The PRIZE 🏆 depends on how many players matched to play that particular game. There is a 20% platform fee deduction applicable before awarding Prizes. A minimum of two players and a maximum of 4 players are matched LIVE within a 30 seconds countdown timer, to compete against each other
+              </Text>
+            </Collapsible>
+          </View>
 
-             <View style={styles.accordion}>
-              <TouchableOpacity
-              
-               onPress={() => setFaqstate(prev=>({...prev, three: !faqState.three}))}
-               style={styles.accordionHeader}>
-                <Text style={styles.accordionText}>How do I compete against The House?
+                     <View style={styles.accordion}>
+            <TouchableOpacity
+              onPress={() =>
+                setFaqstate((prev) => ({ ...prev, eight: !faqState.eight }))
+              }
+              style={styles.accordionHeader}
+            >
+              <Text style={styles.accordionText}>What is Defuse-X?
+ </Text>
+              <Text style={styles.accordionToggle}>
+                {faqState.eight ? "+" : "-"}
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={faqState.eight}>
+              <Text style={styles.accordionContent}>
+              Defuse-X is a competition where users attempt to successfully defuse a Virtual Explosive under intense pressure and time constraints. It involves pattern recognition, keen attention to details and quick memory. It is in three(3) phases and users must scale one phase before he is allowed to proceed to the next phase, to avoid a virtual explosion 💥, which means "GAME OVER"
 
+Phase 1: Pattern recognition: Here, four colors will appear randomly in a sequence and then disappear. The user must memorize the sequence and has 5 seconds to reproduce that same exact sequence that he saw, in order to scale Phase 1
 
-</Text>
-                <Text style={styles.accordionToggle}>
-                  {faqState.three ? '+' : '-'}
-                </Text>
-              </TouchableOpacity>
-              <Collapsible collapsed={faqState.three}>
-                <Text style={styles.accordionContent}>Go to the AVAILABLE GAMES page, check for games published by The House that you would be interested in playing, then use your accumulated points and try to match the House's results for the House's Prize
+Phase 2: Attention to details: Here, four random colors will appear, a combination of Slow-blinking colors and Fast-blinking colors in a tricky fashion. The user has 3 seconds to click on the slow-blinking colors, in order to scale Phase 2 
 
+Phase 3: Memory: Here, the user will be asked to recall a random event he saw in Phase 1. For example, he can be asked to click on the third color that appeared in the sequence in Phase 1, etc. The user has 5 seconds to click on the appropriate answer, in order to scale Phase 3, to successfully defuse the virtual explosive and emerge the winner 
 
-</Text>
-              </Collapsible>
-            </View>
-
-             <View style={styles.accordion}>
-              <TouchableOpacity
-              
-               onPress={() => setFaqstate(prev=>({...prev, four: !faqState.four}))}
-               style={styles.accordionHeader}>
-                <Text style={styles.accordionText}>What is Losers' Game?
-
-
-
-</Text>
-                <Text style={styles.accordionToggle}>
-                  {faqState.four ? '+' : '-'}
-                </Text>
-              </TouchableOpacity>
-              <Collapsible collapsed={faqState.four}>
-                <Text style={styles.accordionContent}>Losers' Game gives you the opportunity to reclaim your game after losing the first time. It is as expected, competitive
-
-
-</Text>
-              </Collapsible>
-            </View>
+The person with the highest score wins, and goes with 100% of the Prize, as it is a WINNER TAKES ALL Game. The PRIZE 🏆 depends on how many players matched to play that particular game. There is a 20% platform fee deduction applicable before awarding Prizes. A minimum of two players and a maximum of 4 players are matched LIVE within a 30 seconds countdown timer, to compete against each other
+              </Text>
+            </Collapsible>
+          </View>
           {/* ))} */}
+           <View style={styles.accordion}>
+            <TouchableOpacity
+              // onPress={() => toggleFAQ(index)}
+              onPress={() =>
+                setFaqstate((prev) => ({ ...prev, nine: !faqState.nine }))
+              }
+              style={styles.accordionHeader}
+            >
+              <Text style={styles.accordionText}>
+                What are Whipple Points?
+              </Text>
+              <Text style={styles.accordionToggle}>
+                {faqState.nine ? "+" : "-"}
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={faqState.nine}>
+              <Text style={styles.accordionContent}>
+               Whipple points are points awarded to users when they perform certain actions on the platform. With the accumulated points, they get privileges like:
+
+1) With 20 Whipple points, 2.5% withdrawal fee gets waived and user makes free withdrawal 
+
+2) With 40 Whipple points, the user will play FREE games(Tap Rush, Math Clash, Color Switch Reflex and Defuse-X) in the "Game Rush" category 
+
+3) With 40 Whipple points, the user also gets 25% discounted plays(as The House or player competing against The House) in the other games
+
+4) With 80 Whipple points, the user will play FREE games(as The House or player competing against The House) in the other games 
+
+There will be a corresponding reduction in Whipple points in the above scenarios
+              </Text>
+            </Collapsible>
+          </View>
+
+          <View style={styles.accordion}>
+            <TouchableOpacity
+              onPress={() =>
+                setFaqstate((prev) => ({ ...prev, ten: !faqState.ten }))
+              }
+              style={styles.accordionHeader}
+            >
+              <Text style={styles.accordionText}>How do I accumulate Whipple Points?</Text>
+              <Text style={styles.accordionToggle}>
+                {faqState.ten ? "+" : "-"}
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={faqState.ten}>
+              <Text style={styles.accordionContent}>
+                You can accumulate Whipple points by:
+
+1) Referring your friends to register on Whipple using your REFERRAL CODE and play games on Whipple. You will get 4 Whipple points per successful referral
+
+Refer as many people as possible and make sure they register on Whipple with your REFERRAL CODE, in order for you to accumulate as many Whipple points as possible 😁
+
+2) Play the SkillQuiz Pro game. Answer 40 short quiz questions under 5 seconds per question, and compete to win 2 Whipple points per correct answer for a maximum of 80 Whipple points. It is FREE to play, however, if you want, you can boost the time from 5 seconds to 60 seconds for 100 naira  per question, if you need more time to answer a question. 
+
+The Quiz game can only be played once in 24 hours and users are advised to stay on course and complete the Quiz once they start, in order to MAXIMIZE their Whipple points accumulation.
+
+3) upload on your Social Media handles a screen record of the games you won on Whipple (with TIME-STAMPS) and send us a link to your handle to verify, then grant us the permission to reshare and get 4 additional Whipple points for that day
+
+4) Play the Pre-Game Activity Games
+              </Text>
+            </Collapsible>
+          </View>
         </View>
 
         {/* Contact Support Form */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Contact Support</Text>
 
-          {/* <Text style={styles.label}>Subject</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Issue topic"
-            value={subject}
-            onChangeText={setSubject}
-            placeholderTextColor="#aaa"
-          />
-
-          <Text style={styles.label}>Description</Text>
-          <TextInput
-            style={styles.textarea}
-            multiline
-            numberOfLines={4}
-            placeholder="Describe your issue in detail"
-            value={description}
-            onChangeText={setDescription}
-            placeholderTextColor="#aaa"
-          />
-
-          <TouchableOpacity style={styles.submitButton}>
-            <Text style={styles.submitText}>Submit Ticket</Text>
-          </TouchableOpacity> */}
-
           <View style={styles.contactInfo}>
-            <Text style={styles.contactText}>For urgent matters, contact us directly:</Text>
-            <Text style={styles.contactText}>📧 support@mywhipple.com</Text>
-            <Text style={styles.contactText}>📞 +234 9079141911</Text>
+            <Text style={styles.contactText}>
+              For urgent matters, contact us directly:
+            </Text>
+
+            {/* Email */}
+            <TouchableOpacity style={styles.contactRow} onPress={openEmailApp}>
+              <FontAwesome name="envelope" size={20} color="#6B4EFF" />
+              <Text style={styles.contactTextClickable}>
+                support@mywhipple.com
+              </Text>
+            </TouchableOpacity>
+
+            {/* WhatsApp */}
+            <TouchableOpacity
+              style={styles.contactRow}
+              onPress={openWhatsapp}
+            >
+              <FontAwesome name="whatsapp" size={24} color="#25D366" />
+              <Text style={styles.contactTextClickable}>+234 9079141911</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -173,15 +344,15 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 16,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: "#000",
         shadowOpacity: 0.05,
         shadowRadius: 4,
         shadowOffset: { width: 0, height: 2 },
@@ -193,85 +364,55 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 16,
-    color: '#222',
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 6,
-    color: '#333',
-  },
-  input: {
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    height: 44,
-    marginBottom: 12,
-    fontSize: 14,
-    color: '#000',
-    backgroundColor: '#fafafa',
-  },
-  textarea: {
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
-    height: 100,
-    marginBottom: 16,
-    fontSize: 14,
-    color: '#000',
-    backgroundColor: '#fafafa',
-    textAlignVertical: 'top',
-  },
-  submitButton: {
-    backgroundColor: '#6B4EFF',
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  submitText: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  contactInfo: {
-    marginTop: 24,
-    alignItems: 'center',
-  },
-  contactText: {
-    fontSize: 14,
-    color: '#666',
-    marginVertical: 2,
+    color: "#222",
   },
   accordion: {
     borderBottomWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: "#e5e5e5",
     paddingVertical: 10,
   },
   accordionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   accordionText: {
     fontSize: 15,
-    fontWeight: '500',
-    color: '#333',
+    fontWeight: "500",
+    color: "#333",
   },
   accordionToggle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#6B4EFF',
+    fontWeight: "bold",
+    color: "#6B4EFF",
   },
   accordionContent: {
     paddingTop: 8,
     fontSize: 14,
-    color: '#555',
+    color: "#555",
     lineHeight: 20,
+  },
+  contactInfo: {
+    marginTop: 24,
+    alignItems: "flex-start",
+  },
+  contactText: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 8,
+  },
+  contactRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 6,
+  },
+  contactTextClickable: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: "#111827",
+    fontWeight: "500",
   },
 });
 

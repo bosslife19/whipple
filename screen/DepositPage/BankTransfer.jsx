@@ -13,7 +13,7 @@ export default function BankTransfer() {
   };
 
   const openEmailApp = () => {
-    const email = "support@whipple.com";
+    const email = "support@mywhipple.com";
     Linking.openURL(`mailto:${email}`);
   };
 

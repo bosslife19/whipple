@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "app/_layout.jsx", "app/index.jsx", "app/(tabs)/_layout.jsx", "components/Input/RenderGames.jsx", "screen/otp/otp.jsx", "components/ToastMessage.js"  ]
+, "app/_layout.jsx", "app/index.jsx", "app/(tabs)/_layout.jsx", "components/Input/RenderGames.jsx", "screen/otp/otp.jsx", "components/ToastMessage.js", "app/(routes)/verifypassword/index.jsx", "app/(routes)/resetpassword/index.jsx"  ]
 }

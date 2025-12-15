@@ -4,10 +4,19 @@ import Profilescs from '../../styles/profileScren.styles'
 import Header from '../Header/Header'
 import { router } from 'expo-router'
 import {AuthContext} from '../../context/AuthContext'
+import * as Clipboard from 'expo-clipboard';
 // import * as Clipboard from "expo-clipboard";
 
 export default function ReferAndEarn() {
   const {userDetails} = useContext(AuthContext)
+
+  const copyToClipboard = async (text) => {
+    await Clipboard.setStringAsync(text);
+    
+   
+    
+  };
+
 
   return (
     <View style={{height:'100%'}}>
@@ -32,6 +41,7 @@ export default function ReferAndEarn() {
               //     Alert.alert("Copied", "Referral code copied to clipboard!");
               //   }
               // }}
+              onPress={()=>copyToClipboard(userDetails?.referral_code)}
             >
               <Text>Copy</Text>
             </TouchableOpacity>
@@ -41,10 +51,10 @@ export default function ReferAndEarn() {
             <TouchableOpacity style={Profilescs.shareButton}
             onPress={async () => {
               try {
-                const referralLink = `https://whipple.com/ref/${userDetails?.referral_code}`;
+               
                 await Share.share({
-                  message: `Join me on this app and earn rewards! Use my referral link: ${referralLink}`,
-                  url: referralLink, // iOS also accepts `url`
+                  message: `Join me on this app and earn rewards! Use my referral code: ${userDetails?.referral_code}`,
+                  url: userDetails?.referral_code, // iOS also accepts `url`
                 });
               } catch (error) {
                 console.error("Error sharing link:", error);
