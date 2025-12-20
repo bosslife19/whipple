@@ -121,7 +121,9 @@ const SelectedNumberSpinWheel = () => {
   const handleSpinButtonPress = async() => {
     spinWheel();
 try {
-  const resp = await makeRequest('/deduct-balance');
+  const resp = await makeRequest('/deduct-balance', {
+        amount: game.stake/game.odds
+      });
   if(resp.response.status){
        const res = await makeRequest('/play-game',{
       gameId: id,

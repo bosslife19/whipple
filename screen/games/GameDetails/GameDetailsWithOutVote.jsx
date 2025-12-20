@@ -79,8 +79,7 @@ const GameDetailsWithOutVote = () => {
               <Text style={styles.value}>{odds}</Text>
             </View>
           </View>
-          <Text style={styles.label}>Players</Text>
-          <Text style={styles.value}>9 joined</Text>
+         
         </View>
 
         <View style={styles.card}>

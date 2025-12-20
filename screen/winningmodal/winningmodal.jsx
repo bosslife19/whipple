@@ -26,22 +26,17 @@ const Winningmodal = ({ visible, closeModal }) => {
                   flexDirection: "row",
                   position: "absolute",
                   bottom: "23%",
-                  right: "13%",
-                  gap: 20,
-                  marginHorizontal: "auto",
+                  paddingHorizontal: "10%",
+                  left: '40%',
+                  marginTop:10,
+                  
+
+                  // right: "13%",
+                  
                   flex: 1,
                 }}
               >
-                <TouchableOpacity
-                  style={{
-                    paddingHorizontal: "8%",
-                    borderWidth: 1,
-                    paddingVertical: 10,
-                    borderRadius: 5,
-                  }}
-                >
-                  <Text style={maingamess.confirmText}>View Details</Text>
-                </TouchableOpacity>
+               
 
                 <TouchableOpacity
                   style={{

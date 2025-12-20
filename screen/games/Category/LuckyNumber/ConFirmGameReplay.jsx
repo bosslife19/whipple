@@ -203,8 +203,7 @@ const ConFirmSelectedLuckyNumbers = () => {
               <Text style={ConfirmsSTy.value}>{game?.odds}</Text>
             </View>
           </View>
-          <Text style={ConfirmsSTy.label}>Players</Text>
-          <Text style={ConfirmsSTy.value}>9 joined</Text>
+
         </View>
 
         {/* Number Selection Section */}
