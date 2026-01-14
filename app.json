@@ -17,7 +17,8 @@
         "foregroundImage": "./assets/images/whipple_logo.jpg",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.whipple.whipple"
+      "package": "com.whipple.whipple",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
