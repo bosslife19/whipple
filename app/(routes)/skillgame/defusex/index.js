@@ -158,7 +158,7 @@ export default function DefuseX() {
     //   getMatchingUpdate()
     // }
     if (res.data.match.status === "started") {
-      getMatchingUpdate()
+      getMatchingUpdate('game',0)
       startGame();
       setIsMounted(false)
       // setCountdownTimer(5);
@@ -171,11 +171,11 @@ export default function DefuseX() {
     }
   };
 
-  const getMatchingUpdate = async (ingame = 'game') => { 
+  const getMatchingUpdate = async (ingame = 'game', score) => { 
     try {
       const { error, response }  = await makeRequest("/skillgame/matches/updateScore", {   
           matchId: gameId,
-          score: phase1Score + phase2Score + phase3Score,
+          score: score,
           ingame: ingame,
         });
         
@@ -493,7 +493,7 @@ useEffect(() => {
   // start game
   function startGame() {
     gameStartRef.current = Date.now();
-    getMatchingUpdate()
+    getMatchingUpdate('game',0)
     // reset players
     // setPlayers((p) =>
     //   p.map((pl) => ({
@@ -541,7 +541,7 @@ useEffect(() => {
       alert("error", "💥 BOOM! Wrong wire!");
       setTimeout(() => {
         setShowExplosion(false);
-        finishGame(); // player eliminated -> finish
+        finishGame(0); // player eliminated -> finish
       }, 1500);
       return;
     }
@@ -585,7 +585,7 @@ useEffect(() => {
       alert("error", "💥 BOOM! Unstable wire!");
       setTimeout(() => {
         setShowExplosion(false);
-        finishGame(); // player eliminated -> finish
+        finishGame(50); // player eliminated -> finish
       }, 1500);
     }
     // check if all stable wires cut
@@ -623,32 +623,37 @@ useEffect(() => {
     }
     setTimeout(() => {
       setShowExplosion(false);
-      finishGame();
+      finishGame(isCorrect ? 350 : 150);
     }, isCorrect ? 1000 : 1600);
   }
 
   function handlePhaseTimeout() {
+    setShowExplosion(true);
     if (phase === "phase1-input") {
-      setShowExplosion(true);
-      // setPlayers((p) => p.map((pl) => (pl.id === 1 ? { ...pl, eliminated: true } : pl)));
       setTimeout(() => {
         setShowExplosion(false);
-        finishGame();
+        finishGame(0);
       }, 1200);
     } else if (phase === "phase2") {
-      startPhase3();
+      setTimeout(() => {
+        setShowExplosion(false);
+        finishGame(50);
+      }, 1200);
     } else if (phase === "phase3") {
-      finishGame();
+      setTimeout(() => {
+        setShowExplosion(false);
+        finishGame(150);
+      }, 1200);
     }
   }
 
   // compute totals and finish
-  function finishGame() {
+  function finishGame(score = 0) {
     const completion = (Date.now() - gameStartRef.current) / 1000;
-    const total = phase1Score + phase2Score + phase3Score;
+    const total = score;
     setIsMounted(true)
     getMatchingComplete(total, completion)
-    getMatchingUpdate()
+    getMatchingUpdate('game', total)
     // setPlayers((prev) =>
     //   prev.map((pl) =>
     //     pl.id === 1
