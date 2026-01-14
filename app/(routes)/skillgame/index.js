@@ -98,7 +98,7 @@ export default function Skillgame() {
             <Text style={styles.heroTitle}>WHIPPLE</Text>
             <Text style={styles.heroSubtitle}>SKILL GAMES</Text>
             <Text style={styles.heroDesc}>
-              Compete in fast-paced skill challenges. 4 players enter, top 2 get paid.
+              Compete in fast-paced skill challenges. 4 players enter, top 2 get rewarded.
             </Text>
             <View style={styles.heroStats}>
               <View style={styles.heroStat}>
@@ -132,7 +132,7 @@ export default function Skillgame() {
                 <Text style={styles.skill}>{item.skill}</Text>
 
                 <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Stake:</Text>
+                  <Text style={styles.infoLabel}>Participation</Text>
                   <Text style={styles.infoValue}>₦{item.stake}</Text>
                 </View>
                 <View style={styles.infoRow}>
@@ -163,7 +163,7 @@ export default function Skillgame() {
           </View>
           <View style={styles.infoCard}>
             <Text style={[styles.infoBig, { color: "#facc15" }]}>75%</Text>
-            <Text style={styles.infoSmall}>Winner Takes</Text>
+            <Text style={styles.infoSmall}>Top Performer gets</Text>
           </View>
           <View style={styles.infoCard}>
             <Text style={[styles.infoBig, { color: "#38bdf8" }]}>25%</Text>

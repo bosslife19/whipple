@@ -160,7 +160,7 @@ const renderGameSection = (title, games) => (
           return (
             <View key={index} style={gameCates.card}>
               <View style={gameCates.imageWrapper}>
-                {title === "Top Games" && (
+                {title === "EVENTS" && (
                   <Text style={gameCates.imageBadge}>{index + 1}</Text>
                 )}
 
@@ -238,7 +238,7 @@ const renderGameSection = (title, games) => (
   if (selectedCategory === 'Home') {
     return (
       <View>
-        {renderGameSection('Top Games', topGames)}
+        {renderGameSection('EVENTS', topGames)}
         {renderGameSection('Popular Games', popularGames)}
         {renderGameSection('Quick Games', quickGames)}
       </View>

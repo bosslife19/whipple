@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import Collapsible from "react-native-collapsible";
 import Header from "../Header/Header";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const Support = () => {
   const [activeFAQ, setActiveFAQ] = useState(null);
@@ -26,15 +26,14 @@ const Support = () => {
     six: true,
     seven: true,
     eight: true,
-    nine:true,
-    ten:true
+    nine: true,
+    ten: true,
   });
 
   // const toggleFAQ = (index) => {
   //   setActiveFAQ(activeFAQ === index ? null : index);
   // };
 
-  
   const openEmailApp = () => {
     const email = "support@mywhipple.com";
     Linking.openURL(`mailto:${email}`);
@@ -87,7 +86,7 @@ const Support = () => {
               style={styles.accordionHeader}
             >
               <Text style={styles.accordionText}>
-                How do I become the House?
+                How do I become the Knight?
               </Text>
               <Text style={styles.accordionToggle}>
                 {faqState.two ? "+" : "-"}
@@ -95,13 +94,13 @@ const Support = () => {
             </TouchableOpacity>
             <Collapsible collapsed={faqState.two}>
               <Text style={styles.accordionContent}>
-                You can become the House by creating games. Go to the TOP GAMES
-                PAGE or BECOME THE HOUSE page to create any games of your
-                choice. There is a 25% admission fee to create a game. Why 25%?
-                To create balance ⚖. We want more players than Houses, thus the
-                threshold to become The House is high There is also a 1% deposit
-                fee and 2.5% withdrawal fee(waivable depending on your points)
-                to handle the Cost of our payment partners.
+                You can become the Knight by creating events. Go to the EVENTS
+                PAGE or BECOME THE Knight page to create any events of your
+                choice. There is a 25% admission fee to create a event. Why 25%?
+                To create balance ⚖. We want more participants than Knights, thus the
+                threshold to become The Knight is high There is also a 1%
+                deposit fee and 2.5% withdrawal fee(waivable depending on your
+                points) to handle the Cost of our payment partners.
               </Text>
             </Collapsible>
           </View>
@@ -114,7 +113,7 @@ const Support = () => {
               style={styles.accordionHeader}
             >
               <Text style={styles.accordionText}>
-                How do I compete against The House?
+                How do I compete against The Knight?
               </Text>
               <Text style={styles.accordionToggle}>
                 {faqState.three ? "+" : "-"}
@@ -122,10 +121,10 @@ const Support = () => {
             </TouchableOpacity>
             <Collapsible collapsed={faqState.three}>
               <Text style={styles.accordionContent}>
-                Go to the AVAILABLE GAMES page, check for games published by The
-                House that you would be interested in playing, then use your
-                accumulated points and try to match the House's results for the
-                House's Prize
+                Go to the Available Events page, check for events published by
+                The Knight that you would be interested in playing, then use
+                your accumulated points and try to match the Knight's results
+                for the Knight's reward
               </Text>
             </Collapsible>
           </View>
@@ -137,14 +136,14 @@ const Support = () => {
               }
               style={styles.accordionHeader}
             >
-              <Text style={styles.accordionText}>What is Losers' Game?</Text>
+              <Text style={styles.accordionText}>What is Losers' event?</Text>
               <Text style={styles.accordionToggle}>
                 {faqState.four ? "+" : "-"}
               </Text>
             </TouchableOpacity>
             <Collapsible collapsed={faqState.four}>
               <Text style={styles.accordionContent}>
-                Losers' Game gives you the opportunity to reclaim your game
+                Losers' event gives you the opportunity to reclaim your event
                 after losing the first time. It is as expected, competitive
               </Text>
             </Collapsible>
@@ -165,18 +164,18 @@ const Support = () => {
               <Text style={styles.accordionContent}>
                 Tap Rush is a competition where users try to OUT-TAP each other
                 under a 30 seconds window. The person with the highest taps
-                wins, and goes with 75% of the prize, while the runner up is
-                awarded the remaining 25%. The PRIZE 🏆 depends on how many
-                players matched to play that particular game. There is a 20%
-                platform fee deduction applicable before awarding Prizes. A
-                minimum of two players and a maximum of 4 players are matched
+                triumphs, and goes with 75% of the reward, while the runner up is
+                awarded the remaining 25%. The REWARD 🏆 depends on how many
+                participants matched to play that particular event. There is a 20%
+                platform fee deduction applicable before awarding rewards. A
+                minimum of two participants and a maximum of 4 participants are matched
                 LIVE within a 30 seconds countdown timer, to compete against
                 each other
               </Text>
             </Collapsible>
           </View>
 
-           <View style={styles.accordion}>
+          <View style={styles.accordion}>
             <TouchableOpacity
               onPress={() =>
                 setFaqstate((prev) => ({ ...prev, six: !faqState.six }))
@@ -190,59 +189,97 @@ const Support = () => {
             </TouchableOpacity>
             <Collapsible collapsed={faqState.six}>
               <Text style={styles.accordionContent}>
-                Math Clash is a competition where users solve 20 simple arithmetic questions under a 3 Seconds per question time limit. The person with the highest score wins, and goes with 75% of the prize, while the runner up is awarded the remaining 25%. The PRIZE 🏆 depends on how many players matched to play that particular game. There is a 20% platform fee deduction applicable before awarding Prizes. A minimum of two players and a maximum of 4 players are matched LIVE within a 30 seconds countdown timer, to compete against each other
+                Math Clash is a competition where users solve 20 simple
+                arithmetic questions under a 3 Seconds per question time limit.
+                The person with the highest score triumphs, and goes with 75% of the
+                reward, while the runner up is awarded the remaining 25%. The
+                REWARD 🏆 depends on how many participants matched to play that
+                particular event. There is a 20% platform fee deduction
+                applicable before awarding rewards. A minimum of two participants and
+                a maximum of 4 participants are matched LIVE within a 30 seconds
+                countdown timer, to compete against each other
               </Text>
             </Collapsible>
           </View>
 
-                     <View style={styles.accordion}>
+          <View style={styles.accordion}>
             <TouchableOpacity
               onPress={() =>
                 setFaqstate((prev) => ({ ...prev, seven: !faqState.seven }))
               }
               style={styles.accordionHeader}
             >
-              <Text style={styles.accordionText}>What is Color Switch Reflex?</Text>
+              <Text style={styles.accordionText}>
+                What is Color Switch Reflex?
+              </Text>
               <Text style={styles.accordionToggle}>
                 {faqState.seven ? "+" : "-"}
               </Text>
             </TouchableOpacity>
             <Collapsible collapsed={faqState.seven}>
               <Text style={styles.accordionContent}>
-                Color Switch Reflex is a competition where users match the color(in words) that pops up, against the color it appears in. For example, if RED(the word) appears in GREEN( the color), the user will click on GREEN( the color) to gain points. These pop ups will come up 20 times within a time frame of 2 seconds per pop up, and the player has to match the WORD against the COLOR it appears in. The person with the highest score wins, and goes with 75% of the prize, while the runner up is awarded the remaining 25%. The PRIZE 🏆 depends on how many players matched to play that particular game. There is a 20% platform fee deduction applicable before awarding Prizes. A minimum of two players and a maximum of 4 players are matched LIVE within a 30 seconds countdown timer, to compete against each other
+                Color Switch Reflex is a competition where users match the
+                color(in words) that pops up, against the color it appears in.
+                For example, if RED(the word) appears in GREEN( the color), the
+                user will click on GREEN( the color) to gain points. These pop
+                ups will come up 20 times within a time frame of 2 seconds per
+                pop up, and the participant has to match the WORD against the COLOR
+                it appears in. The person with the highest score triumphs, and goes
+                with 75% of the reward, while the runner up is awarded the
+                remaining 25%. The REWARD 🏆 depends on how many participants matched
+                to play that particular event. There is a 20% platform fee
+                deduction applicable before awarding rewards. A minimum of two
+                participants and a maximum of 4 participants are matched LIVE within a 30
+                seconds countdown timer, to compete against each other
               </Text>
             </Collapsible>
           </View>
 
-                     <View style={styles.accordion}>
+          <View style={styles.accordion}>
             <TouchableOpacity
               onPress={() =>
                 setFaqstate((prev) => ({ ...prev, eight: !faqState.eight }))
               }
               style={styles.accordionHeader}
             >
-              <Text style={styles.accordionText}>What is Defuse-X?
- </Text>
+              <Text style={styles.accordionText}>What is Defuse-X?</Text>
               <Text style={styles.accordionToggle}>
                 {faqState.eight ? "+" : "-"}
               </Text>
             </TouchableOpacity>
             <Collapsible collapsed={faqState.eight}>
               <Text style={styles.accordionContent}>
-              Defuse-X is a competition where users attempt to successfully defuse a Virtual Explosive under intense pressure and time constraints. It involves pattern recognition, keen attention to details and quick memory. It is in three(3) phases and users must scale one phase before he is allowed to proceed to the next phase, to avoid a virtual explosion 💥, which means "GAME OVER"
-
-Phase 1: Pattern recognition: Here, four colors will appear randomly in a sequence and then disappear. The user must memorize the sequence and has 5 seconds to reproduce that same exact sequence that he saw, in order to scale Phase 1
-
-Phase 2: Attention to details: Here, four random colors will appear, a combination of Slow-blinking colors and Fast-blinking colors in a tricky fashion. The user has 3 seconds to click on the slow-blinking colors, in order to scale Phase 2 
-
-Phase 3: Memory: Here, the user will be asked to recall a random event he saw in Phase 1. For example, he can be asked to click on the third color that appeared in the sequence in Phase 1, etc. The user has 5 seconds to click on the appropriate answer, in order to scale Phase 3, to successfully defuse the virtual explosive and emerge the winner 
-
-The person with the highest score wins, and goes with 100% of the Prize, as it is a WINNER TAKES ALL Game. The PRIZE 🏆 depends on how many players matched to play that particular game. There is a 20% platform fee deduction applicable before awarding Prizes. A minimum of two players and a maximum of 4 players are matched LIVE within a 30 seconds countdown timer, to compete against each other
+                Defuse-X is a competition where users attempt to successfully
+                defuse a Virtual Explosive under intense pressure and time
+                constraints. It involves pattern recognition, keen attention to
+                details and quick memory. It is in three(3) phases and users
+                must scale one phase before he is allowed to proceed to the next
+                phase, to avoid a virtual explosion 💥, which means "event OVER"
+                Phase 1: Pattern recognition: Here, four colors will appear
+                randomly in a sequence and then disappear. The user must
+                memorize the sequence and has 5 seconds to reproduce that same
+                exact sequence that he saw, in order to scale Phase 1 Phase 2:
+                Attention to details: Here, four random colors will appear, a
+                combination of Slow-blinking colors and Fast-blinking colors in
+                a tricky fashion. The user has 3 seconds to click on the
+                slow-blinking colors, in order to scale Phase 2 Phase 3: Memory:
+                Here, the user will be asked to recall a random event he saw in
+                Phase 1. For example, he can be asked to click on the third
+                color that appeared in the sequence in Phase 1, etc. The user
+                has 5 seconds to click on the appropriate answer, in order to
+                scale Phase 3, to successfully defuse the virtual explosive and
+                emerge the winner The person with the highest score triumphs, and
+                goes with 100% of the reward, as it is a ZERO SUM event.
+                The REWARD 🏆 depends on how many participants matched to play that
+                particular event. There is a 20% platform fee deduction
+                applicable before awarding rewards. A minimum of two participants and
+                a maximum of 4 participants are matched LIVE within a 30 seconds
+                countdown timer, to compete against each other
               </Text>
             </Collapsible>
           </View>
           {/* ))} */}
-           <View style={styles.accordion}>
+          <View style={styles.accordion}>
             <TouchableOpacity
               // onPress={() => toggleFAQ(index)}
               onPress={() =>
@@ -250,26 +287,25 @@ The person with the highest score wins, and goes with 100% of the Prize, as it i
               }
               style={styles.accordionHeader}
             >
-              <Text style={styles.accordionText}>
-                What are Whipple Points?
-              </Text>
+              <Text style={styles.accordionText}>What are Whipple Points?</Text>
               <Text style={styles.accordionToggle}>
                 {faqState.nine ? "+" : "-"}
               </Text>
             </TouchableOpacity>
             <Collapsible collapsed={faqState.nine}>
               <Text style={styles.accordionContent}>
-               Whipple points are points awarded to users when they perform certain actions on the platform. With the accumulated points, they get privileges like:
-
-1) With 20 Whipple points, 2.5% withdrawal fee gets waived and user makes free withdrawal 
-
-2) With 40 Whipple points, the user will play FREE games(Tap Rush, Math Clash, Color Switch Reflex and Defuse-X) in the "Game Rush" category 
-
-3) With 40 Whipple points, the user also gets 25% discounted plays(as The House or player competing against The House) in the other games
-
-4) With 80 Whipple points, the user will play FREE games(as The House or player competing against The House) in the other games 
-
-There will be a corresponding reduction in Whipple points in the above scenarios
+                Whipple points are points awarded to users when they perform
+                certain actions on the platform. With the accumulated points,
+                they get privileges like: 1) With 20 Whipple points, 2.5%
+                withdrawal fee gets waived and user makes free withdrawal 2)
+                With 40 Whipple points, the user will participate in FREE events(Tap Rush,
+                Math Clash, Color Switch Reflex and Defuse-X) in the "event
+                Rush" category 3) With 40 Whipple points, the user also gets 25%
+                discounted events(as The Knight or participant competing against The
+                Knight) in the other events 4) With 80 Whipple points, the user
+                will participate in FREE events(as The Knight or participant competing against
+                The Knight) in the other events There will be a corresponding
+                reduction in Whipple points in the above scenarios
               </Text>
             </Collapsible>
           </View>
@@ -281,26 +317,35 @@ There will be a corresponding reduction in Whipple points in the above scenarios
               }
               style={styles.accordionHeader}
             >
-              <Text style={styles.accordionText}>How do I accumulate Whipple Points?</Text>
+              <Text style={styles.accordionText}>
+                How do I accumulate Whipple Points?
+              </Text>
               <Text style={styles.accordionToggle}>
                 {faqState.ten ? "+" : "-"}
               </Text>
             </TouchableOpacity>
             <Collapsible collapsed={faqState.ten}>
               <Text style={styles.accordionContent}>
-                You can accumulate Whipple points by:
-
-1) Referring your friends to register on Whipple using your REFERRAL CODE and play games on Whipple. You will get 4 Whipple points per successful referral
-
-Refer as many people as possible and make sure they register on Whipple with your REFERRAL CODE, in order for you to accumulate as many Whipple points as possible 😁
-
-2) Play the SkillQuiz Pro game. Answer 40 short quiz questions under 5 seconds per question, and compete to win 2 Whipple points per correct answer for a maximum of 80 Whipple points. It is FREE to play, however, if you want, you can boost the time from 5 seconds to 60 seconds for 100 naira  per question, if you need more time to answer a question. 
-
-The Quiz game can only be played once in 24 hours and users are advised to stay on course and complete the Quiz once they start, in order to MAXIMIZE their Whipple points accumulation.
-
-3) upload on your Social Media handles a screen record of the games you won on Whipple (with TIME-STAMPS) and send us a link to your handle to verify, then grant us the permission to reshare and get 4 additional Whipple points for that day
-
-4) Play the Pre-Game Activity Games
+                You can accumulate Whipple points by: 1) Referring your friends
+                to register on Whipple using your REFERRAL CODE and create events
+                on Whipple. You will get 4 Whipple points per successful
+                referral. Refer as many people as possible and make sure they
+                register on Whipple with your REFERRAL CODE, in order for you to
+                accumulate as many Whipple points as possible 😁 2) Participate in the
+                SkillQuiz Pro event. Answer 40 short quiz questions under 5
+                seconds per question, and compete to win 2 Whipple points per
+                correct answer for a maximum of 80 Whipple points. It is FREE to
+                play, however, if you want, you can boost the time from 5
+                seconds to 60 seconds for 100 naira per question, if you need
+                more time to answer a question. The Quiz event can only be
+                played once in 24 hours and users are advised to stay on course
+                and complete the Quiz once they start, in order to MAXIMIZE
+                their Whipple points accumulation. 3) upload on your Social
+                Media handles a screen record of the events you won on Whipple
+                (with TIME-STAMPS) and send us a link to your handle to verify,
+                then grant us the permission to reshare and get 4 additional
+                Whipple points for that day 4) Play the Pre-event Activity
+                events
               </Text>
             </Collapsible>
           </View>
@@ -324,10 +369,7 @@ The Quiz game can only be played once in 24 hours and users are advised to stay 
             </TouchableOpacity>
 
             {/* WhatsApp */}
-            <TouchableOpacity
-              style={styles.contactRow}
-              onPress={openWhatsapp}
-            >
+            <TouchableOpacity style={styles.contactRow} onPress={openWhatsapp}>
               <FontAwesome name="whatsapp" size={24} color="#25D366" />
               <Text style={styles.contactTextClickable}>+234 9079141911</Text>
             </TouchableOpacity>

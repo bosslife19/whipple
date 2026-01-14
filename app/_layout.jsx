@@ -11,9 +11,18 @@ import { Platform } from 'react-native';
 import { GameProvider } from '../context/AppContext.js'; // adjust path
 import {AuthProvider} from '../context/AuthContext.js'
 import { PaystackProvider} from 'react-native-paystack-webview';
+import { NotificationProvider } from "@/context/NotificationContext";
+import * as Notifications from 'expo-notifications'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -51,6 +60,7 @@ export default function RootLayout() {
 
   return (
   <AuthProvider>
+    <NotificationProvider>
     <GameProvider>
       <PaystackProvider publicKey={process.env.EXPO_PUBLIC_PAYSTACK_LIVE} defaultChannels={['card','bank_transfer','mobile_money','ussd','bank']}>
         <Stack screenOptions={{ headerShown: false }}>
@@ -58,6 +68,8 @@ export default function RootLayout() {
         </Stack>
       </PaystackProvider>
     </GameProvider>
+    </NotificationProvider>
+   
   </AuthProvider>
 );
 

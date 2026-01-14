@@ -106,7 +106,7 @@ const [user, setUser] = useState(null);
         {/* Placeholder for Additional Content */}
         <View style={Homes.contentContainer}>
          <View style={[Homes.scrollContainer,{justifyContent:"space-between",marginHorizontal:16,}]}>
-            <Text style={Homes.Header}>Available Games</Text>
+            <Text style={Homes.Header}>Available Events</Text>
              <TouchableOpacity 
              onPress={()=> router.push("/(routes)/games/availablegames")}
              style={{backgroundColor:'#0040841F',paddingHorizontal:15,paddingVertical:5,borderRadius:5}} >
@@ -130,7 +130,7 @@ const [user, setUser] = useState(null);
             </Text>
             </TouchableOpacity>
           </View>
-          {/* Available Games */}
+          {/* Available Events */}
           <AvailableGamesList/>
         </View>
 
@@ -149,7 +149,7 @@ const [user, setUser] = useState(null);
                     
             </TouchableOpacity> */}
          {/* </View> */}
-          {/* Available Games */}
+          {/* Available Events */}
           {/* <PastGames/> */}
         {/* </View> */}
 
