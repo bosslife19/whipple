@@ -40,6 +40,7 @@ export async function registerForPushNotificationsAsync() {
         })
       ).data;
 
+
       await AsyncStorage.setItem('pushToken', pushTokenString);
       return pushTokenString;
     } catch (e: unknown) {
