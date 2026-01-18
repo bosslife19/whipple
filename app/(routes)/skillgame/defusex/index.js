@@ -54,7 +54,7 @@ const WIRE_COLORS = [
 export default function DefuseX() {
   // Game state variables
   const [phase, setPhase] = useState("waiting"); // waiting, countdown, phase1, phase1-input, phase2, phase3, finished
-  const [matchTimer, setMatchTimer] = useState(3);
+  const [matchTimer, setMatchTimer] = useState(30);
   const [countdown, setCountdown] = useState(5);
   const [phase1Sequence, setPhase1Sequence] = useState([]);
   const [playerSequence, setPlayerSequence] = useState([]);
@@ -694,7 +694,7 @@ useEffect(() => {
     setPhase3Score(0);
     setIsMounted(false)
     if(bckclc){      
-      setMatchTimer(3);
+      setMatchTimer(30);
       router.push(`/(routes)/skillgame/defusex`)
     }else{
       setMatchTimer(0);
