@@ -563,7 +563,7 @@ useEffect(() => {
     setCutWires(new Set());
     setPhase2Score(0);
     setPhase("phase2");
-    setTimeLeft(3);
+    setTimeLeft(5);
     alert("info", "Phase 2: Cut only stable wires!");
   }
 
