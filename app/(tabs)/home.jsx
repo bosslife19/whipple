@@ -25,6 +25,7 @@ import {AuthContext} from '../../context/AuthContext'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { formatCurrency } from '../../utlils';
 import {useFocusEffect} from 'expo-router';
+import {registerForPushNotificationsAsync} from '../../utlils/registerForPushnotificationsAsync'
 import axiosClient from '../../axiosClient';
 
 export default function HomeScreen() {
@@ -44,7 +45,10 @@ const [user, setUser] = useState(null);
        
          registerForPushNotificationsAsync().then(
                 (token) => {
-                  axiosClient.post('/user-push-token', {token}).then(data=>AsyncStorage.removeItem('pushToken'));
+                  axiosClient.post('/user-push-token', {token}).then(data=>{
+                    
+                    AsyncStorage.removeItem('pushToken')
+                  }).catch(e=>console.log(e));
     
                 },
                 (error) => {
