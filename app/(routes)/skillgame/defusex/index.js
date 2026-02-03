@@ -19,6 +19,7 @@ import Toast from '../../../../components/Toast';
 import axiosClient from "../../../../axiosClient";
 import {AuthContext} from '../../../../context/AuthContext'
 import { useRequest } from "../../../../hooks/useRequest";
+import { useIsFocused } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
@@ -78,6 +79,8 @@ export default function DefuseX() {
   const { loading, makeRequest } = useRequest();
   const [gameId, setGameId] = useState();
 
+  const isFocused = useIsFocused();
+
 
   const getMatchingJoining = async () => { 
     try {
@@ -85,31 +88,34 @@ export default function DefuseX() {
       setUserBalanceGen(res?.data.user_balance)
       setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
       setGameId(res.data.match.id)
+      setMatchTimer(res.data.countdown)
+      if(res.data.countdown == 0){
+        setPhase("countdown");
+        setCountdown(1);
+      }
     } catch (error) {  
       // console.error('Error fetching admin parameter:', error);
-      setToastVisible(true)
-      setToastType("error")
-      setToastTitle("Insufficient balance")
-      setToastMessage("Your balance is too low for this game.")
-      resetMatchmaking(false)
+      handleNetworkError("Insufficient balance", "Your balance is too low for this game.") 
     } finally { 
       // setLoader("");
     }
   };
 
-  const handleNetworkError = () => {
+   const handleNetworkError = (hdg="Network error", mss="Please try again!") => {
     setToastVisible(true)
-    setToastType("error")
-    setToastTitle("Network error")
-    setToastMessage("Please try again!")
-    resetMatchmaking(false)
+    setToastType("error")   
+    setToastTitle(hdg)
+    setToastMessage(mss)
+    setTimeout(() => {
+      resetMatchmaking(false)
+    }, 3000)
   }
 
   const getMatchingStart = async () => { 
     try {
       const res = await axiosClient.get(`/skillgame/matches/start/${gameId}`);
       if(res.data.status == "error"){
-        handleNetworkError()
+        handleNetworkError('Match start error', res.data.message)
       }
       setPlayers((prev) => {
       const existingIds = new Set(prev.map((p) => p.id));
@@ -137,6 +143,9 @@ export default function DefuseX() {
     try {
       const res = await axiosClient.get(`/skillgame/matches/status/${gameId}`);
       // console.log(res.data.players)
+      if(res?.data?.match?.status == "cancelled"){
+        handleNetworkError("No active players", "No users available for this game. Please try again later.")
+      }
       setPlayers((prev) => {
       const existingIds = new Set(prev.map((p) => p.id));
       const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
@@ -235,11 +244,13 @@ export default function DefuseX() {
   };
 
   useEffect(() => {
+    if (!isFocused) return;
       getMatchingJoining();
     }, []);
 
   const [blinkIndex, setBlinkIndex] = useState(0);
   useEffect(() => {
+    if (!isFocused) return;
     const colors = ["color", "dull", "brightness"];
     const interval = setInterval(() => {
       setBlinkIndex((prev) => (prev + 1) % colors.length);
@@ -254,6 +265,7 @@ export default function DefuseX() {
 
   // 🔁 Fast blinking for unstable wires
   useEffect(() => {
+    if (!isFocused) return;
     const fastInterval = setInterval(() => {
       setFastBlink((prev) => !prev);
     }, 300); // fast blink speed
@@ -262,6 +274,7 @@ export default function DefuseX() {
 
   // 🕐 Slow blinking for cut wires
   useEffect(() => {
+    if (!isFocused) return;
     const slowInterval = setInterval(() => {
       setSlowBlink((prev) => !prev);
     }, 800); // slow blink speed
@@ -270,6 +283,7 @@ export default function DefuseX() {
 
 
 useEffect(() => {
+  if (!isFocused) return;
     let interval;
     
       if (isMounted) {
@@ -305,6 +319,7 @@ useEffect(() => {
   const glowAnim = useRef(new Animated.Value(0)).current;
     
       useEffect(() => {
+        if (!isFocused) return;
         Animated.loop(
           Animated.sequence([
             Animated.timing(glowAnim, {
@@ -346,6 +361,7 @@ useEffect(() => {
   // Animated glow for wires / card
   const glow = useRef(new Animated.Value(0)).current;
   useEffect(() => {
+    if (!isFocused) return;
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(glow, { toValue: 1, duration: 900, useNativeDriver: false }),
@@ -359,6 +375,7 @@ useEffect(() => {
   // small pulse for sequence boxes
   const pulse = useRef(new Animated.Value(1)).current;
   useEffect(() => {
+    if (!isFocused) return;
     const l = Animated.loop(
       Animated.sequence([
         Animated.timing(pulse, { toValue: 1.06, duration: 700, useNativeDriver: true }),
@@ -371,6 +388,7 @@ useEffect(() => {
 
   // matchmaking timer that fills players
   useEffect(() => {
+    if (!isFocused) return;
     if (phase !== "waiting") return;
     if (matchTimer <= 0) {
       // start countdown
@@ -407,6 +425,7 @@ useEffect(() => {
 
   // countdown -> start game
   useEffect(() => {
+    if (!isFocused) return;
     if (phase !== "countdown") return;
     if (countdown <= 0) {
       // startGame();
@@ -426,6 +445,7 @@ useEffect(() => {
 
   // phase timers (phase1-input, phase2, phase3)
   useEffect(() => {
+    if (!isFocused) return;
     if (!["phase1-input", "phase2", "phase3"].includes(phase)) return;
     if (timeLeft <= 0) {
       // handle timeouts
@@ -438,6 +458,7 @@ useEffect(() => {
 
   // simulate opponents behavior during phase2 & 3 and scoring
   // useEffect(() => {
+  // if (!isFocused) return;
   //   if (phase === "phase2" || phase === "phase3") {
   //     const interval = setInterval(() => {
   //       setPlayers((prev) =>

@@ -134,7 +134,7 @@ export default function Skillgame() {
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Stake:</Text>
                   <Text style={styles.infoValue}>₦{item.stake}</Text>
-                </View>
+                </View> 
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Duration:</Text>
                   <Text style={styles.infoValue}>{item.duration}</Text>
