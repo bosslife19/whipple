@@ -7,6 +7,7 @@ import axiosClient from "../../../../axiosClient";
 import Toast from '../../../../components/Toast';
 import {AuthContext} from '../../../../context/AuthContext'
 import { useRequest } from "../../../../hooks/useRequest";
+import { useIsFocused } from "@react-navigation/native";
 
 const COLORS = [
   { name: 'RED', value: '#EF4444' },
@@ -36,37 +37,41 @@ export default function ColorSwitchReflex() {
   const { loading, makeRequest } = useRequest();
   const [gameId, setGameId] = useState();
 
+  const isFocused = useIsFocused();
+
   const getMatchingJoining = async () => { 
     try {
       const res = await axiosClient.get("/skillgame/matches/join/color_switch");
       setUserBalanceGen(res?.data.user_balance)
       setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
       setGameId(res.data.match.id)
-    } catch (error) { handleNetworkError  
-      // console.error('Error fetching admin parameter:', error);
-      setToastVisible(true)
-      setToastType("error")
-      setToastTitle("Insufficient balance")
-      setToastMessage("Your balance is too low for this game.")
-      resetMatchmaking(false)
+      setMatchmakingTimer(res.data.countdown)
+      if(res.data.countdown == 0){
+        setGameState("countdown");
+        setCountdownTimer(1);
+      }
+    } catch (error) { 
+      handleNetworkError("Insufficient balance", "Your balance is too low for this game.") 
     } finally { 
       // setLoader("");
     }
   };
 
-  const handleNetworkError = () => {
+   const handleNetworkError = (hdg="Network error", mss="Please try again!") => {
     setToastVisible(true)
-    setToastType("error")
-    setToastTitle("Network error")
-    setToastMessage("Please try again!")
-    resetMatchmaking(false)
+    setToastType("error")   
+    setToastTitle(hdg)
+    setToastMessage(mss)
+    setTimeout(() => {
+      resetMatchmaking(false)
+    }, 3000)
   }
 
   const getMatchingStart = async () => { 
       try {
         const res = await axiosClient.get(`/skillgame/matches/start/${gameId}`);
         if(res.data.status == "error"){
-          handleNetworkError()
+          handleNetworkError('Match start error', res.data.message)
         }
         setPlayers((prev) => {
         const existingIds = new Set(prev.map((p) => p.id));
@@ -96,6 +101,9 @@ export default function ColorSwitchReflex() {
     try {
       const res = await axiosClient.get(`/skillgame/matches/status/${gameId}`);
       // console.log(res.data.players)
+      if(res?.data?.match?.status == "cancelled"){
+        handleNetworkError("No active players", "No users available for this game. Please try again later.")
+      }
       setPlayers((prev) => {
       const existingIds = new Set(prev.map((p) => p.id));
       const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
@@ -188,10 +196,12 @@ export default function ColorSwitchReflex() {
   };
 
   useEffect(() => {
+    if (!isFocused) return;
       getMatchingJoining();
     }, []);
   
    useEffect(() => {
+    if (!isFocused) return;
     let interval;
     
       if (isMounted) {
@@ -222,6 +232,7 @@ export default function ColorSwitchReflex() {
   const glowAnim = useRef(new Animated.Value(0)).current;
   
     useEffect(() => {
+      if (!isFocused) return;
       Animated.loop(
         Animated.sequence([
           Animated.timing(glowAnim, {
@@ -274,6 +285,7 @@ export default function ColorSwitchReflex() {
 
   // Matchmaking phase
   useEffect(() => {
+    if (!isFocused) return;
     if (gameState === 'waiting' && matchmakingTimer > 0) {
       const timer = setTimeout(() => {
         const newTime = matchmakingTimer - 1;
@@ -291,6 +303,7 @@ export default function ColorSwitchReflex() {
 
   // Countdown before start
   useEffect(() => {
+    if (!isFocused) return;
     if (gameState === 'countdown' && countdownTimer > 0) {
       const timer = setTimeout(() => {
         setCountdownTimer(countdownTimer - 1)
@@ -308,6 +321,7 @@ export default function ColorSwitchReflex() {
 
   // Timer for each round
   useEffect(() => {
+    if (!isFocused) return;
     if (gameState === 'playing' && timeLeft > 0) {
       const timer = setTimeout(() => {
         setTimeLeft(timeLeft - 1)
@@ -558,6 +572,16 @@ export default function ColorSwitchReflex() {
             </View>
         </View>
       )}
+
+      <Toast
+        visible={toastVisible}
+        type={toastType}
+        title={toastTitle}
+        message={toastMessage}
+        position="bottom"
+        duration={3000}
+        onHide={() => setToastVisible(false)}
+      />
     </View>
   );
 }
