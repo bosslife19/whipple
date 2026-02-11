@@ -12,12 +12,12 @@ import { ArrowLeft, Trophy, Medal } from "lucide-react-native";
 import { router } from 'expo-router';
 import axiosClient from "../../../../axiosClient";
 import Toast from '../../../../components/Toast';
-import {AuthContext} from '../../../../context/AuthContext'
+import { AuthContext } from '../../../../context/AuthContext'
 import { useRequest } from "../../../../hooks/useRequest";
 import { useIsFocused } from "@react-navigation/native";
 
 export default function TapRush() {
-  const {userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails} = useContext(AuthContext)
+  const { userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails } = useContext(AuthContext)
   const { loading, makeRequest } = useRequest();
   const [gameId, setGameId] = useState();
   const [gameState, setGameState] = useState("waiting");
@@ -36,9 +36,35 @@ export default function TapRush() {
   const isFocused = useIsFocused();
 
   const glowAnim = useRef(new Animated.Value(0)).current;
+  const timeoutsRef = useRef([]);
+  const intervalsRef = useRef([]);
+
+  const safeSetTimeout = (callback, delay) => {
+    const id = setTimeout(callback, delay);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  const safeSetInterval = (callback, delay) => {
+    const id = setInterval(callback, delay);
+    intervalsRef.current.push(id);
+    return id;
+  };
+
+  const clearAllTimers = () => {
+    timeoutsRef.current.forEach(clearTimeout);
+    intervalsRef.current.forEach(clearInterval);
+
+    timeoutsRef.current = [];
+    intervalsRef.current = [];
+  };
 
   useEffect(() => {
-    if (!isFocused) return;
+    if (!isFocused) {
+      clearAllTimers();
+      setIsMounted(false);
+      return;
+    }
     Animated.loop(
       Animated.sequence([
         Animated.timing(glowAnim, {
@@ -77,155 +103,158 @@ export default function TapRush() {
     }),
   };
 
-  const getMatchingJoining = async () => { 
+  const getMatchingJoining = async () => {
     try {
       const res = await axiosClient.get("/skillgame/matches/join/tap_rush");
       setUserBalanceGen(res?.data.user_balance)
-      setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
+      setUserDetails(prev => ({ ...prev, wallet_balance: res?.data.user_balance }));
       setGameId(res.data.match.id)
       setMatchmakingTimer(res.data.countdown)
-      if(res.data.countdown == 0){
+      if (res.data.countdown == 0) {
         setGameState("countdown");
         setCountdownTimer(1);
       }
-    } catch (error) { 
-      handleNetworkError("Insufficient balance", "Your balance is too low for this game.") 
-    } finally { 
+    } catch (error) {
+      handleNetworkError("Insufficient balance", "Your balance is too low for this game.")
+    } finally {
       // setLoader("");
     }
   };
 
- const handleNetworkError = (hdg="Network error", mss="Please try again!") => {
+  const handleNetworkError = (hdg = "Network error", mss = "Please try again!") => {
     setToastVisible(true)
-    setToastType("error")   
+    setToastType("error")
     setToastTitle(hdg)
     setToastMessage(mss)
-    setTimeout(() => {
+    safeSetTimeout(() => {
       resetMatchmaking(false)
     }, 3000)
   }
 
-  const getMatchingStart = async () => { 
+  const getMatchingStart = async () => {
     try {
       const res = await axiosClient.get(`/skillgame/matches/start/${gameId}`);
-      if(res.data.status == "error"){
+      if (res.data.status == "error") {
         handleNetworkError('Match start error', res.data.message)
       }
       setPlayers((prev) => {
-      const existingIds = new Set(prev.map((p) => p.id));
-      const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
-      
-      return [
-        ...prev,
-        ...newPlayers?.map((player) => ({
-          id: player.id,
-          name: player.user_id,
-          taps: player.score,
-        })),
-      ];
-    });
-    setPlayersReady(res.data.playerCount);
-      
-    } catch (error) { handleNetworkError  
-     
-    } finally { 
-      
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
+
+        return [
+          ...prev,
+          ...newPlayers?.map((player) => ({
+            id: player.id,
+            name: player.user_id,
+            taps: player.score,
+          })),
+        ];
+      });
+      setPlayersReady(res.data.playerCount);
+
+    } catch (error) {
+      handleNetworkError
+
+    } finally {
+
     }
   };
 
-  const getMatchingPlayer = async () => { 
+  const getMatchingPlayer = async () => {
     try {
       const res = await axiosClient.get(`/skillgame/matches/status/${gameId}`);
       // console.log(res.data.players)
-      if(res?.data?.match?.status == "cancelled"){
+      if (res?.data?.match?.status == "cancelled") {
         handleNetworkError("No active players", "No users available for this game. Please try again later.")
       }
       setPlayers((prev) => {
-      const existingIds = new Set(prev.map((p) => p.id));
-      const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
-      
-      return [
-        ...prev,
-        ...newPlayers?.map((player) => ({
-          id: player.id,
-          name: player.user_id,
-          taps: player.score,
-        })),
-      ];
-    });
-    setPlayersReady(res.data.playerCount);
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
 
-    // Start countdown
-    // if (playersReady >= 4 || newTimer === 0) {
-    if (res.data.match.status === "started") {
-      getMatchingUpdate()
-      startGame();
-      setIsMounted(false)
-      // setCountdownTimer(2);
+        return [
+          ...prev,
+          ...newPlayers?.map((player) => ({
+            id: player.id,
+            name: player.user_id,
+            taps: player.score,
+          })),
+        ];
+      });
+      setPlayersReady(res.data.playerCount);
+
+      // Start countdown
+      // if (playersReady >= 4 || newTimer === 0) {
+      if (res.data.match.status === "started") {
+        getMatchingUpdate()
+        startGame();
+        setIsMounted(false)
+        // setCountdownTimer(2);
+      }
+
+    } catch (error) {
+      handleNetworkError
+
+    } finally {
+
     }
-      
-    } catch (error) { handleNetworkError  
-     
-    } finally { 
-      
-    }
   };
 
-  const getMatchingUpdate = async (ingame = 'game') => { 
+  const getMatchingUpdate = async (ingame = 'game') => {
     try {
-      const { error, response }  = await makeRequest("/skillgame/matches/updateScore", {   
-          matchId: gameId,
-          score: Number(tapCount || 0),
-          ingame: ingame,
-        });
-        
-        if(response){
-          setPlayers(
-            response?.leaderboard.map((player) => ({
-              id: player.id,
-              name: player.name,
-              taps: player.score,
-            }))
-          );
-        }    
-      
-    } catch (error) { handleNetworkError  } finally {  }
+      const { error, response } = await makeRequest("/skillgame/matches/updateScore", {
+        matchId: gameId,
+        score: Number(tapCount || 0),
+        ingame: ingame,
+      });
+
+      if (response) {
+        setPlayers(
+          response?.leaderboard.map((player) => ({
+            id: player.id,
+            name: player.name,
+            taps: player.score,
+          }))
+        );
+      }
+
+    } catch (error) { handleNetworkError } finally { }
   };
 
-  const getMatchingComplete = async () => { 
+  const getMatchingComplete = async () => {
     try {
-      const { error, response }  = await makeRequest("/skillgame/matches/complete", {   
-          matchId: gameId,
-          score: tapCount,
-          time: countdownTimer
-        });  
-      
-    } catch (error) { handleNetworkError  } finally {  }
+      const { error, response } = await makeRequest("/skillgame/matches/complete", {
+        matchId: gameId,
+        score: tapCount,
+        time: countdownTimer
+      });
+
+    } catch (error) { handleNetworkError } finally { }
   };
 
-  const getMatchingEndUpdate = async () => { 
+  const getMatchingEndUpdate = async () => {
     try {
       const res = await axiosClient.get(`/skillgame/matches/checkStatus/${gameId}`);
-      
-      if(res.data.status === "finished"){
+
+      if (res.data.status === "finished") {
         setWinnings(res?.data.user_winning)
         setUserBalanceGen(res?.data.user_balance)
-        setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
+        setUserDetails(prev => ({ ...prev, wallet_balance: res?.data.user_balance }));
         setPlayers(
-            res.data.results.map((player) => ({
-              id: player.rank,
-              name: player.name,
-              taps: player.score,
-              win: player.winnings,
-            }))
-          );
-          setIsMounted(false)
-          setGameState("finished");
+          res.data.results.map((player) => ({
+            id: player.rank,
+            name: player.name,
+            taps: player.score,
+            win: player.winnings,
+          }))
+        );
+        setIsMounted(false)
+        setGameState("finished");
       }
-      
-    } catch (error) { handleNetworkError  
-     
-    } finally { 
+
+    } catch (error) {
+      handleNetworkError
+
+    } finally {
     }
   };
 
@@ -234,50 +263,50 @@ export default function TapRush() {
     getMatchingJoining();
   }, []);
 
- useEffect(() => {
-  if (!isFocused) return;
-  let interval;
+  useEffect(() => {
+    if (!isFocused) return;
+    let interval;
 
-  if (isMounted) {
-    // Run once immediately
-    if(gameState === "countdown" && countdownTimer === 0){
-      getMatchingPlayer()
-    }else{
-       getMatchingEndUpdate();
+    if (isMounted) {
+      // Run once immediately
+      if (gameState === "countdown" && countdownTimer === 0) {
+        getMatchingPlayer()
+      } else {
+        getMatchingEndUpdate();
+      }
+
+      // Start polling
+      interval = safeSetInterval(() => {
+        if (isMounted) {
+          if (gameState === "countdown" && countdownTimer === 0) {
+            getMatchingPlayer()
+          } else {
+            getMatchingEndUpdate();
+          }
+        }
+      }, 2000);
     }
 
-    // Start polling
-    interval = setInterval(() => {
-      if (isMounted) {
-        if(gameState === "countdown" && countdownTimer === 0){
-          getMatchingPlayer()
-        }else{
-           getMatchingEndUpdate();
-        }
-      }   
-    }, 2000);
-  }
-
-  // Cleanup when unmounting or when isMounted becomes false
-  return () => {
-    if (interval) clearInterval(interval);
-  };
-}, [isMounted]);
+    // Cleanup when unmounting or when isMounted becomes false
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isMounted]);
 
 
   // Matchmaking timer
   useEffect(() => {
     if (!isFocused) return;
     if (gameState === "waiting" && matchmakingTimer > 0) {
-      const timer = setTimeout(() => {
+      const timer = safeSetTimeout(() => {
         const newTimer = matchmakingTimer - 1;
         setMatchmakingTimer(newTimer);
-        if(gameId){          
+        if (gameId) {
           getMatchingPlayer()
         }
       }, 1000);
       return () => clearTimeout(timer);
-    }else if (matchmakingTimer === 0 && gameState === "waiting") {
+    } else if (matchmakingTimer === 0 && gameState === "waiting") {
       // Force start the game
       setGameState("countdown");
     }
@@ -287,15 +316,15 @@ export default function TapRush() {
   useEffect(() => {
     if (!isFocused) return;
     if (gameState === "countdown" && countdownTimer > 0) {
-      const timer = setTimeout(() => {  
-         setCountdownTimer(countdownTimer - 1)
-         if(gameId){          
+      const timer = safeSetTimeout(() => {
+        setCountdownTimer(countdownTimer - 1)
+        if (gameId) {
           getMatchingPlayer()
         }
       }, 1000);
       return () => clearTimeout(timer);
     } else if (gameState === "countdown" && countdownTimer === 0) {
-      getMatchingPlayer()      
+      getMatchingPlayer()
       getMatchingStart();
       setIsMounted(true)
     }
@@ -313,13 +342,13 @@ export default function TapRush() {
   useEffect(() => {
     if (!isFocused) return;
     if (gameState === "playing" && timeLeft > 0) {
-      const timer = setTimeout(() => {
+      const timer = safeSetTimeout(() => {
         setTimeLeft(timeLeft - 1)
         getMatchingUpdate("ingame")
       }, 1000);
       return () => clearTimeout(timer);
     } else if (timeLeft === 0 && gameState === "playing") {
-      setGameState("completed");  
+      setGameState("completed");
       endGame();
     }
   }, [gameState, timeLeft]);
@@ -331,7 +360,7 @@ export default function TapRush() {
     // setPlayers((prev) => prev.map((p) => ({ ...p, taps: 0 })));
   };
 
-    const handleTap = useCallback(() => {
+  const handleTap = useCallback(() => {
     if (gameState === "playing") {
       setTapCount((prev) => prev + 1);
       // setPlayers((prev) =>
@@ -340,7 +369,7 @@ export default function TapRush() {
       //   )
       // );
     }
-  }, [gameState]);   
+  }, [gameState]);
 
   const endGame = () => {
     setIsMounted(true)
@@ -360,16 +389,17 @@ export default function TapRush() {
     </View>
   );
 
-  
+
   const resetMatchmaking = (bckclc) => {
     setGameState("waiting");
     setPlayersReady(0);
     setPlayers([]);
-    setIsMounted(false)
-    if(bckclc){
+    clearAllTimers();
+    setIsMounted(false);
+    if (bckclc) {
       setMatchmakingTimer(30);
       router.push(`/(routes)/skillgame/handspeed`)
-    }else{
+    } else {
       setMatchmakingTimer(0);
       router.push("/(routes)/skillgame")
     }
@@ -379,7 +409,7 @@ export default function TapRush() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={()=> resetMatchmaking(false)} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => resetMatchmaking(false)} style={styles.backBtn}>
           <ArrowLeft size={20} color="#fff" />
           <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
@@ -387,8 +417,8 @@ export default function TapRush() {
         <View style={{ width: 60 }} />
       </View>
 
-      <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 1 }}>        
-          <Text style={styles.subText}>₦100 Stake</Text>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 1 }}>
+        <Text style={styles.subText}>₦100 Stake</Text>
       </View>
 
       {/* Waiting */}
@@ -396,20 +426,20 @@ export default function TapRush() {
         <View style={styles.centerBox}>
           <Animated.View style={[styles.card, animatedStyle]}>
             <Text style={styles.timerText}>{matchmakingTimer}s</Text>
-          <Text style={styles.subText}>Finding players...</Text>
+            <Text style={styles.subText}>Finding players...</Text>
           </Animated.View>
-          <View  style={{ marginTop: 10, flexDirection: "column", justifyContent: "flex-start"}}>
+          <View style={{ marginTop: 10, flexDirection: "column", justifyContent: "flex-start" }}>
             <Text style={styles.smallText}> • Tap as fast as possible for 30 seconds!</Text>
             <Text style={styles.smallText}> • Highest tap count wins</Text>
             <Text style={styles.smallText}> • In case of tie, fastest last tap wins</Text>
           </View>
 
           <View style={{ marginTop: 20 }}>
-            <Text style={[styles.smallText, {textAlign: "center"}]}>Players Ready: {playersReady}/4</Text>
-              <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 5, width: '100%', flexWrap: 'wrap' }}>
+            <Text style={[styles.smallText, { textAlign: "center" }]}>Players Ready: {playersReady}/4</Text>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 5, width: '100%', flexWrap: 'wrap' }}>
               {players.map((p, ind) => (
-                <View key={p.id} style={{flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginTop: 5, borderWidth: 1, backgroundColor: '#111', borderRadius: 20, padding: 10, width: '48%' }}>
-                  <Text style={{ 
+                <View key={p.id} style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginTop: 5, borderWidth: 1, backgroundColor: '#111', borderRadius: 20, padding: 10, width: '48%' }}>
+                  <Text style={{
                     backgroundColor: '#1A4051',
                     color: '#00B3D2',
                     padding: 10,
@@ -420,7 +450,7 @@ export default function TapRush() {
                     textAlign: 'center',
                     textAlignVertical: 'center', // centers text vertically on Android
                     fontWeight: 'bold'
-                  }}>{ind+1}</Text>
+                  }}>{ind + 1}</Text>
                   <Text style={styles.playerText}>{p.name}</Text>
                 </View>
               ))}
@@ -434,7 +464,7 @@ export default function TapRush() {
         <View style={styles.centerBox}>
           <Animated.View style={[styles.card, animatedStyle]}>
             <Text style={styles.bigText}>{countdownTimer ? `${countdownTimer}s` : 'Waiting'}</Text>
-          <Text style={styles.subText}>Get Ready!</Text>
+            <Text style={styles.subText}>Get Ready!</Text>
           </Animated.View>
         </View>
       )}
@@ -448,7 +478,7 @@ export default function TapRush() {
             <TouchableOpacity onPress={handleTap}>
               <LinearGradient
                 colors={["#4c6ef5", "#15aabf"]}
-                style={styles.tapButton}    
+                style={styles.tapButton}
               >
                 <Text style={styles.tapText}>TAP!</Text>
               </LinearGradient>
@@ -461,14 +491,14 @@ export default function TapRush() {
             keyExtractor={(item) => item.id.toString()}
           />
         </View>
-      ) }
+      )}
 
       {/* completed */}
       {gameState === 'completed' && (
         <View style={styles.centerBox}>
           <Animated.View style={[styles.card, animatedStyle]}>
             <Text style={styles.bigText}>Completed</Text>
-          <Text style={styles.subText}>Waiting for result!</Text>
+            <Text style={styles.subText}>Waiting for result!</Text>
           </Animated.View>
         </View>
       )}
@@ -486,8 +516,8 @@ export default function TapRush() {
                   index === 0
                     ? styles.gold
                     : index === 1
-                    ? styles.silver
-                    : styles.normalItem,
+                      ? styles.silver
+                      : styles.normalItem,
                 ]}
               >
                 <View style={styles.resultRow}>
@@ -505,16 +535,16 @@ export default function TapRush() {
             keyExtractor={(item) => item.id.toString()}
           />
 
-          <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-around", marginTop: 20, marginBottom: 20}}>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around", marginTop: 20, marginBottom: 20 }}>
             <TouchableOpacity
-              style={[styles.playAgain, {backgroundColor: "#FFD04C"}]}
-              onPress={()=> resetMatchmaking(false)}
+              style={[styles.playAgain, { backgroundColor: "#FFD04C" }]}
+              onPress={() => resetMatchmaking(false)}
             >
               <Text style={styles.playAgainText}>Back to Lobby</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.playAgain}
-              onPress={()=> resetMatchmaking(true)}
+              onPress={() => resetMatchmaking(true)}
             >
               <Text style={styles.playAgainText}>Play Again</Text>
             </TouchableOpacity>
@@ -579,7 +609,7 @@ const styles = StyleSheet.create({
   resultItem: {
     padding: 14,
     borderRadius: 10,
-     marginVertical: 15,
+    marginVertical: 15,
     alignItems: "center",
     marginHorizontal: 20
   },

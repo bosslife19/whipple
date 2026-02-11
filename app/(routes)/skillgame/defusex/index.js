@@ -14,10 +14,10 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from 'expo-router';
-import { ArrowLeft, Trophy, Medal, Bomb  } from "lucide-react-native";
+import { ArrowLeft, Trophy, Medal, Bomb } from "lucide-react-native";
 import Toast from '../../../../components/Toast';
 import axiosClient from "../../../../axiosClient";
-import {AuthContext} from '../../../../context/AuthContext'
+import { AuthContext } from '../../../../context/AuthContext'
 import { useRequest } from "../../../../hooks/useRequest";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -69,190 +69,217 @@ export default function DefuseX() {
   const [phase3Clue, setPhase3Clue] = useState("");
   const [phase3Correct, setPhase3Correct] = useState("blue");
 
- const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastType, setToastType] = useState("info");
   const [toastTitle, setToastTitle] = useState("info");
   const [toastMessage, setToastMessage] = useState("info");
   const [winnings, setWinnings] = useState(0);
-  const {userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails} = useContext(AuthContext)
+  const { userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails } = useContext(AuthContext)
   const { loading, makeRequest } = useRequest();
   const [gameId, setGameId] = useState();
 
   const isFocused = useIsFocused();
 
+  const timeoutsRef = useRef([]);
+  const intervalsRef = useRef([]);
 
-  const getMatchingJoining = async () => { 
+  const safeSetTimeout = (callback, delay) => {
+    const id = setTimeout(callback, delay);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  const safeSetInterval = (callback, delay) => {
+    const id = setInterval(callback, delay);
+    intervalsRef.current.push(id);
+    return id;
+  };
+
+  const clearAllTimers = () => {
+    timeoutsRef.current.forEach(clearTimeout);
+    intervalsRef.current.forEach(clearInterval);
+
+    timeoutsRef.current = [];
+    intervalsRef.current = [];
+  };
+
+
+  const getMatchingJoining = async () => {
     try {
       const res = await axiosClient.get("/skillgame/matches/join/defuse_x");
       setUserBalanceGen(res?.data.user_balance)
-      setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
+      setUserDetails(prev => ({ ...prev, wallet_balance: res?.data.user_balance }));
       setGameId(res.data.match.id)
       setMatchTimer(res.data.countdown)
-      if(res.data.countdown == 0){
+      if (res.data.countdown == 0) {
         setPhase("countdown");
         setCountdown(1);
       }
-    } catch (error) {  
+    } catch (error) {
       // console.error('Error fetching admin parameter:', error);
-      handleNetworkError("Insufficient balance", "Your balance is too low for this game.") 
-    } finally { 
+      handleNetworkError("Insufficient balance", "Your balance is too low for this game.")
+    } finally {
       // setLoader("");
     }
   };
 
-   const handleNetworkError = (hdg="Network error", mss="Please try again!") => {
+  const handleNetworkError = (hdg = "Network error", mss = "Please try again!") => {
     setToastVisible(true)
-    setToastType("error")   
+    setToastType("error")
     setToastTitle(hdg)
     setToastMessage(mss)
-    setTimeout(() => {
+    safeSetTimeout(() => {
       resetMatchmaking(false)
     }, 3000)
   }
 
-  const getMatchingStart = async () => { 
+  const getMatchingStart = async () => {
     try {
       const res = await axiosClient.get(`/skillgame/matches/start/${gameId}`);
-      if(res.data.status == "error"){
+      if (res.data.status == "error") {
         handleNetworkError('Match start error', res.data.message)
       }
       setPlayers((prev) => {
-      const existingIds = new Set(prev.map((p) => p.id));
-      const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
-      
-      return [
-        ...prev,
-        ...newPlayers?.map((player) => ({
-          id: player.id,
-          name: player.user_id,
-          taps: player.score,
-        })),
-      ];
-    });
-    setPlayersReady(res.data.playerCount);
-      
-    } catch (error) {  
-     handleNetworkError
-    } finally { 
-      
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
+
+        return [
+          ...prev,
+          ...newPlayers?.map((player) => ({
+            id: player.id,
+            name: player.user_id,
+            taps: player.score,
+          })),
+        ];
+      });
+      setPlayersReady(res.data.playerCount);
+
+    } catch (error) {
+      handleNetworkError
+    } finally {
+
     }
   };
 
-  const getMatchingPlayer = async () => { 
+  const getMatchingPlayer = async () => {
     try {
       const res = await axiosClient.get(`/skillgame/matches/status/${gameId}`);
       // console.log(res.data.players)
-      if(res?.data?.match?.status == "cancelled"){
+      if (res?.data?.match?.status == "cancelled") {
         handleNetworkError("No active players", "No users available for this game. Please try again later.")
       }
       setPlayers((prev) => {
-      const existingIds = new Set(prev.map((p) => p.id));
-      const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
-      
-      return [
-        ...prev,
-        ...newPlayers?.map((player) => ({
-          id: player.id,
-          name: player.user_id,
-          score: player.score,
-          time: player.time,
-        })),
-      ];
-    });
-    setPlayersReady(res.data.playerCount);
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
 
-    // Start countdown
-    // if (playersReady >= 4 || newTimer === 0) {
-    //   getMatchingUpdate()
-    // }
-    if (res.data.match.status === "started") {
-      getMatchingUpdate('game',0)
-      startGame();
-      setIsMounted(false)
-      // setCountdownTimer(5);
+        return [
+          ...prev,
+          ...newPlayers?.map((player) => ({
+            id: player.id,
+            name: player.user_id,
+            score: player.score,
+            time: player.time,
+          })),
+        ];
+      });
+      setPlayersReady(res.data.playerCount);
+
+      // Start countdown
+      // if (playersReady >= 4 || newTimer === 0) {
+      //   getMatchingUpdate()
+      // }
+      if (res.data.match.status === "started") {
+        getMatchingUpdate('game', 0)
+        startGame();
+        setIsMounted(false)
+        // setCountdownTimer(5);
+      }
+
+    } catch (error) {
+      handleNetworkError
+    } finally {
+
     }
-      
-    } catch (error) {  
-     handleNetworkError
-    } finally { 
-      
-    }
   };
 
-  const getMatchingUpdate = async (ingame = 'game', score) => { 
+  const getMatchingUpdate = async (ingame = 'game', score) => {
     try {
-      const { error, response }  = await makeRequest("/skillgame/matches/updateScore", {   
-          matchId: gameId,
-          score: score,
-          ingame: ingame,
-        });
-        
-        if(response){
-          setPlayers(
-            response?.leaderboard.map((player) => ({
-              id: player.id,
-              name: player.name,
-              score: player.score,
-              time: player.time,
-            }))
-          );
-        }    
-      
-    } catch (error) { handleNetworkError } finally {  }
+      const { error, response } = await makeRequest("/skillgame/matches/updateScore", {
+        matchId: gameId,
+        score: score,
+        ingame: ingame,
+      });
+
+      if (response) {
+        setPlayers(
+          response?.leaderboard.map((player) => ({
+            id: player.id,
+            name: player.name,
+            score: player.score,
+            time: player.time,
+          }))
+        );
+      }
+
+    } catch (error) { handleNetworkError } finally { }
   };
 
-  const getMatchingComplete = async (total, completion) => { 
+  const getMatchingComplete = async (total, completion) => {
     try {
-      const { error, response }  = await makeRequest("/skillgame/matches/complete", {   
-          matchId: gameId,
-          score: total,
-          time: completion
-        }); 
-        // console.log([total, completion])   
-        setPhase("completed");
-      
-    } catch (error) { handleNetworkError } finally {  }
+      const { error, response } = await makeRequest("/skillgame/matches/complete", {
+        matchId: gameId,
+        score: total,
+        time: completion
+      });
+      // console.log([total, completion])   
+      setPhase("completed");
+
+    } catch (error) { handleNetworkError } finally { }
   };
 
-  const getMatchingEndUpdate = async () => { 
+  const getMatchingEndUpdate = async () => {
     try {
       const res = await axiosClient.get(`/skillgame/matches/checkStatus/${gameId}`);
-      
-      if(res.data.results){
+
+      if (res.data.status === "finished") {
         setWinnings(res?.data.user_winning)
         setUserBalanceGen(res?.data.user_balance)
-        setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
+        setUserDetails(prev => ({ ...prev, wallet_balance: res?.data.user_balance }));
         setPlayers(
-            res.data.results.map((player) => ({
-              id: player.rank,
-              name: player.name,
-              score: player.score,
-              time: player.time,
-              win: player.winnings,
-            }))
-          );
-          setIsMounted(false)
-          setPhase("finished")
+          res.data.results.map((player) => ({
+            id: player.rank,
+            name: player.name,
+            score: player.score,
+            time: player.time,
+            win: player.winnings,
+          }))
+        );
+        setIsMounted(false)
+        setPhase("finished")
       }
-      
-    } catch (error) {  
-     handleNetworkError
-    } finally { 
-      
+
+    } catch (error) {
+      handleNetworkError
+    } finally {
+
     }
   };
 
   useEffect(() => {
-    if (!isFocused) return;
-      getMatchingJoining();
-    }, []);
+    if (!isFocused) {
+      clearAllTimers();
+      setIsMounted(false);
+      return;
+    }
+    getMatchingJoining();
+  }, []);
 
   const [blinkIndex, setBlinkIndex] = useState(0);
   useEffect(() => {
     if (!isFocused) return;
     const colors = ["color", "dull", "brightness"];
-    const interval = setInterval(() => {
+    const interval = safeSetInterval(() => {
       setBlinkIndex((prev) => (prev + 1) % colors.length);
     }, 500); // change speed here (ms)
     return () => clearInterval(interval);
@@ -266,7 +293,7 @@ export default function DefuseX() {
   // 🔁 Fast blinking for unstable wires
   useEffect(() => {
     if (!isFocused) return;
-    const fastInterval = setInterval(() => {
+    const fastInterval = safeSetInterval(() => {
       setFastBlink((prev) => !prev);
     }, 300); // fast blink speed
     return () => clearInterval(fastInterval);
@@ -275,37 +302,37 @@ export default function DefuseX() {
   // 🕐 Slow blinking for cut wires
   useEffect(() => {
     if (!isFocused) return;
-    const slowInterval = setInterval(() => {
+    const slowInterval = safeSetInterval(() => {
       setSlowBlink((prev) => !prev);
     }, 800); // slow blink speed
     return () => clearInterval(slowInterval);
   }, []);
 
 
-useEffect(() => {
-  if (!isFocused) return;
+  useEffect(() => {
+    if (!isFocused) return;
     let interval;
-    
-      if (isMounted) {
-        // Run once immediately
-        if(phase === "countdown" && countdown === 0){
-          getMatchingPlayer()
-        }else{
-          getMatchingEndUpdate();
-        }
 
-        // Start polling
-        interval = setInterval(() => {
-          if (isMounted) {
-            if(phase === "countdown" && countdown === 0){
-              getMatchingPlayer()
-            }else{
-              getMatchingEndUpdate();
-            }
-          }   
-        }, 2000);
+    if (isMounted) {
+      // Run once immediately
+      if (phase === "countdown" && countdown === 0) {
+        getMatchingPlayer()
+      } else {
+        getMatchingEndUpdate();
       }
-      // Cleanup when unmounting or when isMounted becomes false
+
+      // Start polling
+      interval = safeSetInterval(() => {
+        if (isMounted) {
+          if (phase === "countdown" && countdown === 0) {
+            getMatchingPlayer()
+          } else {
+            getMatchingEndUpdate();
+          }
+        }
+      }, 2000);
+    }
+    // Cleanup when unmounting or when isMounted becomes false
     return () => {
       if (interval) clearInterval(interval);
     };
@@ -317,46 +344,46 @@ useEffect(() => {
 
 
   const glowAnim = useRef(new Animated.Value(0)).current;
-    
-      useEffect(() => {
-        if (!isFocused) return;
-        Animated.loop(
-          Animated.sequence([
-            Animated.timing(glowAnim, {
-              toValue: 1,
-              duration: 1200,
-              useNativeDriver: false,
-            }),
-            Animated.timing(glowAnim, {
-              toValue: 0,
-              duration: 1200,
-              useNativeDriver: false,
-            }),
-          ])
-        ).start();
-      }, [glowAnim]);
-    
-      // Interpolate shadow color and intensity
-      const shadowColor = glowAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['rgba(0, 180, 255, 0.3)', 'rgba(0, 255, 255, 1)'], // strong blue glow
-      });
-    
-      const shadowRadius = glowAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [10, 35], // increases shadow spread
-      });
+
+  useEffect(() => {
+    if (!isFocused) return;
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim, {
+          toValue: 1,
+          duration: 1200,
+          useNativeDriver: false,
+        }),
+        Animated.timing(glowAnim, {
+          toValue: 0,
+          duration: 1200,
+          useNativeDriver: false,
+        }),
+      ])
+    ).start();
+  }, [glowAnim]);
+
+  // Interpolate shadow color and intensity
+  const shadowColor = glowAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['rgba(0, 180, 255, 0.3)', 'rgba(0, 255, 255, 1)'], // strong blue glow
+  });
+
+  const shadowRadius = glowAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [10, 35], // increases shadow spread
+  });
 
   const animatedStyle = {
-      shadowColor,
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 1,
-      shadowRadius,
-      elevation: glowAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [6, 24],
-      }),
-    };
+    shadowColor,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius,
+    elevation: glowAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [6, 24],
+    }),
+  };
 
   // Animated glow for wires / card
   const glow = useRef(new Animated.Value(0)).current;
@@ -396,7 +423,7 @@ useEffect(() => {
       setCountdown(5);
       return;
     }
-    const t = setTimeout(() => {
+    const t = safeSetTimeout(() => {
       setMatchTimer((s) => s - 1);
       // randomly add simulated players
       // if (playersReady < 4 && Math.random() > 0.5) {
@@ -416,9 +443,9 @@ useEffect(() => {
       //     },
       //   ]);
       // }
-      if(gameId){          
-          getMatchingPlayer()
-        }
+      if (gameId) {
+        getMatchingPlayer()
+      }
     }, 1000);
     return () => clearTimeout(t);
   }, [matchTimer, phase, playersReady]);
@@ -429,17 +456,17 @@ useEffect(() => {
     if (phase !== "countdown") return;
     if (countdown <= 0) {
       // startGame();
-      if(gameId){          
-          getMatchingPlayer()
-          getMatchingStart();
-          setIsMounted(true)
-        };
+      if (gameId) {
+        getMatchingPlayer()
+        getMatchingStart();
+        setIsMounted(true)
+      };
       return;
     }
-    const t = setTimeout(() => {
+    const t = safeSetTimeout(() => {
       setCountdown((c) => c - 1)
       getMatchingPlayer()
-      }, 1000);
+    }, 1000);
     return () => clearTimeout(t);
   }, [countdown, phase]);
 
@@ -452,7 +479,7 @@ useEffect(() => {
       handlePhaseTimeout();
       return;
     }
-    const t = setTimeout(() => setTimeLeft((s) => s - 1), 1000);
+    const t = safeSetTimeout(() => setTimeLeft((s) => s - 1), 1000);
     return () => clearTimeout(t);
   }, [phase, timeLeft]);
 
@@ -460,7 +487,7 @@ useEffect(() => {
   // useEffect(() => {
   // if (!isFocused) return;
   //   if (phase === "phase2" || phase === "phase3") {
-  //     const interval = setInterval(() => {
+  //     const interval = safeSetInterval(() => {
   //       setPlayers((prev) =>
   //         prev.map((pl) => {
   //           if (pl.id === 1) return pl; // don't auto change user
@@ -514,7 +541,7 @@ useEffect(() => {
   // start game
   function startGame() {
     gameStartRef.current = Date.now();
-    getMatchingUpdate('game',0)
+    getMatchingUpdate('game', 0)
     // reset players
     // setPlayers((p) =>
     //   p.map((pl) => ({
@@ -540,7 +567,7 @@ useEffect(() => {
     setPhase("phase1");
     alert("info", "Phase 1: Memorize the sequence!");
     // show sequence for 3s
-    setTimeout(() => {
+    safeSetTimeout(() => {
       setShowSeq(false);
       setPhase("phase1-input");
       setTimeLeft(5);
@@ -560,7 +587,7 @@ useEffect(() => {
       setShowExplosion(true);
       // setPlayers((p) => p.map((pl) => (pl.id === 1 ? { ...pl, eliminated: true } : pl)));
       alert("error", "💥 BOOM! Wrong wire!");
-      setTimeout(() => {
+      safeSetTimeout(() => {
         setShowExplosion(false);
         finishGame(0); // player eliminated -> finish
       }, 1500);
@@ -570,7 +597,7 @@ useEffect(() => {
       setPhase1Score(50);
       // setPlayers((p) => p.map((pl) => (pl.id === 1 ? { ...pl, phase1Score: 50 } : pl)));
       alert("success", "Phase 1 Complete! +50 points");
-      setTimeout(startPhase2, 700);
+      safeSetTimeout(startPhase2, 700);
     }
   }
 
@@ -604,7 +631,7 @@ useEffect(() => {
       setShowExplosion(true);
       // setPlayers((p) => p.map((pl) => (pl.id === 1 ? { ...pl, eliminated: true } : pl)));
       alert("error", "💥 BOOM! Unstable wire!");
-      setTimeout(() => {
+      safeSetTimeout(() => {
         setShowExplosion(false);
         finishGame(50); // player eliminated -> finish
       }, 1500);
@@ -613,7 +640,7 @@ useEffect(() => {
     const stableWires = WIRE_COLORS.filter((w) => !unstable.has(w.name)).map((w) => w.name);
     const allCut = stableWires.every((n) => newSet.has(n));
     if (allCut) {
-      setTimeout(startPhase3, 800);
+      safeSetTimeout(startPhase3, 800);
     }
   }
 
@@ -642,7 +669,7 @@ useEffect(() => {
       setShowExplosion(true);
       alert("error", "HUGE EXPLOSION! Wrong wire!");
     }
-    setTimeout(() => {
+    safeSetTimeout(() => {
       setShowExplosion(false);
       finishGame(isCorrect ? 350 : 150);
     }, isCorrect ? 1000 : 1600);
@@ -651,17 +678,17 @@ useEffect(() => {
   function handlePhaseTimeout() {
     setShowExplosion(true);
     if (phase === "phase1-input") {
-      setTimeout(() => {
+      safeSetTimeout(() => {
         setShowExplosion(false);
         finishGame(0);
       }, 1200);
     } else if (phase === "phase2") {
-      setTimeout(() => {
+      safeSetTimeout(() => {
         setShowExplosion(false);
         finishGame(50);
       }, 1200);
     } else if (phase === "phase3") {
-      setTimeout(() => {
+      safeSetTimeout(() => {
         setShowExplosion(false);
         finishGame(150);
       }, 1200);
@@ -685,7 +712,7 @@ useEffect(() => {
     // setPhase("finished");
 
     // sort and show result messages after slight delay
-    // setTimeout(() => {
+    // safeSetTimeout(() => {
     //   setPlayers((prev) => {
     //     const sorted = [...prev].sort((a, b) => {
     //       if (b.total !== a.total) return b.total - a.total;
@@ -701,7 +728,7 @@ useEffect(() => {
     // }, 500);
 
     // after some seconds reset matchmaking
-    // setTimeout(() => {
+    // safeSetTimeout(() => {
     //   resetMatchmaking();
     // }, 3500);
   }
@@ -710,14 +737,15 @@ useEffect(() => {
     setPhase("waiting");
     setPlayersReady(0);
     setPlayers([]);
-    setPhase1Score(0); 
+    setPhase1Score(0);
     setPhase2Score(0);
     setPhase3Score(0);
+    clearAllTimers();
     setIsMounted(false)
-    if(bckclc){      
+    if (bckclc) {
       setMatchTimer(30);
       router.push(`/(routes)/skillgame/defusex`)
-    }else{
+    } else {
       setMatchTimer(0);
       router.push("/(routes)/skillgame")
     }
@@ -752,32 +780,32 @@ useEffect(() => {
         phase === "phase1-input" ||
         phase === "phase2" ||
         phase === "phase3") && (
-        <>
-          {[...Array(8)].map((_, i) => {
-            const c = WIRE_COLORS[Math.floor(Math.random() * WIRE_COLORS.length)].color;
-            const left = Math.random() * width * 0.9;
-            const top = Math.random() * 700;
-            const size = 50 + Math.random() * 120;
-            return (
-              <Animated.View
-                key={`bg-${i}`}
-                style={{
-                  position: "absolute",
-                  left,
-                  top,
-                  width: size,
-                  height: size,
-                  borderRadius: size / 2,
-                  backgroundColor: c,
-                  opacity: 0.12 + Math.random() * 0.2,
-                  transform: [{ scale: 1 + Math.random() * 0.3 }],
-                  blurRadius: 30,
-                }}
-              />
-            );
-          })}
-        </>
-      )}
+          <>
+            {[...Array(8)].map((_, i) => {
+              const c = WIRE_COLORS[Math.floor(Math.random() * WIRE_COLORS.length)].color;
+              const left = Math.random() * width * 0.9;
+              const top = Math.random() * 700;
+              const size = 50 + Math.random() * 120;
+              return (
+                <Animated.View
+                  key={`bg-${i}`}
+                  style={{
+                    position: "absolute",
+                    left,
+                    top,
+                    width: size,
+                    height: size,
+                    borderRadius: size / 2,
+                    backgroundColor: c,
+                    opacity: 0.12 + Math.random() * 0.2,
+                    transform: [{ scale: 1 + Math.random() * 0.3 }],
+                    blurRadius: 30,
+                  }}
+                />
+              );
+            })}
+          </>
+        )}
 
       {/* explosion overlay */}
       {showExplosion && (
@@ -785,14 +813,14 @@ useEffect(() => {
           <Text style={styles.explosionEmoji}>💥</Text>
         </View>
       )}
-      
+
       <View style={styles.container}>
         <ScrollView>
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity
-              onPress={()=> resetMatchmaking(false)}
-              style={[styles.backBtn, {flexDirection: "row", justifyContent: "flex-start"}]}
+              onPress={() => resetMatchmaking(false)}
+              style={[styles.backBtn, { flexDirection: "row", justifyContent: "flex-start" }]}
             >
               <ArrowLeft size={20} color="#fff" />
               <Text style={styles.backText}> Back </Text>
@@ -812,10 +840,10 @@ useEffect(() => {
               <Animated.View style={[styles.card, { backgroundColor: "#0f1724", shadowColor: cardGlowColor, shadowRadius: cardShadowRadius }]}>
                 <Animated.View style={[styles.card, animatedStyle]}>
                   <View style={{ alignItems: "center" }}><Bomb size={30} color="#FFBB33" /></View>
-                  <Text style={[styles.bigTimer, {color: "#FFBB33"}]}>{matchTimer}s</Text>
+                  <Text style={[styles.bigTimer, { color: "#FFBB33" }]}>{matchTimer}s</Text>
                   <Text style={styles.cardSub}>Finding players...</Text>
                 </Animated.View>
-                
+
                 <View style={styles.phaseGrid}>
                   <View style={styles.phaseBox}>
                     <Text style={styles.phaseTitle}>PHASE 1</Text>
@@ -823,12 +851,12 @@ useEffect(() => {
                     <Text style={styles.phaseSmall}>50 pts</Text>
                   </View>
                   <View style={styles.phaseBox}>
-                    <Text style={[styles.phaseTitle, {color: "#B447EB"}]}>PHASE 2</Text>
+                    <Text style={[styles.phaseTitle, { color: "#B447EB" }]}>PHASE 2</Text>
                     <Text style={styles.phaseDesc}>Stability - 5s</Text>
                     <Text style={styles.phaseSmall}>100 pts</Text>
                   </View>
                   <View style={styles.phaseBox}>
-                    <Text style={[styles.phaseTitle, {color: "#FFBB33"}]}>PHASE 3</Text>
+                    <Text style={[styles.phaseTitle, { color: "#FFBB33" }]}>PHASE 3</Text>
                     <Text style={styles.phaseDesc}>Recall - 3s</Text>
                     <Text style={styles.phaseSmall}>200 pts</Text>
                   </View>
@@ -841,7 +869,7 @@ useEffect(() => {
                   {players.map((p, i) => (
                     <View key={p.id} style={styles.playerMini}>
                       <View style={styles.avatar}>
-                        <Text style={styles.avatarText}>{i+1}</Text>
+                        <Text style={styles.avatarText}>{i + 1}</Text>
                       </View>
                       <Text style={styles.playerMiniName}>{p.name}</Text>
                     </View>
@@ -897,7 +925,7 @@ useEffect(() => {
                             return (
                               <View
                                 key={idx}
-                                style={[styles.seqBox,{
+                                style={[styles.seqBox, {
                                   width: 60,
                                   height: 60,
                                   borderRadius: 8,
@@ -1005,8 +1033,8 @@ useEffect(() => {
         {phase === "completed" && (
           <View style={styles.centerBox}>
             <Animated.View style={[styles.card, animatedStyle]}>
-              <Text style={{color: "#fff", fontSize: 52}}>Completed</Text>
-            <Text style={[styles.subText, {color: "#fff"}]}>Waiting for result!</Text>
+              <Text style={{ color: "#fff", fontSize: 52 }}>Completed</Text>
+              <Text style={[styles.subText, { color: "#fff" }]}>Waiting for result!</Text>
             </Animated.View>
           </View>
         )}
@@ -1031,13 +1059,13 @@ useEffect(() => {
                       <View style={{ flexDirection: "row", alignItems: "center" }}>
                         <Text style={styles.rank}>#{rank}</Text>
                         {index === 0 ? (
-                        <Trophy color="#ffd43b" size={20} />
+                          <Trophy color="#ffd43b" size={20} />
                         ) : index === 1 ? (
-                        <Medal color="#adb5bd" size={20} />
+                          <Medal color="#adb5bd" size={20} />
                         ) : null}
                         <View style={{ marginLeft: 8 }}>
                           <Text style={styles.playerName}>{item.name}</Text>
-                          <Text style={styles.smallMeta}>{item.time ? `Time ${item.time}s` : "Eliminated"  }</Text>
+                          <Text style={styles.smallMeta}>{item.time ? `Time ${item.time}s` : "Eliminated"}</Text>
                         </View>
                       </View>
                       <View>
@@ -1051,7 +1079,7 @@ useEffect(() => {
             </View>
 
             <View style={{ flexDirection: "row", marginTop: 40, gap: 12 }}>
-              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: "#FFD04C" }]} onPress={()=> resetMatchmaking(false)}>
+              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: "#FFD04C" }]} onPress={() => resetMatchmaking(false)}>
                 <Text style={{ color: "#fff" }}>Back to Lobby</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.actionBtn, { backgroundColor: "#0EA5E9" }]} onPress={() => resetMatchmaking(true)}>
@@ -1071,7 +1099,7 @@ useEffect(() => {
         duration={3000}
         onHide={() => setToastVisible(false)}
       />
-      
+
     </View>
   );
 }
