@@ -38,15 +38,19 @@ const ConFirmSelectedLuckyNumbers = () => {
 
   if (game?.subcategory === "a1") {
     range = 3;
-  } else if (game?.subcategory === "b") {
+  } else if (game?.subcategory === "b" || game?.subcategory === "a2") {
     range = 5;
-  } else if (
+  }
+
+  
+  else if (
     game?.subcategory === "c1" ||
     game?.subcategory === "c2" ||
     game?.subcategory === "c3"
   ) {
     range = 100;
   }
+  console.log(range, game?.subcategory);
 
   useEffect(() => {
     if (losersGame) {
@@ -178,6 +182,7 @@ const ConFirmSelectedLuckyNumbers = () => {
   };
   if (!range) {
     range = 3;
+
   }
   return (
     <>
@@ -203,8 +208,7 @@ const ConFirmSelectedLuckyNumbers = () => {
               <Text style={ConfirmsSTy.value}>{game?.odds}</Text>
             </View>
           </View>
-          <Text style={ConfirmsSTy.label}>Players</Text>
-          <Text style={ConfirmsSTy.value}>9 joined</Text>
+
         </View>
 
         {/* Number Selection Section */}

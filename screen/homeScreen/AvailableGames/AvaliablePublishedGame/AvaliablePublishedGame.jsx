@@ -128,7 +128,7 @@ const filteredGames = games?.filter(game => {
   if (!games) {
     return (
       <View style={LosersGameList.centeredContainer}>
-        <Header name="Available Games" backgroundColor="transparent" />
+        <Header name="Available Events" backgroundColor="transparent" />
         <Text style={LosersGameList.noGameText}>
           No game is currently published.
         </Text>
@@ -138,21 +138,16 @@ const filteredGames = games?.filter(game => {
 
   return (
     <ScrollView style={{ height: "100%", backgroundColor: "#EEF6FF" }}>
-      <Header name="Available Games" />
+      <Header name="Available Events" />
       <View style={styles.container}>
         <View style={LosersGameList.rulesCard}>
           <Text style={LosersGameList.rulesTitle}>Game Rules</Text>
           <View style={LosersGameList.listItem}>
             <Text>
-              Browse all available games to play and bet against The House
+              Browse all Available Events to play and participate against The Knight
             </Text>
           </View>
-          <View style={LosersGameList.listItem}>
-            <Text>Voting Rules:</Text>
-          </View>
-          <View style={LosersGameList.listItem}>
-            <Text>Voting rules depend on the specific game category.</Text>
-          </View>
+         
         </View>
 
         <FilterTabPanel onTabChange={setSelectedTab} />

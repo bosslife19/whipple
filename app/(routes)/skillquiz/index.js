@@ -110,10 +110,10 @@ export default function SkillQuizPro() {
                     <Text>Waived withdrawal fees {`(${admpar?.withdraw_type === 'percent' ? admpar?.withdraw_charge + '%' : 'NGN ' + admpar?.withdraw_charge})`}</Text>
                     </Text>
                     <Text style={[styles.benefit, {backgroundColor: "#F6EEFE", borderRadius: 5, padding:15}]}>
-                    <Text style={[styles.boldBlue, {color: "#9333EA"}]}>40+ Points </Text>{"\n"} 25% discount on bets & house fees
+                    <Text style={[styles.boldBlue, {color: "#9333EA"}]}>40+ Points </Text>{"\n"} 25% discount on events & knight fees
                     </Text>
                     <Text style={[styles.benefit, {backgroundColor: "#FDF7E6", borderRadius: 5, padding:15}]}>
-                    <Text style={[styles.boldBlue, {color: "#CA8A04"}]}>80 Points </Text>{"\n"} Free bets & waived house admission
+                    <Text style={[styles.boldBlue, {color: "#CA8A04"}]}>80 Points </Text>{"\n"} Free events & waived knight admission
                     </Text>
                 </View>
 

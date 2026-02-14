@@ -17,7 +17,8 @@
         "foregroundImage": "./assets/images/whipple_logo.jpg",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.whipple.whipple"
+      "package": "com.whipple.whipple",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -26,6 +27,14 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/whipple_logo.jpg",
+          "color": "#ffffff"
+        }
+      ],
+      
       [
         "expo-splash-screen",
         {
@@ -42,7 +51,8 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "a150233f-a7f4-4402-8ce9-5813be1495de"
+        
+        "projectId": "b987a903-6475-4eaf-887f-e5c3b37d725f"
       }
     }
   }

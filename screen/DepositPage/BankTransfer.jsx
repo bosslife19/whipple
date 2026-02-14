@@ -1,106 +1,160 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, Linking } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 
-export default function BankTransfer({ selectedBank, setSelectedBank, banks }) {
-  const selected = banks.find((b) => b.id === selectedBank);
+export default function BankTransfer() {
+  const [copiedText, setCopiedText] = useState(null);
+
+  const copyToClipboard = async (text) => {
+    await Clipboard.setStringAsync(text);
+    setCopiedText(text);
+    Alert.alert("Copied", `${text} copied to clipboard`);
+    setTimeout(() => setCopiedText(null), 2000);
+  };
+
+  const openEmailApp = () => {
+    const email = "support@mywhipple.com";
+    Linking.openURL(`mailto:${email}`);
+  };
+
+  const CopyRow = ({ label, value }) => (
+    <View style={styles.copyRow}>
+      <Text style={styles.bankDetails}>{label}: {value}</Text>
+
+      <TouchableOpacity
+        onPress={() => copyToClipboard(value)}
+        style={[
+          styles.copyButton,
+          copiedText === value && styles.copyButtonActive
+        ]}
+      >
+        <Text style={styles.copyIcon}>
+          📋
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <View>
-      <Text style={styles.label}>Select a Bank</Text>
-      <View style={styles.bankRow}>
-        {banks.map((bank) => (
-          <TouchableOpacity key={bank.id} onPress={() => setSelectedBank(bank.id)} style={styles.bankCard}>
-            <Image source={bank.logo} style={styles.bankLogo} />
-            {/* <Text>{bank.name}</Text> */}
-          </TouchableOpacity>
-        ))}
+      <View style={styles.instructionsBox}>
+        <Text style={styles.instructionsTitle}>Bank Transfer Instructions</Text>
+
+        <Text style={styles.instructionsSubtitle}>
+          To fund your Whipple wallet, please make a transfer to any of the company accounts below.
+        </Text>
+
+        {/* Moniepoint */}
+        <Text style={styles.bankHeader}>Moniepoint Business Account</Text>
+        <Text style={styles.bankDetails}>Account Name: Torsade de Pointes Ltd</Text>
+        <CopyRow label="Account Number" value="8149470004" />
+
+        {/* Kuda */}
+        <Text style={styles.bankHeader}>Kuda Business Account</Text>
+        <Text style={styles.bankDetails}>Account Name: Torsade de Pointes Ltd</Text>
+        <CopyRow label="Account Number" value="3002890619" />
+
+        {/* Email */}
+        <TouchableOpacity onPress={openEmailApp} style={{ marginTop: 15 }}>
+          <Text style={styles.emailText}>
+            Send your payment receipt to: <Text style={styles.emailLink}>support@whipple.com</Text>
+          </Text>
+        </TouchableOpacity>
+
+        <Text style={styles.infoNote}>
+          Once your transfer is received, your Whipple wallet will be credited instantly.
+        </Text>
       </View>
-
-      {selected && (
-  <View style={styles.instructionsBox}>
-    <Text style={styles.instructionsTitle}>{selected.name} Transfer Instructions</Text>
-    
-    <Text style={styles.instructionStep}>1. Open the {selected.name} mobile app and log in to your account.</Text>
-    <Text style={styles.instructionStep}>2. From the home screen, navigate to the "Pay Bills" section.</Text>
-    <Text style={styles.instructionStep}>3. Choose your preferred payment category.</Text>
-    <Text style={styles.instructionStep}>4. Select our app as both the "Biller" and the "Product".</Text>
-    <Text style={styles.instructionStep}>5. Enter the amount you wish to deposit.</Text>
-    <Text style={styles.instructionStep}>
-      6. Provide your unique Client ID: <Text style={styles.customerId}>{selected.customerId}</Text>
-    </Text>
-
-    <Text style={styles.instructionStep}>
-      Once the payment is confirmed, the funds will be instantly credited to your Bet9ja wallet.
-    </Text>
-  </View>
-)}
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  label: {
-    marginBottom: 10,
-    fontWeight: '600',
-    fontFamily: "montserratMeduim"
-
-  },
-  bankRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  instructionStep: {
-    fontSize: 14,
-    fontWeight: 'normal',
-    marginBottom: 5,
-    fontFamily: 'montserratMedium',
-    color: '#333',
-    lineHeight: 20,
-  },
-  
-  bankCard: {
-    width: '48%',
-    height:90,
-    alignItems: 'center',
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    // padding: 10,
-    borderRadius: 10,
-  },
-  bankLogo: {
-    width: "100%",
-    height: "100%",  
-    borderRadius: 10,
-    resizeMode:"stretch",
-  },
   instructionsBox: {
     marginTop: 20,
-    padding: 15,
-    borderRadius: 10,
-    backgroundColor: '#f9f9f9',
+    padding: 18,
+    borderRadius: 12,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#e6e6e6',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  instructionsTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 8,
+    color: '#222',
+    fontFamily: 'montserratMedium',
+  },
+  instructionsSubtitle: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 15,
+    lineHeight: 20,
+    fontFamily: 'montserratMedium',
+  },
+  bankHeader: {
+    marginTop: 10,
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#333',
+    fontFamily: 'montserratMedium',
+  },
+  bankDetails: {
+    fontSize: 14,
+    marginTop: 4,
+    color: '#444',
+    fontFamily: 'montserratMedium',
+  },
+
+  /* New Copy Row */
+  copyRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 6,
+    backgroundColor: '#f5f5f5',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: '#ddd',
   },
-  instructionsTitle: {
-    fontWeight: 'bold',
-    marginBottom: 5,
+  copyButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    backgroundColor: '#e1ecf4',
+    borderRadius: 6,
+  },
+  copyButtonActive: {
+    backgroundColor: '#c8f7cd',
+  },
+  copyIcon: {
     fontSize: 16,
-    fontFamily: "montserratMeduim"
-
+    color: '#0066cc',
+    fontWeight: '600',
   },
-  texts:{
-        color: '#888',
-    fontFamily: "montserratMeduim"
-  },
-  customerId: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginTop: 5,
-    color: '#212121',
-    fontFamily: "montserratMeduim"
 
+  emailText: {
+    fontSize: 14,
+    color: '#333',
+    fontFamily: 'montserratMedium',
+  },
+  emailLink: {
+    color: '#0066cc',
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
+  infoNote: {
+    marginTop: 18,
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#2e7d32',
+    lineHeight: 20,
+    fontFamily: 'montserratMedium',
   },
 });

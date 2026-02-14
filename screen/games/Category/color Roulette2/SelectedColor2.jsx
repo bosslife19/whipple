@@ -206,7 +206,7 @@ const ColorRouletteSelect2 = () => {
               ))}
             </View>
             
-            <Text style={Slectedcol.resultText}>House's Colors:</Text>
+            <Text style={Slectedcol.resultText}>Color Spun:</Text>
             <View style={Slectedcol.colorBlockContainer}>
               {activeColors.map(id => {
                 const colorObj = colors.find(c => c.id === id);
@@ -251,13 +251,13 @@ const ColorRouletteSelect2 = () => {
 
         {success === true && (
        <Winningmodal
-       visible={visible}
+       visible={visible && success===true}
        closeModal={closeModal}
       />
      )}
     {success === false && (
     <Losingmodal 
-    visible={visible}
+    visible={visible && success===false}
     closeModal={closeModal}
     />
     )}

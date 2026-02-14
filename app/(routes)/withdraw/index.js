@@ -4,94 +4,108 @@ import styled from 'styled-components/native';
 import { Picker } from "@react-native-picker/picker";
 import axiosClient from "../../../axiosClient";
 import { useRequest } from "../../../hooks/useRequest";
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+/* -------------------- NEW PROFESSIONAL LIGHT THEME -------------------- */
 
 const Container = styled.View`
   flex: 1;
-  background-color: #1a1a1a;
-  padding: 16px;
+  background-color: #f7f9fc;
+  padding: 20px;
 `;
 
 const Header = styled.Text`
-  color: #fff;
-  font-size: 24px;
+  color: #1a1a1a;
+  font-size: 26px;
   font-weight: bold;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 `;
 
 const StepBox = styled.View`
-  background-color: #333;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  background-color: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #e6e9ef;
+  shadow-color: #000;
+  shadow-opacity: 0.05;
+  shadow-radius: 4px;
+  elevation: 2;
 `;
 
 const StepText = styled.Text`
-  color: #ccc;
-  margin-bottom: 4px;
+  color: #555;
+  margin-bottom: 6px;
+  font-size: 14px;
 `;
 
 const FormCard = styled.View`
-  background-color: #2a2a2a;
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  border: 1px solid #e6e9ef;
+  shadow-color: #000;
+  shadow-opacity: 0.05;
+  shadow-radius: 4px;
+  elevation: 2;
 `;
 
 const Label = styled.Text`
-  color: #f0f0f0;
-  margin-bottom: 4px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
 `;
 
 const Input = styled.TextInput`
-  background-color: #1a1a1a;
-  color: #fff;
-  padding: 12px;
-  border-radius: 6px;
-  margin-bottom: 12px;
-`;
-
-const OTPSelector = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
+  background-color: #f1f4f9;
+  color: #1a1a1a;
+  padding: 14px;
+  border-radius: 10px;
   margin-bottom: 16px;
+  border: 1px solid #dce1eb;
 `;
 
-const OTPButton = styled.TouchableOpacity`
-  flex: 1;
-  background-color: ${({ selected }) => (selected ? '#00cc44' : '#333')};
-  padding: 12px;
-  border-radius: 6px;
-  margin-right: ${({ isLast }) => (isLast ? '0px' : '8px')};
+/* -------------------- PICKER WRAP -------------------- */
+
+const PickerWrapper = styled.View`
+  background-color: #f1f4f9;
+  border: 1px solid #dce1eb;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  overflow: hidden;
 `;
 
-const OTPText = styled.Text`
-  color: #fff;
-  text-align: center;
-`;
+/* -------------------- BUTTON -------------------- */
 
 const WithdrawButton = styled.TouchableOpacity`
-  background-color: #00cc44;
+  background-color: #0d6efd;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 12px;
   align-items: center;
+  opacity: ${({disabled}) => (disabled ? 0.5 : 1)};
 `;
 
 const WithdrawText = styled.Text`
-  color: #1a1a1a;
-  font-size: 18px;
+  color: #fff;
+  font-size: 17px;
   font-weight: bold;
 `;
 
+/* ---------------------------------------------------------------------- */
+
 export default function WithdrawScreen() {
-  const [amount, setAmount] = React.useState('');
-  const [bankAccount, setBankAccount] = React.useState([]);
-  const [otpMethod, setOtpMethod] = React.useState('sms');
+  const [amount, setAmount] = useState('');
+  const [bankAccount, setBankAccount] = useState([]);
+  const [otpMethod, setOtpMethod] = useState('sms');
   const [selectedBank, setSelectedBank] = useState("");
-  const [bankId, setBankId] = useState("");
+  const [bankCode, setBankCode] = useState("");
   const [pin, setPin] = useState('');
   const [searchText, setSearchText] = useState("");
   const [loader, setLoader] = useState("");
   const { loading, makeRequest } = useRequest();
+  const [accountNumber, setAccountNumber] = useState("");
 
   const filteredBanks = bankAccount.filter((b) =>
     b.bank_name.toLowerCase().includes(searchText.toLowerCase())
@@ -101,9 +115,9 @@ export default function WithdrawScreen() {
     try {
       setLoader("bank");
       const res = await axiosClient.get("/bank-list");
-      setBankAccount(res.data.data ?? []); // assuming API returns array of transactions
+      setBankAccount(res.data.data ?? []);
     } catch (error) {
-      console.error('Error fetching bank:', error);
+      console.log('Error fetching bank:', error);
     } finally {
       setLoader("");
     }
@@ -115,143 +129,105 @@ export default function WithdrawScreen() {
 
   const handleWithdrawalRequest = async () => {
     if (!amount || parseFloat(amount) < 100) {
-        return Alert.alert("Invalid Amount", "Please enter a valid amount (min. 100)");
+      return Alert.alert("Invalid Amount", "Please enter a valid amount (min. 100)");
     }
-    if (!bankId) {
+    if (!bankCode) {
       return Alert.alert("Error", "Please select a bank account");
     }
 
     try {
-      const { error, response }  = await makeRequest("/withdraw/request", {   
-        bank_id: bankId,
-        amount: amount,
-        pin: pin
+      const { error }  = await makeRequest("/withdraw/request", {   
+        bank_code: bankCode,
+        amount,
+        pin,
+        accountNumber,
       });
+
       if (error) {
         return Alert.alert("Error", error?.message);
       }
-      Alert.alert("Success", "Withdrawal  successful. Please check your bank account!");
+
+      Alert.alert("Success", "Withdrawal successful. Please check your bank account!");
     } catch (err) {
-      Alert.alert("Error", "Unable to withdrawal request");
+      Alert.alert("Error", "Withdrawal failed. Please try again.");
     }
   };
 
   return (
-    <Container>
-      <Header>Withdraw</Header>
+    <SafeAreaView style={{flex:1}}>
+     <Container>
+      <Header style={{textAlign:'center'}}>Withdraw</Header>
+
       <StepBox>
         <StepText>1) Enter the amount you wish to withdraw</StepText>
         <StepText>2) Choose a registered bank account</StepText>
-        
-        <StepText>3) Verify with SMS or Email OTP</StepText>
+        <StepText>3) Input your transaction pin</StepText>
+        <StepText>4) Press the "Withdraw" button</StepText>
+        <StepText>5) If withdrawal is successful, it will be credited to your bank account within five minutes!</StepText>
+
       </StepBox>
+
       <FormCard>
         <Label>Amount</Label>
         <Input
           placeholder="₦1,000 min"
           keyboardType="numeric"
-          placeholderTextColor="#555"
+          placeholderTextColor="#9ba1b7"
           value={amount}
-          onChangeText={(text) => setAmount(text)}
+          onChangeText={setAmount}
         />
+
         <Label>Pin</Label>
         <Input
           placeholder="***"
           keyboardType="numeric"
-          placeholderTextColor="#555"
-          value={pin}
+          placeholderTextColor="#9ba1b7"
           secureTextEntry
-          onChangeText={(text) => setPin(text)}
+          value={pin}
+          onChangeText={setPin}
         />
+
         <Label>Bank Account</Label>
-        <View style={styles.container}>
-            {/* Search Input */}
-            {/* <TextInput
-                style={styles.searchInput}
-                placeholder="Search bank..."
-                value={searchText}
-                onChangeText={setSearchText}
-            /> */}
 
-            {/* Loader / Picker */}
-            {loader === "bank" ? (
-                <ActivityIndicator size="large" color="#000" />
-            ) : (
-                <View style={styles.pickerWrapper}>
-                <Picker
-                    selectedValue={selectedBank}
-                    onValueChange={(itemValue) => {
-                    const bank = bankAccount.find((b) => b.bank_id === itemValue);
-                    if (bank) {
-                        setSelectedBank(itemValue);
-                        setBankId(bank.bank_id);
-                    }
-                    }}
-                >
-                    <Picker.Item label="Select a bank" value="" />
-                    {filteredBanks.map((bank) => (
-                    <Picker.Item
-                        key={bank.bank_id}
-                        label={bank.bank_name + " - " + bank.account_number}
-                        value={bank.bank_id}
-                    />
-                    ))}
-                </Picker>
-                </View>
-            )}
-        </View>
+        {loader === "bank" ? (
+          <ActivityIndicator size="large" color="#0d6efd" />
+        ) : (
+          <PickerWrapper>
+            <Picker
+              selectedValue={selectedBank}
+              onValueChange={(itemValue) => {
+                const bank = bankAccount.find((b) => b.bank_code === itemValue);
+                if (bank) {
+                  setSelectedBank(itemValue);
+                  setBankCode(bank.bank_code);
+                  setAccountNumber(bank.account_number);
+                }
+              }}
+              style={{ color: "#1a1a1a" }}
+            >
+              <Picker.Item label="Select a bank" value="" />
+              {filteredBanks.map((bank) => (
+                <Picker.Item
+                  key={bank.bank_code}
+                  label={`${bank.bank_name} - ${bank.account_number}`}
+                  value={bank.bank_code}
+                />
+              ))}
+            </Picker>
+          </PickerWrapper>
+        )}
       </FormCard>
-      {/* <OTPSelector>
-        <OTPButton
-          selected={otpMethod === 'sms'}
-          onPress={() => setOtpMethod('sms')}
-        >
-          <OTPText>SMS OTP</OTPText>
-        </OTPButton>
-        <OTPButton
-          selected={otpMethod === 'email'}
-          isLast
-          onPress={() => setOtpMethod('email')}
-        >
-          <OTPText>Email OTP</OTPText>
-        </OTPButton>
-      </OTPSelector> */}
-      <TouchableOpacity 
-        onPress={handleWithdrawalRequest} 
-        disabled={!amount || !bankId || loading} 
-        style={{ 
-            backgroundColor: "#00cc44", 
-            padding: 16, 
-            borderRadius: 8, 
-            alignItems: "center", 
-            opacity: (!amount || !bankId || loading) ? 0.5 : 1 
-        }}
-        >
-        <WithdrawText>{loading ? "Processing..." : "Withdraw"}</WithdrawText>
-       </TouchableOpacity>
 
-        {/* <WithdrawButton>
-            <WithdrawText>{loading ? "Processing..." : "Request Withdrawal"}</WithdrawText>
-        </WithdrawButton> */}
+      <WithdrawButton 
+        onPress={handleWithdrawalRequest}
+        disabled={!amount || !bankCode || loading}
+      >
+        <WithdrawText>{loading ? "Processing..." : "Withdraw"}</WithdrawText>
+      </WithdrawButton>
     </Container>
+    </SafeAreaView>   
+
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginVertical: 10,
-  },
-  searchInput: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
-  },
-  pickerWrapper: {
-    borderWidth: 1,
-    borderColor: "#000",
-    borderRadius: 8,
-    overflow: "hidden",
-  },
-});
+const styles = StyleSheet.create({});

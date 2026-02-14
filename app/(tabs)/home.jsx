@@ -24,7 +24,8 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../context/AuthContext'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { formatCurrency } from '../../utlils';
-import { useFocusEffect } from 'expo-router';
+import {useFocusEffect} from 'expo-router';
+import {registerForPushNotificationsAsync} from '../../utlils/registerForPushnotificationsAsync'
 import axiosClient from '../../axiosClient';
 
 export default function HomeScreen() {
@@ -38,6 +39,37 @@ export default function HomeScreen() {
     setUserDetails(res.data);
     setUser(res.data);
   }
+  useEffect(()=>{
+    const sendPushToken = async ()=>{
+      const token = await AsyncStorage.getItem('pushToken');
+      
+      if(!token){
+       
+         registerForPushNotificationsAsync().then(
+                (token) => {
+                  axiosClient.post('/user-push-token', {token}).then(data=>{
+                    
+                    AsyncStorage.removeItem('pushToken')
+                  }).catch(e=>console.log(e));
+    
+                },
+                (error) => {
+                  console.log(error)
+                }
+              );  
+
+
+
+        return;
+      }
+     const res =  await axiosClient.post('/user-push-token', {token});
+
+     if(res.data.status){
+      await AsyncStorage.removeItem('pushToken');
+     }
+    }
+    sendPushToken();
+  }, [])
 
   useFocusEffect(
     useCallback(() => {
@@ -102,12 +134,12 @@ export default function HomeScreen() {
       <ScrollView contentContainerStyle={Homes.scrollViewContainer}>
         <SlideShowBet />
         <View style={Homes.imageBackground}>
-          <Text style={[Homes.imageText, { fontSize: 14, fontWeight: 500, textAlign: "center", fontFamily: "Grotesk", paddingVertical: 4 }]}>Available Balance </Text>
-
-          <Text style={[Homes.imageText, { textAlign: "center", fontFamily: "Poppins", fontSize: 24, paddingVertical: 14 }]}>NGN {formatCurrency(user?.wallet_balance) || formatCurrency(userDetails.wallet_balance) || '0.00'}</Text>
-
-          <View style={[Homes.flexD, { justifyContent: "space-between" }]}>
-            <TouchableOpacity onPress={() => router.push("/(routes)/deposit")} style={[Homes.flexD, { paddingHorizontal: "14%", paddingVertical: 14, backgroundColor: "#0A1931", borderRadius: 20, gap: 8 }]}>
+          <Text style={[Homes.imageText,{ fontSize:14,fontWeight:500,textAlign:"center",fontFamily:"Grotesk",paddingVertical:4}]}>Available Balance </Text>
+         
+             <Text style={[Homes.imageText,{ textAlign:"center",fontFamily:"Poppins",fontSize:24,paddingVertical:14}]}>NGN {formatCurrency(user?.wallet_balance) || formatCurrency(userDetails?.wallet_balance) ||'0.00'}</Text>
+             
+              <View style={[Homes.flexD,{justifyContent:"space-between"}]}>
+              <TouchableOpacity onPress={()=> router.push("/(routes)/deposit")} style={[Homes.flexD,{paddingHorizontal:"14%",paddingVertical:14, backgroundColor:"#0A1931",borderRadius:20,gap:8}]}>
               <AntDesign name="plus" size={10} color="#fff" />
               <Text style={[Homes.imageText, { color: "#fff", fontFamily: "Grotesk", fontSize: 10 }]}>
                 Deposit
@@ -173,9 +205,9 @@ export default function HomeScreen() {
                       </Text>
                     
             </TouchableOpacity> */}
-        {/* </View> */}
-        {/* Available Games */}
-        {/* <PastGames/> */}
+         {/* </View> */}
+          {/* Available Events */}
+          {/* <PastGames/> */}
         {/* </View> */}
 
         {/* Features */}
