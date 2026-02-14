@@ -11,7 +11,7 @@ import { ArrowLeft, Trophy, Medal } from "lucide-react-native";
 import { router } from 'expo-router';
 import axiosClient from "../../../../axiosClient";
 import Toast from '../../../../components/Toast';
-import {AuthContext} from '../../../../context/AuthContext'
+import { AuthContext } from '../../../../context/AuthContext'
 import { useRequest } from "../../../../hooks/useRequest";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -35,309 +35,340 @@ export default function MathClash() {
   const [toastTitle, setToastTitle] = useState("info");
   const [toastMessage, setToastMessage] = useState("info");
   const [winnings, setWinnings] = useState(0);
-  const {userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails} = useContext(AuthContext)
+  const { userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails } = useContext(AuthContext)
   const { loading, makeRequest } = useRequest();
   const [gameId, setGameId] = useState();
 
   const isFocused = useIsFocused();
 
 
-  const getMatchingJoining = async () => { 
+  const getMatchingJoining = async () => {
     try {
       const res = await axiosClient.get("/skillgame/matches/join/math_clash");
       setUserBalanceGen(res?.data.user_balance)
-      setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
+      setUserDetails(prev => ({ ...prev, wallet_balance: res?.data.user_balance }));
       setGameId(res.data.match.id)
       setMatchmakingTimer(res.data.countdown)
-      if(res.data.countdown == 0){
+      if (res.data.countdown == 0) {
         setGameState("countdown");
         setCountdownTimer(1);
       }
     } catch (error) {
-       handleNetworkError("Insufficient balance", "Your balance is too low for this game.")  
-    } finally { 
+      handleNetworkError("Insufficient balance", "Your balance is too low for this game.")
+    } finally {
       // setLoader("");
     }
   };
 
-  const handleNetworkError = (hdg="Network error", mss="Please try again!") => {
+  const handleNetworkError = (hdg = "Network error", mss = "Please try again!") => {
     setToastVisible(true)
-    setToastType("error")   
+    setToastType("error")
     setToastTitle(hdg)
     setToastMessage(mss)
-    setTimeout(() => {
+    safeSetTimeout(() => {
       resetMatchmaking(false)
     }, 3000)
   }
 
-  const getMatchingStart = async () => { 
+  const getMatchingStart = async () => {
     try {
       const res = await axiosClient.get(`/skillgame/matches/start/${gameId}`);
-      if(res.data.status == "error"){
+      if (res.data.status == "error") {
         handleNetworkError('Match start error', res.data.message)
       }
       setPlayers((prev) => {
-      const existingIds = new Set(prev.map((p) => p.id));
-      const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
-      
-      return [
-        ...prev,
-        ...newPlayers?.map((player) => ({
-          id: player.id,
-          name: player.user_id,
-          taps: player.score,
-        })),
-      ];
-    });
-    setPlayersReady(res.data.playerCount);
-      
-    } catch (error) { handleNetworkError  
-     
-    } finally { 
-      
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
+
+        return [
+          ...prev,
+          ...newPlayers?.map((player) => ({
+            id: player.id,
+            name: player.user_id,
+            taps: player.score,
+          })),
+        ];
+      });
+      setPlayersReady(res.data.playerCount);
+
+    } catch (error) {
+      handleNetworkError
+
+    } finally {
+
     }
   };
 
-  const getMatchingPlayer = async () => { 
+  const getMatchingPlayer = async () => {
     try {
       const res = await axiosClient.get(`/skillgame/matches/status/${gameId}`);
       // console.log(res.data.players)
-      if(res?.data?.match?.status == "cancelled"){
+      if (res?.data?.match?.status == "cancelled") {
         handleNetworkError("No active players", "No users available for this game. Please try again later.")
       }
       setPlayers((prev) => {
-      const existingIds = new Set(prev.map((p) => p.id));
-      const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
-      
-      return [
-        ...prev,
-        ...newPlayers?.map((player) => ({
-          id: player.id,
-          name: player.user_id,
-          score: player.score,
-        })),
-      ];
-    });
-    setPlayersReady(res.data.playerCount);
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
 
-    // Start countdown
-    // if (playersReady >= 4 || newTimer === 0) {
-    if (res.data.match.status === "started") {
-      getMatchingUpdate()
-      startGame();
-      setIsMounted(false)
-      // setCountdownTimer(5);
+        return [
+          ...prev,
+          ...newPlayers?.map((player) => ({
+            id: player.id,
+            name: player.user_id,
+            score: player.score,
+          })),
+        ];
+      });
+      setPlayersReady(res.data.playerCount);
+
+      // Start countdown
+      // if (playersReady >= 4 || newTimer === 0) {
+      if (res.data.match.status === "started") {
+        getMatchingUpdate()
+        startGame();
+        setIsMounted(false)
+        // setCountdownTimer(5);
+      }
+
+    } catch (error) {
+      handleNetworkError
+
+    } finally {
+
     }
-      
-    } catch (error) { handleNetworkError  
-     
-    } finally { 
-      
-    }
   };
 
-  const getMatchingUpdate = async (ingame = 'game') => { 
+  const getMatchingUpdate = async (ingame = 'game') => {
     try {
-      const { error, response }  = await makeRequest("/skillgame/matches/updateScore", {   
-          matchId: gameId,
-          score: score,
-          ingame: ingame,
-        });
-        
-        if(response){
-          setPlayers(
-            response?.leaderboard.map((player) => ({
-              id: player.id,
-              name: player.name,
-              score: player.score,
-            }))
-          );
-        }    
-      
-    } catch (error) { handleNetworkError  } finally {  }
+      const { error, response } = await makeRequest("/skillgame/matches/updateScore", {
+        matchId: gameId,
+        score: score,
+        ingame: ingame,
+      });
+
+      if (response) {
+        setPlayers(
+          response?.leaderboard.map((player) => ({
+            id: player.id,
+            name: player.name,
+            score: player.score,
+          }))
+        );
+      }
+
+    } catch (error) { handleNetworkError } finally { }
   };
 
-  const getMatchingComplete = async () => { 
+  const getMatchingComplete = async () => {
     try {
-      const { error, response }  = await makeRequest("/skillgame/matches/complete", {   
-          matchId: gameId,
-          score: score,
-          time: avgTime
-        });
-        setGameState("completed");    
-      
-    } catch (error) { handleNetworkError  } finally {  }
+      const { error, response } = await makeRequest("/skillgame/matches/complete", {
+        matchId: gameId,
+        score: score,
+        time: avgTime
+      });
+      setGameState("completed");
+      getMatchingEndUpdate();
+
+    } catch (error) { handleNetworkError } finally { }
   };
 
-  const getMatchingEndUpdate = async () => { 
+  const getMatchingEndUpdate = async () => {
     try {
       const res = await axiosClient.get(`/skillgame/matches/checkStatus/${gameId}`);
-      
-      if(res.data.results){
+
+      if (res.data.status === "finished") {
         setWinnings(res?.data.user_winning)
         setUserBalanceGen(res?.data.user_balance)
-        setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
+        setUserDetails(prev => ({ ...prev, wallet_balance: res?.data.user_balance }));
         setPlayers(
-            res.data.results.map((player) => ({
-              id: player.rank,
-              name: player.name,
-              score: player.score,
-              win: player.winnings,
-            }))
-          );
-          setIsMounted(false)
-          setGameState("finished")
+          res.data.results.map((player) => ({
+            id: player.rank,
+            name: player.name,
+            score: player.score,
+            win: player.winnings,
+          }))
+        );
+        setIsMounted(false)
+        setGameState("finished")
       }
-      
-    } catch (error) { handleNetworkError  
-     
-    } finally { 
-      
+
+    } catch (error) {
+      handleNetworkError
+
+    } finally {
+
     }
+  };
+
+  const timeoutsRef = useRef([]);
+  const intervalsRef = useRef([]);
+
+  const safeSetTimeout = (callback, delay) => {
+    const id = setTimeout(callback, delay);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  const safeSetInterval = (callback, delay) => {
+    const id = setInterval(callback, delay);
+    intervalsRef.current.push(id);
+    return id;
+  };
+
+  const clearAllTimers = () => {
+    timeoutsRef.current.forEach(clearTimeout);
+    intervalsRef.current.forEach(clearInterval);
+
+    timeoutsRef.current = [];
+    intervalsRef.current = [];
   };
 
   useEffect(() => {
-    if (!isFocused) return;
-      getMatchingJoining();
-    }, []);
-  
-   useEffect(() => {
+    if (!isFocused) {
+      clearAllTimers();
+      setIsMounted(false);
+      return;
+    }
+    getMatchingJoining();
+  }, []);
+
+  useEffect(() => {
     if (!isFocused) return;
     let interval;
-    
-      if (isMounted) {
-        // Run once immediately
-        if(gameState === "countdown" && countdownTimer === 0){
-          getMatchingPlayer()
-        }else{
-          getMatchingEndUpdate();
-        }
 
-        // Start polling
-        interval = setInterval(() => {
-          if (isMounted) {
-            if(gameState === "countdown" && countdownTimer === 0){
-              getMatchingPlayer()
-            }else{
-              getMatchingEndUpdate();
-            }
-          }   
-        }, 2000);
+    if (isMounted) {
+      // Run once immediately
+      if (gameState === "countdown" && countdownTimer === 0) {
+        getMatchingPlayer()
+      } else {
+        getMatchingEndUpdate();
       }
-      // Cleanup when unmounting or when isMounted becomes false
+
+      // Start polling
+      interval = safeSetInterval(() => {
+        if (isMounted) {
+          if (gameState === "countdown" && countdownTimer === 0) {
+            getMatchingPlayer()
+          } else {
+            getMatchingEndUpdate();
+          }
+        }
+      }, 2000);
+    }
+    // Cleanup when unmounting or when isMounted becomes false
     return () => {
       if (interval) clearInterval(interval);
     };
   }, [isMounted]);
 
   const glowAnim = useRef(new Animated.Value(0)).current;
-  
-    useEffect(() => {
-      if (!isFocused) return;
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(glowAnim, {
-            toValue: 1,
-            duration: 1200,
-            useNativeDriver: false,
-          }),
-          Animated.timing(glowAnim, {
-            toValue: 0,
-            duration: 1200,
-            useNativeDriver: false,
-          }),
-        ])
-      ).start();
-    }, [glowAnim]);
-  
-    // Interpolate shadow color and intensity
-    const shadowColor = glowAnim.interpolate({
+
+  useEffect(() => {
+    if (!isFocused) return;
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim, {
+          toValue: 1,
+          duration: 1200,
+          useNativeDriver: false,
+        }),
+        Animated.timing(glowAnim, {
+          toValue: 0,
+          duration: 1200,
+          useNativeDriver: false,
+        }),
+      ])
+    ).start();
+  }, [glowAnim]);
+
+  // Interpolate shadow color and intensity
+  const shadowColor = glowAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['rgba(0, 180, 255, 0.3)', 'rgba(180, 71, 235, 1)'], // strong blue glow
+  });
+
+  const shadowRadius = glowAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [10, 35], // increases shadow spread
+  });
+
+  const animatedStyle = {
+    shadowColor,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius,
+    elevation: glowAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: ['rgba(0, 180, 255, 0.3)', 'rgba(180, 71, 235, 1)'], // strong blue glow
-    });
-  
-    const shadowRadius = glowAnim.interpolate({
-      inputRange: [0, 1],
-      outputRange: [10, 35], // increases shadow spread
-    });
-  
-    const animatedStyle = {
-      shadowColor,
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 1,
-      shadowRadius,
-      elevation: glowAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [6, 24],
-      }),
-    };
+      outputRange: [6, 24],
+    }),
+  };
 
   const generateQuestion = useCallback(() => {
-  const operations = ['+', '-', '×', '/'];
-  const op = operations[Math.floor(Math.random() * operations.length)];
+    const operations = ['+', '-', '×', '/'];
+    const op = operations[Math.floor(Math.random() * operations.length)];
 
-  let num1 = Math.floor(Math.random() * 12) + 1;
-  let num2 = Math.floor(Math.random() * 12) + 1;
-  let answer = 0;
+    let num1 = Math.floor(Math.random() * 12) + 1;
+    let num2 = Math.floor(Math.random() * 12) + 1;
+    let answer = 0;
 
-  switch (op) {
-    case '+':
-      answer = num1 + num2;
-      break;
+    switch (op) {
+      case '+':
+        answer = num1 + num2;
+        break;
 
-    case '-':
-      if (num1 < num2) [num1, num2] = [num2, num1]; // avoid negative results
-      answer = num1 - num2;
-      break;
+      case '-':
+        if (num1 < num2) [num1, num2] = [num2, num1]; // avoid negative results
+        answer = num1 - num2;
+        break;
 
-    case '×':
-      answer = num1 * num2;
-      break;
+      case '×':
+        answer = num1 * num2;
+        break;
 
-    case '/':
-      // Ensure perfect division (no decimals)
-      // 1. Choose divisor
-      num2 = Math.floor(Math.random() * 11) + 1; // 1–12
-      // 2. Choose a random multiplier so num1 is divisible by num2
-      const multiplier = Math.floor(Math.random() * 12) + 1;
-      num1 = num2 * multiplier;
-      answer = num1 / num2;
-      break;
-  }
-
-  // Generate 3 wrong options
-  const options = [answer];
-  while (options.length < 4) {
-    const wrong = answer + Math.floor(Math.random() * 10) - 5;
-    if (wrong !== answer && wrong > 0 && !options.includes(wrong)) {
-      options.push(wrong);
+      case '/':
+        // Ensure perfect division (no decimals)
+        // 1. Choose divisor
+        num2 = Math.floor(Math.random() * 11) + 1; // 1–12
+        // 2. Choose a random multiplier so num1 is divisible by num2
+        const multiplier = Math.floor(Math.random() * 12) + 1;
+        num1 = num2 * multiplier;
+        answer = num1 / num2;
+        break;
     }
-  }
 
-  // Shuffle options
-  options.sort(() => Math.random() - 0.5);
+    // Generate 3 wrong options
+    const options = [answer];
+    while (options.length < 4) {
+      const wrong = answer + Math.floor(Math.random() * 10) - 5;
+      if (wrong !== answer && wrong > 0 && !options.includes(wrong)) {
+        options.push(wrong);
+      }
+    }
 
-  return {
-    question: `${num1} ${op} ${num2}`,
-    answer,
-    options,
-  };
-}, []);
+    // Shuffle options
+    options.sort(() => Math.random() - 0.5);
+
+    return {
+      question: `${num1} ${op} ${num2}`,
+      answer,
+      options,
+    };
+  }, []);
 
 
   // Matchmaking countdown
   useEffect(() => {
     if (!isFocused) return;
     if (gameState === 'waiting' && matchmakingTimer > 0) {
-      const timer = setTimeout(() => {
+      const timer = safeSetTimeout(() => {
         const newTimer = matchmakingTimer - 1;
         setMatchmakingTimer(newTimer);
-        if(gameId){          
+        if (gameId) {
           getMatchingPlayer()
         }
       }, 1000);
       return () => clearTimeout(timer);
-    }else if (matchmakingTimer === 0 && gameState === "waiting") {
+    } else if (matchmakingTimer === 0 && gameState === "waiting") {
       // Force start the game
       setGameState("countdown");
     }
@@ -347,9 +378,9 @@ export default function MathClash() {
   useEffect(() => {
     if (!isFocused) return;
     if (gameState === 'countdown' && countdownTimer > 0) {
-      const timer = setTimeout(() => {
+      const timer = safeSetTimeout(() => {
         setCountdownTimer(countdownTimer - 1)
-        if(gameId){          
+        if (gameId) {
           getMatchingPlayer()
         }
       }, 1000);
@@ -365,7 +396,7 @@ export default function MathClash() {
   useEffect(() => {
     if (!isFocused) return;
     if (gameState === 'playing' && currentQuestion < 20) {
-      const timeout = setTimeout(() => {
+      const timeout = safeSetTimeout(() => {
         getMatchingUpdate()
       }, Math.random() * 2000 + 500);
       return () => clearTimeout(timeout);
@@ -376,7 +407,7 @@ export default function MathClash() {
   useEffect(() => {
     if (!isFocused) return;
     if (gameState === 'playing' && timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      const timer = safeSetTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
     } else if (timeLeft === 0 && gameState === 'playing') {
       handleTimeout();
@@ -446,173 +477,174 @@ export default function MathClash() {
     setGameState('waiting');
     setPlayersReady(0);
     setPlayers([]);
-    setIsMounted(false)
-    if(bckclc){
+    clearAllTimers();
+    setIsMounted(false);
+    if (bckclc) {
       setMatchmakingTimer(30);
       router.push(`/(routes)/skillgame/mathclash`)
-    }else{
+    } else {
       setMatchmakingTimer(0);
       router.push("/(routes)/skillgame")
     }
   };
 
   // --- UI Render States ---
-    return (
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-            <TouchableOpacity onPress={()=> resetMatchmaking(false)} style={styles.backBtn}>
-            <ArrowLeft size={20} color="#fff" />
-            <Text style={styles.backText}>Back</Text>
-            </TouchableOpacity>
-            <Text style={styles.titleHead}>Math Clash</Text>
-            <View style={{ width: 60 }} />
-        </View>
-        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 1 }}>        
-            <Text style={styles.subText}>₦300 Stake</Text>
-        </View>
-        {gameState === "waiting" && (
-            <View style={styles.centerBox}>
-                <Animated.View style={[styles.card, animatedStyle]}>
-                    <Text style={styles.timer}>{matchmakingTimer}s</Text>
-                    <Text style={styles.subText}>Finding players...</Text>
-                </Animated.View>
-                <View  style={{ marginTop: 10, flexDirection: "column", justifyContent: "flex-start"}}>
-                    <Text style={styles.smallText}> • Solve 10 math problems as fast as you can!</Text>
-                    <Text style={styles.smallText}> • 3 seconds per question</Text>
-                    <Text style={styles.smallText}> • Correct answer = +10 points</Text>
-                    <Text style={styles.smallText}> • Fastest average time breaks ties</Text>
-                </View>
-                <View style={{marginTop: 20}}>
-                    <Text style={[styles.smallText, {textAlign: "center", fontWeight: 'bold', fontSize: 18}]}>Players Ready: {playersReady}/4</Text>
-                    <View style={styles.playersContainer}>
-                        {players.map((p, ind) => (
-                            <View key={p.id} style={styles.playerCard}>
-                            <Text style={styles.playerNumber}>{ind+1}</Text>
-                            <Text style={styles.playerName}>{p.name}</Text>
-                            </View>
-                        ))}
-                    </View>
-                </View>
-            </View>
-        )}
-
-        {gameState === 'countdown' &&  (
+  return (
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => resetMatchmaking(false)} style={styles.backBtn}>
+          <ArrowLeft size={20} color="#fff" />
+          <Text style={styles.backText}>Back</Text>
+        </TouchableOpacity>
+        <Text style={styles.titleHead}>Math Clash</Text>
+        <View style={{ width: 60 }} />
+      </View>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 1 }}>
+        <Text style={styles.subText}>₦300 Stake</Text>
+      </View>
+      {gameState === "waiting" && (
         <View style={styles.centerBox}>
-            <Animated.View style={[styles.card, animatedStyle]}>
+          <Animated.View style={[styles.card, animatedStyle]}>
+            <Text style={styles.timer}>{matchmakingTimer}s</Text>
+            <Text style={styles.subText}>Finding players...</Text>
+          </Animated.View>
+          <View style={{ marginTop: 10, flexDirection: "column", justifyContent: "flex-start" }}>
+            <Text style={styles.smallText}> • Solve 10 math problems as fast as you can!</Text>
+            <Text style={styles.smallText}> • 3 seconds per question</Text>
+            <Text style={styles.smallText}> • Correct answer = +10 points</Text>
+            <Text style={styles.smallText}> • Fastest average time breaks ties</Text>
+          </View>
+          <View style={{ marginTop: 20 }}>
+            <Text style={[styles.smallText, { textAlign: "center", fontWeight: 'bold', fontSize: 18 }]}>Players Ready: {playersReady}/4</Text>
+            <View style={styles.playersContainer}>
+              {players.map((p, ind) => (
+                <View key={p.id} style={styles.playerCard}>
+                  <Text style={styles.playerNumber}>{ind + 1}</Text>
+                  <Text style={styles.playerName}>{p.name}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </View>
+      )}
+
+      {gameState === 'countdown' && (
+        <View style={styles.centerBox}>
+          <Animated.View style={[styles.card, animatedStyle]}>
             <Text style={styles.bigCountdown}>{countdownTimer ? `${countdownTimer}s` : 'Waiting'}</Text>
             <Text style={styles.subtitle}>Game starting...</Text>
-            </Animated.View>
+          </Animated.View>
         </View>
-        )}
+      )}
 
-        {gameState === 'playing' && question &&  (
-            <View>
-                <View style={styles.topRow}>
-                <Text style={styles.sub}>Question {currentQuestion + 1}/20</Text>
-                <Text style={styles.timer}>{timeLeft}s</Text>
-                <Text style={styles.sub}>Score: {score}</Text>
-                </View>
-
-                <View style={styles.questionCard}>
-                    <Text style={styles.questionText}>{question.question} = ?</Text>
-                    <View style={styles.optionContainer}>
-                        {question.options.map((opt, i) => (
-                        <TouchableOpacity
-                            key={i}
-                            onPress={() => handleAnswer(opt)}
-                            style={styles.optionButton}
-                        >
-                            <Text style={styles.optionText}>{opt}</Text>
-                        </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
-                <View style={{marginTop: 10}}>
-                    <Text style={styles.subText}>Live Leaderboard</Text>
-                    <FlatList
-                        data={[...players].sort((a, b) => b.score - a.score)}
-                        keyExtractor={p => p.id.toString()}
-                        renderItem={({ item, index }) => (
-                            <View style={styles.rankCard}>
-                            <Text style={styles.rank}>#{index + 1}</Text>
-                            <Text style={styles.rankName}>{item.name}</Text>
-                            <Text style={styles.rankScore}>{item.score}</Text>
-                            </View>
-                        )}
-                        />
-                </View>
-            </View>
-        )}
-
-        {/* completed */}
-        {gameState === "completed" && (
-          <View style={styles.centerBox}>
-            <Animated.View style={[styles.card, animatedStyle]}>
-              <Text style={{color: "#fff", fontSize: 52}}>Completed</Text>
-            <Text style={[styles.subText, {color: "#fff"}]}>Waiting for result!</Text>
-            </Animated.View>
+      {gameState === 'playing' && question && (
+        <View>
+          <View style={styles.topRow}>
+            <Text style={styles.sub}>Question {currentQuestion + 1}/20</Text>
+            <Text style={styles.timer}>{timeLeft}s</Text>
+            <Text style={styles.sub}>Score: {score}</Text>
           </View>
-        )}
 
-        { gameState === 'finished' && (
-            <View style={{ flex: 1 }}>
-                <Text style={styles.title}>🏆 Game Over</Text>
-                <FlatList
-                    data={players}
-                    renderItem={({ item, index }) => (
-                        <View
-                        style={[
-                            styles.resultItem,
-                            index === 0
-                            ? styles.gold
-                            : index === 1
-                            ? styles.silver
-                            : styles.normalItem,
-                        ]}
-                        >
-                        <View style={styles.resultRow}>
-                            {index === 0 ? (
-                            <Trophy color="#ffd43b" size={20} />
-                            ) : index === 1 ? (
-                            <Medal color="#adb5bd" size={20} />
-                            ) : null}
-                            <Text style={styles.resultText}>
-                            {item.name} — {item.score} scores
-                            </Text>
-                        </View>
-                        </View>
-                    )}
-                    keyExtractor={(item) => item.id.toString()}
-                />
-                <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-around", marginTop: 20, marginBottom: 20}}>
-                    <TouchableOpacity
-                        style={[styles.btn, {backgroundColor: "#FFD04C"}]}
-                        onPress={()=> resetMatchmaking(false)}
-                    >
-                        <Text style={styles.btnText}>Back to Lobby</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.btn}
-                        onPress={() => resetMatchmaking(true)}
-                    >
-                        <Text style={styles.btnText}>Play Again</Text>
-                    </TouchableOpacity>
-                </View>
+          <View style={styles.questionCard}>
+            <Text style={styles.questionText}>{question.question} = ?</Text>
+            <View style={styles.optionContainer}>
+              {question.options.map((opt, i) => (
+                <TouchableOpacity
+                  key={i}
+                  onPress={() => handleAnswer(opt)}
+                  style={styles.optionButton}
+                >
+                  <Text style={styles.optionText}>{opt}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
-        )}
+          </View>
+          <View style={{ marginTop: 10 }}>
+            <Text style={styles.subText}>Live Leaderboard</Text>
+            <FlatList
+              data={[...players].sort((a, b) => b.score - a.score)}
+              keyExtractor={p => p.id.toString()}
+              renderItem={({ item, index }) => (
+                <View style={styles.rankCard}>
+                  <Text style={styles.rank}>#{index + 1}</Text>
+                  <Text style={styles.rankName}>{item.name}</Text>
+                  <Text style={styles.rankScore}>{item.score}</Text>
+                </View>
+              )}
+            />
+          </View>
+        </View>
+      )}
 
-        <Toast
-          visible={toastVisible}
-          type={toastType}
-          title={toastTitle}
-          message={toastMessage}
-          position="bottom"
-          duration={3000}
-          onHide={() => setToastVisible(false)}
-        />
-      </View>
-    );
+      {/* completed */}
+      {gameState === "completed" && (
+        <View style={styles.centerBox}>
+          <Animated.View style={[styles.card, animatedStyle]}>
+            <Text style={{ color: "#fff", fontSize: 52 }}>Completed</Text>
+            <Text style={[styles.subText, { color: "#fff" }]}>Waiting for result!</Text>
+          </Animated.View>
+        </View>
+      )}
+
+      {gameState === 'finished' && (
+        <View style={{ flex: 1 }}>
+          <Text style={styles.title}>🏆 Game Over</Text>
+          <FlatList
+            data={players}
+            renderItem={({ item, index }) => (
+              <View
+                style={[
+                  styles.resultItem,
+                  index === 0
+                    ? styles.gold
+                    : index === 1
+                      ? styles.silver
+                      : styles.normalItem,
+                ]}
+              >
+                <View style={styles.resultRow}>
+                  {index === 0 ? (
+                    <Trophy color="#ffd43b" size={20} />
+                  ) : index === 1 ? (
+                    <Medal color="#adb5bd" size={20} />
+                  ) : null}
+                  <Text style={styles.resultText}>
+                    {item.name} — {item.score} scores
+                  </Text>
+                </View>
+              </View>
+            )}
+            keyExtractor={(item) => item.id.toString()}
+          />
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around", marginTop: 20, marginBottom: 20 }}>
+            <TouchableOpacity
+              style={[styles.btn, { backgroundColor: "#FFD04C" }]}
+              onPress={() => resetMatchmaking(false)}
+            >
+              <Text style={styles.btnText}>Back to Lobby</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => resetMatchmaking(true)}
+            >
+              <Text style={styles.btnText}>Play Again</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
+      <Toast
+        visible={toastVisible}
+        type={toastType}
+        title={toastTitle}
+        message={toastMessage}
+        position="bottom"
+        duration={3000}
+        onHide={() => setToastVisible(false)}
+      />
+    </View>
+  );
 
   return null;
 }
@@ -765,10 +797,10 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     alignItems: "center",
     marginHorizontal: 20
-  },  
+  },
   gold: { backgroundColor: "#fff3bf" },
   silver: { backgroundColor: "#dee2e6" },
   resultRow: { flexDirection: "row", alignItems: "center", gap: 10 },
-  resultText: { fontSize: 16, fontWeight: "600" },  
+  resultText: { fontSize: 16, fontWeight: "600" },
   normalItem: { backgroundColor: "#f1f3f5" },
 });

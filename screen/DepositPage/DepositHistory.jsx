@@ -18,6 +18,7 @@ const TABS = [
   { label: 'All', key: 'all' },
   { label: 'Deposits', key: 'deposit' },
   { label: 'Stakes', key: 'game' },
+  { label: 'Wins', key: 'win' },
   { label: 'Payouts', key: 'withdrawal' },
 ];
 
@@ -83,14 +84,15 @@ export default function TransactionsHistory() {
           <Text
             style={[
               styles.amount,
-              { color: item.type == 'deposit' ? '#22C55E' : '#EF4444' },
+              { color: item.type == 'deposit' || item.type == 'win' ? '#22C55E' : '#EF4444' },
             ]}
           >
-            {item.type == 'deposit' ? '+' : '-'} {formatCurrency(item.amount)}
+            {item.type == 'deposit' || item.type == 'win' ? '+' : '-'} {formatCurrency(item.amount)}
           </Text>
           <Text style={styles.type}>{item.type}</Text>
         </View>
       </View>
+      <Text style={styles.date}>{item.description}</Text>
       <Text style={styles.date}>{formatDate(item.created_at)}</Text>
     </View>
   );
@@ -170,7 +172,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   tabText: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#475569',
     fontFamily: 'montserratMeduim',
   },

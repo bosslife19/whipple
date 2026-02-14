@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef, useContext } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, Animated, ScrollView  } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, Animated, ScrollView } from 'react-native';
 import { LinearGradient } from "expo-linear-gradient";
 import { ArrowLeft, Trophy, Medal } from "lucide-react-native";
 import { router } from 'expo-router';
 import axiosClient from "../../../../axiosClient";
 import Toast from '../../../../components/Toast';
-import {AuthContext} from '../../../../context/AuthContext'
+import { AuthContext } from '../../../../context/AuthContext'
 import { useRequest } from "../../../../hooks/useRequest";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -33,50 +33,50 @@ export default function ColorSwitchReflex() {
   const [toastTitle, setToastTitle] = useState("info");
   const [toastMessage, setToastMessage] = useState("info");
   const [winnings, setWinnings] = useState(0);
-  const {userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails} = useContext(AuthContext)
+  const { userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails } = useContext(AuthContext)
   const { loading, makeRequest } = useRequest();
   const [gameId, setGameId] = useState();
 
   const isFocused = useIsFocused();
 
-  const getMatchingJoining = async () => { 
+  const getMatchingJoining = async () => {
     try {
       const res = await axiosClient.get("/skillgame/matches/join/color_switch");
       setUserBalanceGen(res?.data.user_balance)
-      setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
+      setUserDetails(prev => ({ ...prev, wallet_balance: res?.data.user_balance }));
       setGameId(res.data.match.id)
       setMatchmakingTimer(res.data.countdown)
-      if(res.data.countdown == 0){
+      if (res.data.countdown == 0) {
         setGameState("countdown");
         setCountdownTimer(1);
       }
-    } catch (error) { 
-      handleNetworkError("Insufficient balance", "Your balance is too low for this game.") 
-    } finally { 
+    } catch (error) {
+      handleNetworkError("Insufficient balance", "Your balance is too low for this game.")
+    } finally {
       // setLoader("");
     }
   };
 
-   const handleNetworkError = (hdg="Network error", mss="Please try again!") => {
+  const handleNetworkError = (hdg = "Network error", mss = "Please try again!") => {
     setToastVisible(true)
-    setToastType("error")   
+    setToastType("error")
     setToastTitle(hdg)
     setToastMessage(mss)
-    setTimeout(() => {
+    safeSetTimeout(() => {
       resetMatchmaking(false)
     }, 3000)
   }
 
-  const getMatchingStart = async () => { 
-      try {
-        const res = await axiosClient.get(`/skillgame/matches/start/${gameId}`);
-        if(res.data.status == "error"){
-          handleNetworkError('Match start error', res.data.message)
-        }
-        setPlayers((prev) => {
+  const getMatchingStart = async () => {
+    try {
+      const res = await axiosClient.get(`/skillgame/matches/start/${gameId}`);
+      if (res.data.status == "error") {
+        handleNetworkError('Match start error', res.data.message)
+      }
+      setPlayers((prev) => {
         const existingIds = new Set(prev.map((p) => p.id));
         const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
-        
+
         return [
           ...prev,
           ...newPlayers?.map((player) => ({
@@ -87,189 +87,220 @@ export default function ColorSwitchReflex() {
         ];
       });
       setPlayersReady(res.data.playerCount);
-  
-      // Start countdown
-        
-      } catch (error) { handleNetworkError  
-       
-      } finally { 
-        
-      }
-    };
 
-  const getMatchingPlayer = async () => { 
+      // Start countdown
+
+    } catch (error) {
+      handleNetworkError
+
+    } finally {
+
+    }
+  };
+
+  const getMatchingPlayer = async () => {
     try {
       const res = await axiosClient.get(`/skillgame/matches/status/${gameId}`);
       // console.log(res.data.players)
-      if(res?.data?.match?.status == "cancelled"){
+      if (res?.data?.match?.status == "cancelled") {
         handleNetworkError("No active players", "No users available for this game. Please try again later.")
       }
       setPlayers((prev) => {
-      const existingIds = new Set(prev.map((p) => p.id));
-      const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
-      
-      return [
-        ...prev,
-        ...newPlayers?.map((player) => ({
-          id: player.id,
-          name: player.user_id,
-          score: player.score,
-        })),
-      ];
-    });
-    setPlayersReady(res.data.playerCount);
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
 
-    // Start countdown
-    // if (playersReady >= 4 || newTimer === 0) {
-    if (res.data.match.status === "started") {
-      getMatchingUpdate()
-      startGame();
-      setIsMounted(false)
-      // setCountdownTimer(5);
+        return [
+          ...prev,
+          ...newPlayers?.map((player) => ({
+            id: player.id,
+            name: player.user_id,
+            score: player.score,
+          })),
+        ];
+      });
+      setPlayersReady(res.data.playerCount);
+
+      // Start countdown
+      // if (playersReady >= 4 || newTimer === 0) {
+      if (res.data.match.status === "started") {
+        getMatchingUpdate()
+        startGame();
+        setIsMounted(false)
+        // setCountdownTimer(5);
+      }
+
+    } catch (error) {
+      handleNetworkError
+
+    } finally {
+
     }
-      
-    } catch (error) { handleNetworkError  
-     
-    } finally { 
-      
-    }
   };
 
-  const getMatchingUpdate = async (ingame = 'game') => { 
+  const getMatchingUpdate = async (ingame = 'game') => {
     try {
-      const { error, response }  = await makeRequest("/skillgame/matches/updateScore", {   
-          matchId: gameId,
-          score: score,
-          ingame: ingame,
-        });
-        
-        if(response){
-          setPlayers(
-            response?.leaderboard.map((player) => ({
-              id: player.id,
-              name: player.name,
-              score: player.score,
-            }))
-          );
-        }    
-      
-    } catch (error) { handleNetworkError  } finally {  }
+      const { error, response } = await makeRequest("/skillgame/matches/updateScore", {
+        matchId: gameId,
+        score: score,
+        ingame: ingame,
+      });
+
+      if (response) {
+        setPlayers(
+          response?.leaderboard.map((player) => ({
+            id: player.id,
+            name: player.name,
+            score: player.score,
+          }))
+        );
+      }
+
+    } catch (error) { handleNetworkError } finally { }
   };
 
-  const getMatchingComplete = async () => { 
+  const getMatchingComplete = async () => {
     try {
-      const { error, response }  = await makeRequest("/skillgame/matches/complete", {   
-          matchId: gameId,
-          score: score,
-          time: countdownTimer
-        });    
-        setGameState("completed");
-      
-    } catch (error) { handleNetworkError  } finally {  }
+      const { error, response } = await makeRequest("/skillgame/matches/complete", {
+        matchId: gameId,
+        score: score,
+        time: countdownTimer
+      });
+      setGameState("completed");
+      getMatchingEndUpdate();
+
+    } catch (error) { handleNetworkError } finally { }
   };
 
-  const getMatchingEndUpdate = async () => { 
+  const getMatchingEndUpdate = async () => {
     try {
       const res = await axiosClient.get(`/skillgame/matches/checkStatus/${gameId}`);
-      
-      if(res.data.results){
+
+      if (res.data.status === "finished") {
         setWinnings(res?.data.user_winning)
         setUserBalanceGen(res?.data.user_balance)
-        setUserDetails(prev=>({...prev, wallet_balance:res?.data.user_balance}));
+        setUserDetails(prev => ({ ...prev, wallet_balance: res?.data.user_balance }));
         setPlayers(
-            res.data.results.map((player) => ({
-              id: player.rank,
-              name: player.name,
-              score: player.score,
-              win: player.winnings,
-            }))
-          );
-          setIsMounted(false)
-          setGameState("finished")
+          res.data.results.map((player) => ({
+            id: player.rank,
+            name: player.name,
+            score: player.score,
+            win: player.winnings,
+          }))
+        );
+        setIsMounted(false)
+        setGameState("finished")
       }
-      
-    } catch (error) { handleNetworkError  
-     
-    } finally { 
-      
+
+    } catch (error) {
+      handleNetworkError
+
+    } finally {
+
     }
+  };
+
+  const timeoutsRef = useRef([]);
+  const intervalsRef = useRef([]);
+
+  const safeSetTimeout = (callback, delay) => {
+    const id = setTimeout(callback, delay);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  const safeSetInterval = (callback, delay) => {
+    const id = setInterval(callback, delay);
+    intervalsRef.current.push(id);
+    return id;
+  };
+
+  const clearAllTimers = () => {
+    timeoutsRef.current.forEach(clearTimeout);
+    intervalsRef.current.forEach(clearInterval);
+
+    timeoutsRef.current = [];
+    intervalsRef.current = [];
   };
 
   useEffect(() => {
-    if (!isFocused) return;
-      getMatchingJoining();
-    }, []);
-  
-   useEffect(() => {
+    if (!isFocused) {
+      clearAllTimers();
+      setIsMounted(false);
+      return;
+    }
+    getMatchingJoining();
+  }, []);
+
+  useEffect(() => {
     if (!isFocused) return;
     let interval;
-    
-      if (isMounted) {
-        // Run once immediately
-        if(gameState === "countdown" && countdownTimer === 0){
-          getMatchingPlayer()
-        }else{
-          getMatchingEndUpdate();
-        }
 
-        // Start polling
-        interval = setInterval(() => {
-          if (isMounted) {
-            if(gameState === "countdown" && countdownTimer === 0){
-              getMatchingPlayer()
-            }else{
-              getMatchingEndUpdate();
-            }
-          }   
-        }, 2000);
+    if (isMounted) {
+      // Run once immediately
+      if (gameState === "countdown" && countdownTimer === 0) {
+        getMatchingPlayer()
+      } else {
+        getMatchingEndUpdate();
       }
-      // Cleanup when unmounting or when isMounted becomes false
+
+      // Start polling
+      interval = safeSetInterval(() => {
+        if (isMounted) {
+          if (gameState === "countdown" && countdownTimer === 0) {
+            getMatchingPlayer()
+          } else {
+            getMatchingEndUpdate();
+          }
+        }
+      }, 2000);
+    }
+    // Cleanup when unmounting or when isMounted becomes false
     return () => {
       if (interval) clearInterval(interval);
     };
   }, [isMounted]);
 
   const glowAnim = useRef(new Animated.Value(0)).current;
-  
-    useEffect(() => {
-      if (!isFocused) return;
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(glowAnim, {
-            toValue: 1,
-            duration: 1200,
-            useNativeDriver: false,
-          }),
-          Animated.timing(glowAnim, {
-            toValue: 0,
-            duration: 1200,
-            useNativeDriver: false,
-          }),
-        ])
-      ).start();
-    }, [glowAnim]);
-  
-    // Interpolate shadow color and intensity
-    const shadowColor = glowAnim.interpolate({
+
+  useEffect(() => {
+    if (!isFocused) return;
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim, {
+          toValue: 1,
+          duration: 1200,
+          useNativeDriver: false,
+        }),
+        Animated.timing(glowAnim, {
+          toValue: 0,
+          duration: 1200,
+          useNativeDriver: false,
+        }),
+      ])
+    ).start();
+  }, [glowAnim]);
+
+  // Interpolate shadow color and intensity
+  const shadowColor = glowAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['rgba(0, 180, 255, 0.3)', 'rgba(0, 255, 255, 1)'], // strong blue glow
+  });
+
+  const shadowRadius = glowAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [10, 35], // increases shadow spread
+  });
+
+  const animatedStyle = {
+    shadowColor,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius,
+    elevation: glowAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: ['rgba(0, 180, 255, 0.3)', 'rgba(0, 255, 255, 1)'], // strong blue glow
-    });
-  
-    const shadowRadius = glowAnim.interpolate({
-      inputRange: [0, 1],
-      outputRange: [10, 35], // increases shadow spread
-    });
-  
-    const animatedStyle = {
-      shadowColor,
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 1,
-      shadowRadius,
-      elevation: glowAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [6, 24],
-      }),
-    };
+      outputRange: [6, 24],
+    }),
+  };
 
   const fadeAnim = new Animated.Value(1);
 
@@ -287,15 +318,15 @@ export default function ColorSwitchReflex() {
   useEffect(() => {
     if (!isFocused) return;
     if (gameState === 'waiting' && matchmakingTimer > 0) {
-      const timer = setTimeout(() => {
+      const timer = safeSetTimeout(() => {
         const newTime = matchmakingTimer - 1;
         setMatchmakingTimer(newTime);
-        if(gameId){          
+        if (gameId) {
           getMatchingPlayer()
         }
       }, 1000);
       return () => clearTimeout(timer);
-    }else if (matchmakingTimer === 0 && gameState === "waiting") {
+    } else if (matchmakingTimer === 0 && gameState === "waiting") {
       // Force start the game
       setGameState("countdown");
     }
@@ -305,9 +336,9 @@ export default function ColorSwitchReflex() {
   useEffect(() => {
     if (!isFocused) return;
     if (gameState === 'countdown' && countdownTimer > 0) {
-      const timer = setTimeout(() => {
+      const timer = safeSetTimeout(() => {
         setCountdownTimer(countdownTimer - 1)
-        if(gameId){          
+        if (gameId) {
           getMatchingPlayer()
         }
       }, 1000);
@@ -323,7 +354,7 @@ export default function ColorSwitchReflex() {
   useEffect(() => {
     if (!isFocused) return;
     if (gameState === 'playing' && timeLeft > 0) {
-      const timer = setTimeout(() => {
+      const timer = safeSetTimeout(() => {
         setTimeLeft(timeLeft - 1)
         getMatchingUpdate()
       }, 1000);
@@ -350,18 +381,18 @@ export default function ColorSwitchReflex() {
   const handleColorSelect = (colorName) => {
     if (!challenge) return;
     const isCorrect = colorName === challenge.correctAnswer;
-    if(isCorrect){
-        setScore((prev) => Math.max(0, prev + 5));
+    if (isCorrect) {
+      setScore((prev) => Math.max(0, prev + 5));
       // setPlayers(prev =>
       //   prev.map(p => (p.id === 1 ? { ...p, score: p.score + 5 } : p)),
       // );
-    }else{
-        setScore((prev) => Math.max(0, prev -2));
-        // setPlayers(prev =>
-        //     prev.map(p => (p.id === 1 ? { ...p, score: p.score - 2 } : p)),
-        // );
+    } else {
+      setScore((prev) => Math.max(0, prev - 2));
+      // setPlayers(prev =>
+      //     prev.map(p => (p.id === 1 ? { ...p, score: p.score - 2 } : p)),
+      // );
     }
-    
+
     nextRound(true);
   };
 
@@ -380,102 +411,103 @@ export default function ColorSwitchReflex() {
   };
 
   const renderLeaderboardItem = ({ item, index }) => (
-      <View
-        style={[
-          styles.leaderItem,
-          item.id === 1 ? styles.highlight : styles.normalItem,
-        ]}
-      >
-        <Text style={styles.rank}>#{index + 1}</Text>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.taps}>{item.score}</Text>
-      </View>
-    );
+    <View
+      style={[
+        styles.leaderItem,
+        item.id === 1 ? styles.highlight : styles.normalItem,
+      ]}
+    >
+      <Text style={styles.rank}>#{index + 1}</Text>
+      <Text style={styles.name}>{item.name}</Text>
+      <Text style={styles.taps}>{item.score}</Text>
+    </View>
+  );
 
   const resetMatchmaking = (bckclc) => {
-      setGameState('waiting')
-      setPlayersReady(0);
-      setPlayers([]);
-      setIsMounted(false)
-      if(bckclc){
-        setMatchmakingTimer(30);
-        router.push(`/(routes)/skillgame/colorswitch`)
-      }else{
-        setMatchmakingTimer(0);
-        router.push("/(routes)/skillgame")
-      }
-    };
+    setGameState('waiting')
+    setPlayersReady(0);
+    setPlayers([]);
+    clearAllTimers();
+    setIsMounted(false);
+    if (bckclc) {
+      setMatchmakingTimer(30);
+      router.push(`/(routes)/skillgame/colorswitch`)
+    } else {
+      setMatchmakingTimer(0);
+      router.push("/(routes)/skillgame")
+    }
+  };
 
   return (
     <View style={styles.container}>
       {/* Top Header */}
 
       <View style={styles.header}>
-        <TouchableOpacity onPress={()=> resetMatchmaking(false)} style={styles.backBtn}>
-        <ArrowLeft size={20} color="#fff" />
-        <Text style={styles.backText}>Back</Text>
+        <TouchableOpacity onPress={() => resetMatchmaking(false)} style={styles.backBtn}>
+          <ArrowLeft size={20} color="#fff" />
+          <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.titleHead}>Color Switch Reflex</Text>
         <View style={{ width: 20 }} />
-    </View>
+      </View>
 
-    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 1 }}>        
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 1 }}>
         <Text style={styles.subText}>₦500 Stake</Text>
-    </View>
+      </View>
 
       {/* Waiting State */}
       {gameState === 'waiting' && (
         <ScrollView>
-            <View style={styles.centerBox}>
-                <Animated.View style={[styles.card, animatedStyle]}>
-                <Text style={styles.timerText}>{matchmakingTimer}s</Text>
-                <Text style={styles.subText}>Finding players...</Text>
-                </Animated.View>
-                <View style={{ marginTop: 5, flexDirection: "column", justifyContent: "flex-start"}}>
-                    <Text style={styles.smallText}> • 20 rounds - 3 seconds per prompt</Text>
-                    <Text style={styles.smallText}> • Tap the COLOR of the text, not the word!</Text>
-                    <Text style={styles.smallText}> • Correct = +5 points, Wrong/Timeout = -2 points</Text>
-                </View>
-
-                <View style={[styles.card, { marginTop: 10, flexDirection: "column", justifyContent: "flex-start"}]}>
-                    <Text style={styles.smallText}> Example:</Text>
-                    <Text style={{color: "#3B82F6", fontSize: 40}}> RED</Text>
-                    <Text style={styles.smallText}> The word says "RED" but the color is BLUE → Tap BLUE!</Text>
-                </View>
-
-                <View style={{ marginTop: 10 }}>
-                <Text style={[styles.smallText, {textAlign: "center"}]}>Players Ready: {playersReady}/4</Text>
-                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 5, width: '100%', flexWrap: 'wrap' }}>
-                    {players.map((p, ind) => (
-                    <View key={p.id} style={{flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginTop: 5, borderWidth: 1, backgroundColor: '#111', borderRadius: 20, padding: 10, width: '48%' }}>
-                        <Text style={{ 
-                        backgroundColor: '#1A4051',
-                        color: '#00B3D2',
-                        padding: 10,
-                        marginRight: 5,
-                        borderRadius: 50, // use number instead of "50%"
-                        width: 40,
-                        height: 40,
-                        textAlign: 'center',
-                        textAlignVertical: 'center', // centers text vertically on Android
-                        fontWeight: 'bold'
-                        }}>{ind+1}</Text>
-                        <Text style={styles.playerText}>{p.name}</Text>
-                    </View>
-                    ))}
-                </View>
-                </View>
+          <View style={styles.centerBox}>
+            <Animated.View style={[styles.card, animatedStyle]}>
+              <Text style={styles.timerText}>{matchmakingTimer}s</Text>
+              <Text style={styles.subText}>Finding players...</Text>
+            </Animated.View>
+            <View style={{ marginTop: 5, flexDirection: "column", justifyContent: "flex-start" }}>
+              <Text style={styles.smallText}> • 20 rounds - 3 seconds per prompt</Text>
+              <Text style={styles.smallText}> • Tap the COLOR of the text, not the word!</Text>
+              <Text style={styles.smallText}> • Correct = +5 points, Wrong/Timeout = -2 points</Text>
             </View>
+
+            <View style={[styles.card, { marginTop: 10, flexDirection: "column", justifyContent: "flex-start" }]}>
+              <Text style={styles.smallText}> Example:</Text>
+              <Text style={{ color: "#3B82F6", fontSize: 40 }}> RED</Text>
+              <Text style={styles.smallText}> The word says "RED" but the color is BLUE → Tap BLUE!</Text>
+            </View>
+
+            <View style={{ marginTop: 10 }}>
+              <Text style={[styles.smallText, { textAlign: "center" }]}>Players Ready: {playersReady}/4</Text>
+              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 5, width: '100%', flexWrap: 'wrap' }}>
+                {players.map((p, ind) => (
+                  <View key={p.id} style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginTop: 5, borderWidth: 1, backgroundColor: '#111', borderRadius: 20, padding: 10, width: '48%' }}>
+                    <Text style={{
+                      backgroundColor: '#1A4051',
+                      color: '#00B3D2',
+                      padding: 10,
+                      marginRight: 5,
+                      borderRadius: 50, // use number instead of "50%"
+                      width: 40,
+                      height: 40,
+                      textAlign: 'center',
+                      textAlignVertical: 'center', // centers text vertically on Android
+                      fontWeight: 'bold'
+                    }}>{ind + 1}</Text>
+                    <Text style={styles.playerText}>{p.name}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          </View>
         </ScrollView>
       )}
 
       {/* Countdown */}
       {gameState === 'countdown' && (
         <View style={styles.centerBox}>
-            <Animated.View style={[styles.card, animatedStyle]}>
+          <Animated.View style={[styles.card, animatedStyle]}>
             <Text style={styles.bigText}>{countdownTimer ? `${countdownTimer}s` : 'Waiting'}</Text>
             <Text style={styles.subText}>Get Ready...</Text>
-            </Animated.View>
+          </Animated.View>
         </View>
       )}
 
@@ -503,12 +535,12 @@ export default function ColorSwitchReflex() {
               </TouchableOpacity>
             ))}
           </View>
-          <View style={{width: '100%', }}>
+          <View style={{ width: '100%', }}>
             <Text style={styles.subText}>Live Leaderboard</Text>
             <FlatList
-                data={[...players].sort((a, b) => b.score - a.score)}
-                renderItem={renderLeaderboardItem}
-                keyExtractor={(item) => item.id.toString()}
+              data={[...players].sort((a, b) => b.score - a.score)}
+              renderItem={renderLeaderboardItem}
+              keyExtractor={(item) => item.id.toString()}
             />
           </View>
         </View>
@@ -518,8 +550,8 @@ export default function ColorSwitchReflex() {
       {gameState === "completed" && (
         <View style={styles.centerBox}>
           <Animated.View style={[styles.card, animatedStyle]}>
-            <Text style={[styles.bigText, {color: "#fff", fontSize: 52}]}>Completed</Text>
-          <Text style={[styles.subText, {color: "#fff"}]}>Waiting for result!</Text>
+            <Text style={[styles.bigText, { color: "#fff", fontSize: 52 }]}>Completed</Text>
+            <Text style={[styles.subText, { color: "#fff" }]}>Waiting for result!</Text>
           </Animated.View>
         </View>
       )}
@@ -527,49 +559,49 @@ export default function ColorSwitchReflex() {
       {/* Finished */}
       {gameState === 'finished' && (
         <View style={{ flex: 1 }}>
-            <Text style={styles.title}>🏆 Game Over</Text>
-            <Text style={styles.infoText}>Final Score: {score}</Text>
-            <FlatList
-                data={players}
-                renderItem={({ item, index }) => (
-                    <View
-                    style={[
-                        styles.resultItem,
-                        index === 0
-                        ? styles.gold
-                        : index === 1
-                        ? styles.silver
-                        : styles.normalItem,
-                    ]}
-                    >
-                    <View style={styles.resultRow}>
-                        {index === 0 ? (
-                        <Trophy color="#ffd43b" size={20} />
-                        ) : index === 1 ? (
-                        <Medal color="#adb5bd" size={20} />
-                        ) : null}
-                        <Text style={styles.resultText}>
-                        {item.name} — {item.score} scores
-                        </Text>
-                    </View>
-                    </View>
-                )}
-                keyExtractor={(item) => item.id.toString()}
-            />
-            <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-around", marginVertical: 20}}>
-                <TouchableOpacity
-                    style={[styles.playBtn, {backgroundColor: "#FFD04C"}]}
-                    onPress={()=> resetMatchmaking(false)}
-                >
-                    <Text style={{ color: '#fff', fontWeight: 'bold' }}>Back to Lobby</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.playBtn}
-                    onPress={() => resetMatchmaking(true)}
-                >
-                    <Text style={{ color: '#fff', fontWeight: 'bold' }}>Play Again</Text>
-                </TouchableOpacity>
-            </View>
+          <Text style={styles.title}>🏆 Game Over</Text>
+          <Text style={styles.infoText}>Final Score: {score}</Text>
+          <FlatList
+            data={players}
+            renderItem={({ item, index }) => (
+              <View
+                style={[
+                  styles.resultItem,
+                  index === 0
+                    ? styles.gold
+                    : index === 1
+                      ? styles.silver
+                      : styles.normalItem,
+                ]}
+              >
+                <View style={styles.resultRow}>
+                  {index === 0 ? (
+                    <Trophy color="#ffd43b" size={20} />
+                  ) : index === 1 ? (
+                    <Medal color="#adb5bd" size={20} />
+                  ) : null}
+                  <Text style={styles.resultText}>
+                    {item.name} — {item.score} scores
+                  </Text>
+                </View>
+              </View>
+            )}
+            keyExtractor={(item) => item.id.toString()}
+          />
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around", marginVertical: 20 }}>
+            <TouchableOpacity
+              style={[styles.playBtn, { backgroundColor: "#FFD04C" }]}
+              onPress={() => resetMatchmaking(false)}
+            >
+              <Text style={{ color: '#fff', fontWeight: 'bold' }}>Back to Lobby</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.playBtn}
+              onPress={() => resetMatchmaking(true)}
+            >
+              <Text style={{ color: '#fff', fontWeight: 'bold' }}>Play Again</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
 
@@ -592,7 +624,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },  
+  },
   subText: { fontSize: 16, color: "#666", marginVertical: 10 },
   backBtn: { flexDirection: "row", alignItems: "center" },
   backText: { marginLeft: 6, fontSize: 16, color: "#fff" },
@@ -654,7 +686,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#4c6ef5",
     padding: 14,
     borderRadius: 10,
-  },  
+  },
   centerBox: { justifyContent: "center", alignItems: "center", backgroundColor: '#121216', shadowOpacity: 0.9, borderRadius: 5 },
   card: {
     backgroundColor: '#111',
@@ -666,9 +698,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     // borderColor: '#00eaff',
     width: '100%'
-  },  
+  },
   timerText: { fontSize: 80, color: "#4c6ef5", fontWeight: "bold" },
-  smallText: { fontSize: 14, color: "#888" },  
+  smallText: { fontSize: 14, color: "#888" },
   playerText: { textAlign: "center", fontSize: 16, color: "#fff" },
   tapText: { fontSize: 32, fontWeight: "bold", color: "#fff" },
   leaderItem: {
@@ -686,7 +718,7 @@ const styles = StyleSheet.create({
   resultItem: {
     padding: 14,
     borderRadius: 10,
-     marginVertical: 15,
+    marginVertical: 15,
     alignItems: "center",
     marginHorizontal: 20
   },

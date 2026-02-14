@@ -7,7 +7,7 @@ import {
   SimpleLineIcons,
 } from "@expo/vector-icons";
 import Locks from "../../../assets/images/lock"
- import { LinearGradient } from "expo-linear-gradient";
+import { LinearGradient } from "expo-linear-gradient";
 import Google from "../../../assets/images/google"
 import { useContext, useEffect, useState } from "react";
 import {
@@ -36,17 +36,18 @@ import Facebook from "../../../assets/images/Facebook";
 // import SpinningLogo from "@/LoadingScreen/SpinningLogo";
 
 export default function SignupScreen() {
-   const [buttonSpinner, setButtonSpinner] = useState(false);
-   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+  const [buttonSpinner, setButtonSpinner] = useState(false);
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [email, setEmail] = useState("");
-   // const { setUserDetails, userDetails } = useContext(AuthContext);
+  // const { setUserDetails, userDetails } = useContext(AuthContext);
   const baseUrl = process.env.EXPO_PUBLIC_BASE_URL;
+  // const baseUrl = 'https://aphidious-lizzie-crashingly.ngrok-free.dev';
   const [authToken, setAuthToken] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
-  
+
   // Enable button when both email and password fields are filled
   useEffect(() => {
     setIsButtonEnabled(email.trim() !== "");
@@ -59,20 +60,20 @@ export default function SignupScreen() {
       setIsButtonEnabled(true);
       router.push("/(routes)/account-creation");
     }, 2000);
-   };
+  };
 
   useEffect(() => {
     const getToken = async () => {
       const token = await AsyncStorage.getItem("authToken");
       setAuthToken(token);
     };
-    const checkLogin = async ()=>{
+    const checkLogin = async () => {
       const loggedIn = await AsyncStorage.getItem('loggedIn');
-      if(loggedIn){
+      if (loggedIn) {
         setLoggedIn(true);
         setIsInitialized(true);
 
-      }else{
+      } else {
         setLoggedIn(false);
         setIsInitialized(true);
 
@@ -85,11 +86,11 @@ export default function SignupScreen() {
     // Render loading state while determining the login status
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <SpinningLogo/>
+        <SpinningLogo />
       </View>
     );
   }
-  if(loggedIn){
+  if (loggedIn) {
     router.replace('/(tabs)/home');
     return null
   }
@@ -101,52 +102,52 @@ export default function SignupScreen() {
           flexGrow: 1, // Allows content to grow and scroll
           paddingBottom: "21%",
           height: "100%",
-          backgroundColor:"#F7EEFD"
+          backgroundColor: "#F7EEFD"
         }}
         keyboardShouldPersistTaps="handled" // Ensures keyboard doesn't block input
         showsVerticalScrollIndicator={false} // Op
       >
-       <View style={styles.container}>
-      {/* Image */}
-      
-      
-      </View>
-      
-        <View style={{paddingHorizontal:"7%"}}>
-        
-       <Text 
-         style={[
+        <View style={styles.container}>
+          {/* Image */}
+
+
+        </View>
+
+        <View style={{ paddingHorizontal: "7%" }}>
+
+          <Text
+            style={[
               SectionsLogin.welcomeText,
               {
                 fontFamily: "Poppins",
                 color: "#0F172A",
                 lineHeight: 43.95,
                 // fontSize:26,
-                paddingTop:10,
+                paddingTop: 10,
                 fontWeight: "700",
               },
             ]}
-        >
-          Join Your Journey
-        </Text>
-       
-           <Text style={[ SectionsLogin.welcomeText,
-            {
-              fontFamily: "Poppins",
-              color: "#475569",
-              fontSize:14,
-               paddingHorizontal:10,
-              //   lineHeight: 43.95,
-              fontWeight: "500",
-              marginVertical:20
-            }
+          >
+            Join Your Journey
+          </Text>
+
+          <Text style={[SectionsLogin.welcomeText,
+          {
+            fontFamily: "Poppins",
+            color: "#475569",
+            fontSize: 14,
+            paddingHorizontal: 10,
+            //   lineHeight: 43.95,
+            fontWeight: "500",
+            marginVertical: 20
+          }
           ]}>
-            Create an account and start transforming your health today          
-        </Text>
+            Create an account and start transforming your health today
+          </Text>
           <View style={SectionsLogin.inputContainers}>
-          <View style={[SectionsLogin.contains, isFocused && 
-            { borderColor: "#8A2BE2", borderWidth: 1 }]}>
-          <MailIcon/>
+            <View style={[SectionsLogin.contains, isFocused &&
+              { borderColor: "#8A2BE2", borderWidth: 1 }]}>
+              <MailIcon />
               <TextInput
                 style={[
                   SectionsLogin.input,
@@ -157,19 +158,19 @@ export default function SignupScreen() {
                 value={email}
                 placeholder="email"
                 onFocus={() => setIsFocused(true)}
-                  onBlur={() => setIsFocused(false)}
-                placeholderTextColor={Platform.OS === "ios" ? "#94A3B8" : undefined} 
+                onBlur={() => setIsFocused(false)}
+                placeholderTextColor={Platform.OS === "ios" ? "#94A3B8" : undefined}
                 onChangeText={(value) => setEmail(value)}
               />
             </View>
- 
+
             <TouchableOpacity
               style={[SectionsLogin.loginButton,
-                !isButtonEnabled && { backgroundColor: "#64748B", opacity:0.8 } // Gray out if disabled
+              !isButtonEnabled && { backgroundColor: "#64748B", opacity: 0.8 } // Gray out if disabled
               ]}
               onPress={handleSignUp}
               disabled={!isButtonEnabled}
-             >
+            >
               {buttonSpinner ? (
                 <ActivityIndicator size="small" color={"white"} />
               ) : (
@@ -179,12 +180,12 @@ export default function SignupScreen() {
                     { fontFamily: "Poppins" },
                   ]}
                 >
-                 Register
+                  Register
                 </Text>
               )}
             </TouchableOpacity>
- 
-             
+
+
             <View style={SectionsLogin.signupRedirect}>
               <Text
                 style={{
@@ -195,7 +196,7 @@ export default function SignupScreen() {
                   color: "#3E3E3E",
                 }}
               >
-                 Already have an account?
+                Already have an account?
               </Text>
               <TouchableOpacity onPress={() => router.push("/(routes)/login")}>
                 <Text style={SectionsLogin.signUpText}>Login</Text>
@@ -209,12 +210,12 @@ export default function SignupScreen() {
   );
 
 }
- 
+
 
 const styles = StyleSheet.create({
   iosPlaceholder: {
     fontFamily: "Poppins", // Ensure the placeholder uses the same font
-    color:'#aaa'
+    color: '#aaa'
   },
   container: {
     position: "relative",
