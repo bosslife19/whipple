@@ -167,6 +167,7 @@ export default function MathClash() {
         time: avgTime
       });
       setGameState("completed");
+      getMatchingEndUpdate();
 
     } catch (error) { handleNetworkError } finally { }
   };

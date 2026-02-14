@@ -3,6 +3,7 @@ import axios from 'axios';
 import { router } from 'expo-router';
 
 const axiosClient = axios.create({
+    //baseURL: `https://aphidious-lizzie-crashingly.ngrok-free.dev/api`,
     baseURL: `${process.env.EXPO_PUBLIC_BASE_URL}/api`,
     headers: {
         'Content-Security-Policy': "default-src 'self'; img-src https://*; script-src 'self';"

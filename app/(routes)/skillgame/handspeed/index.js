@@ -227,6 +227,7 @@ export default function TapRush() {
         score: tapCount,
         time: countdownTimer
       });
+      getMatchingEndUpdate();
 
     } catch (error) { handleNetworkError } finally { }
   };

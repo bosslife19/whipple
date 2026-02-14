@@ -234,6 +234,7 @@ export default function DefuseX() {
       });
       // console.log([total, completion])   
       setPhase("completed");
+      getMatchingEndUpdate();
 
     } catch (error) { handleNetworkError } finally { }
   };

@@ -166,6 +166,7 @@ export default function ColorSwitchReflex() {
         time: countdownTimer
       });
       setGameState("completed");
+      getMatchingEndUpdate();
 
     } catch (error) { handleNetworkError } finally { }
   };
