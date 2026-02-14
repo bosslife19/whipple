@@ -71,11 +71,11 @@ export default function HomeScreen() {
       route: '/(routes)/skillgame',
       backgroundColor: '#0A1931',
     },
-    {
-      name: 'Fun Forecast',
-      route: '/(routes)/forecast',
-      backgroundColor: '#0A1931',
-    },
+    // {
+    //   name: 'Fun Forecast',
+    //   route: '/(routes)/forecast',
+    //   backgroundColor: '#0A1931',
+    // },
   ];
   return (
     <View style={Homes.Container}>
