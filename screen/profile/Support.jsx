@@ -43,6 +43,10 @@ const Support = () => {
     const whatsapp = "https://wa.link/h9umoe";
     Linking.openURL(whatsapp);
   };
+   const openTelegram = () => {
+    const whatsapp = "https://t.me/+ES_VmnaIvsUxMDI0";
+    Linking.openURL(whatsapp);
+  };
 
   return (
     <View style={{ backgroundColor: "#f9f9fb", height: "100%" }}>
@@ -372,6 +376,10 @@ const Support = () => {
             <TouchableOpacity style={styles.contactRow} onPress={openWhatsapp}>
               <FontAwesome name="whatsapp" size={24} color="#25D366" />
               <Text style={styles.contactTextClickable}>+234 9079141911</Text>
+            </TouchableOpacity>
+             <TouchableOpacity style={styles.contactRow} onPress={openTelegram}>
+              <FontAwesome name="telegram" size={24} color="purple" />
+              <Text style={styles.contactTextClickable}>Join our Telegram Group</Text>
             </TouchableOpacity>
           </View>
         </View>
