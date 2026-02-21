@@ -40,8 +40,8 @@ export default function SignupScreen() {
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [email, setEmail] = useState("");
   // const { setUserDetails, userDetails } = useContext(AuthContext);
-  // const baseUrl = process.env.EXPO_PUBLIC_BASE_URL;
-  const baseUrl = 'https://aphidious-lizzie-crashingly.ngrok-free.dev';
+  const baseUrl = process.env.EXPO_PUBLIC_BASE_URL;
+  // const baseUrl = 'https://aphidious-lizzie-crashingly.ngrok-free.dev';
   const [authToken, setAuthToken] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
