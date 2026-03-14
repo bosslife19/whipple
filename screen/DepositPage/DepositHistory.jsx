@@ -10,7 +10,7 @@ import {
 import { MaterialIcons, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import Header from '../Header/Header';
 import { formatCurrency } from '../../utlils/formatCurrency';
-import { formatDate } from '../../utlils/formatDate';
+import { formatDateWithTime } from '../../utlils/formatDate';
 import axiosClient from "../../axiosClient"
 
 // Tabs now have label + key
@@ -93,7 +93,7 @@ export default function TransactionsHistory() {
         </View>
       </View>
       <Text style={styles.date}>{item.description}</Text>
-      <Text style={styles.date}>{formatDate(item.created_at)}</Text>
+      <Text style={styles.date}>{formatDateWithTime(item.created_at)}</Text>
     </View>
   );
 
@@ -141,7 +141,7 @@ export default function TransactionsHistory() {
             contentContainerStyle={{ paddingBottom: '156%' }}
             showsVerticalScrollIndicator={false}
           />
-        )}
+        )} 
       </View>
     </>
   );
