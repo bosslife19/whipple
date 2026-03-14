@@ -15,18 +15,39 @@ const ForecastMatchCard = ({
 }) => {
     const isGeneral = mode === 'general';
     const [timeLeft, setTimeLeft] = useState('');
+    const gameId = String(match?.id ?? '')
+        .replace(/\D/g, '')
+        .padStart(9, '0');
 
-    useEffect(() => {
+    const kickoffStr = match.kickoff_time || match.match_kickoff_time;
+    let kickoffDisplay = '';
+
+    if (kickoffStr) {
+        const date = new Date(kickoffStr.replace(' ', 'T'));
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        let hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        if (hours === 0) hours = 12;
+
+        kickoffDisplay = `${days[date.getDay()]} ${date.getDate()}, ${months[date.getMonth()]} ${hours}:${minutes}${ampm}`;
+    }
+
+    useEffect(() => { 
         const calculateTimeLeft = () => {
             const kickoffStr = match.kickoff_time || match.match_kickoff_time;
             if (!kickoffStr) return;
 
             const kickoff = new Date(kickoffStr.replace(' ', 'T')).getTime();
+            const cutoff = kickoff - 10 * 60 * 1000; // 10 minutes before kickoff
             const now = new Date().getTime();
-            const difference = kickoff - now;
+            const difference = cutoff - now;
 
             if (difference <= 0) {
-                setTimeLeft('Started');
+                setTimeLeft('00:00:00');
                 return;
             }
 
@@ -81,12 +102,19 @@ const ForecastMatchCard = ({
     return (
         <View style={styles.card}>
             <View style={styles.cardHeader}>
-                <Text style={styles.time}>{match.kickoff_time || match.match_kickoff_time}</Text>
-                {!readOnly && (
-                    <View style={styles.countdownContainer}>
-                        <Text style={styles.countdownText}>{timeLeft}</Text>
-                    </View>
-                )}
+                <View style={styles.headerSectionLeft}>
+                    <Text style={styles.time}>{kickoffDisplay}</Text>
+                </View>
+                <View style={styles.headerSectionCenter}>
+                    <Text style={styles.gameId}>{gameId}</Text>
+                </View>
+                <View style={styles.headerSectionRight}>
+                    {!readOnly && (
+                        <View style={styles.countdownContainer}>
+                            <Text style={styles.countdownText}>{timeLeft}</Text>
+                        </View>
+                    )}
+                </View>
             </View>
 
             <View style={styles.teamsContainer}>
@@ -129,10 +157,10 @@ const ForecastMatchCard = ({
                     {readOnly && (
                         <View style={styles.readOnlyValue}>
                             <Text style={styles.valueText}>
-                                {isGeneral ? selection?.match_result_a : selection?.match_score_a}
+                                {isGeneral ? selection?.match_result_a || match.forecast_choice_a : selection?.match_score_a || match.forecast_score_a}
                             </Text>
                         </View>
-                    )}
+                    )} 
                 </View>
 
                 {/* VS Column */}
@@ -223,7 +251,7 @@ const ForecastMatchCard = ({
                     {readOnly && (
                         <View style={styles.readOnlyValue}>
                             <Text style={styles.valueText}>
-                                {isGeneral ? selection?.match_result_b : selection?.match_score_b}
+                                {isGeneral ? selection?.match_result_b || match.forecast_choice_b : selection?.match_score_b || match.forecast_score_b}
                             </Text>
                         </View>
                     )}
@@ -261,20 +289,34 @@ const styles = StyleSheet.create({
     },
     cardHeader: {
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 12,
-        position: 'relative',
+    },
+    gameId: {
+        fontSize: 12,
+        color: '#111827',
+        fontWeight: '800',
     },
     countdownContainer: {
-        position: 'absolute',
-        right: 0,
         backgroundColor: '#fef2f2',
         paddingHorizontal: 8,
         paddingVertical: 2,
         borderRadius: 4,
         borderWidth: 0.5,
         borderColor: '#fee2e2',
+    },
+    headerSectionLeft: {
+        flex: 1,
+        alignItems: 'flex-start',
+    },
+    headerSectionCenter: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    headerSectionRight: {
+        flex: 1,
+        alignItems: 'flex-end',
     },
     countdownText: {
         fontSize: 10,

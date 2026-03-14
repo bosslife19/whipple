@@ -4,14 +4,14 @@ import { router } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const ForecastHeader = ({ title = "Whipple" }) => {
+const ForecastHeader = ({ title = "Whipple", backButton = false }) => {
     const insets = useSafeAreaInsets();
 
     return (
         <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
             <TouchableOpacity
                 style={styles.backButton}
-                onPress={() => router.back()}
+                onPress={backButton ? () => router.push('/(tabs)/home') : () => router.push('/(routes)/forecast')}
                 activeOpacity={0.7}
             >
                 <ArrowLeft color="#16a34a" size={24} strokeWidth={2.5} />

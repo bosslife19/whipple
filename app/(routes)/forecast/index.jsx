@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, ActivityIndicator, RefreshControl } from 'react-native';
+import { router } from 'expo-router';
 import { Trophy, Info } from 'lucide-react-native';
 import api from '../../../axiosClient';
 import ForecastHeader from '../../../components/forecast/ForecastHeader';
 import ForecastMatchCard from '../../../components/forecast/ForecastMatchCard';
 import SelectionOverlay from '../../../components/forecast/SelectionOverlay';
 import ForecastTabs from '../../../components/forecast/ForecastTabs';
-import Toast from 'react-native-toast-message';
+import Toast from '../../../components/Toast';
 
 export default function ForecastDashboard() {
     const [loading, setLoading] = useState(true);
@@ -16,10 +17,30 @@ export default function ForecastDashboard() {
     const [showOverlay, setShowOverlay] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+    const [now, setNow] = useState(Date.now());
+    const [toastVisible, setToastVisible] = useState(false);
+    const [toastType, setToastType] = useState('info');
+    const [toastTitle, setToastTitle] = useState('');
+    const [toastMessage, setToastMessage] = useState('');
 
     useEffect(() => {
         fetchGames();
     }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setNow(Date.now());
+        }, 1000); // keep in sync with countdown (1 second)
+
+        return () => clearInterval(interval);
+    }, []);
+
+    const showToast = (type = 'info', message = '', title) => {
+        setToastVisible(true);
+        setToastType(type);
+        setToastTitle(title || `${type.charAt(0).toUpperCase()}${type.slice(1)}`);
+        setToastMessage(message);
+    };
 
     const fetchGames = async () => {
         try {
@@ -28,11 +49,7 @@ export default function ForecastDashboard() {
             setMatches(res.data || []);
         } catch (err) {
             console.error(err);
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: 'Failed to fetch games'
-            });
+            showToast('error', 'Failed to fetch games', 'Error');
         } finally {
             setLoading(false);
         }
@@ -92,37 +109,46 @@ export default function ForecastDashboard() {
             const payload = {
                 status: 'active',
                 type: mode,
-                matches: matchData
+                matches: matchData 
             };
 
-            await api.post('/forecast/submit', payload);
+            const res = await api.post('/forecast/submit', payload);
 
-            Toast.show({
-                type: 'success',
-                text1: 'Success',
-                text2: 'Forecast submitted successfully!'
-            });
+            showToast('success', res?.data?.message || 'Forecast submitted successfully!', 'Success');
 
             setSelections({});
             setShowOverlay(false);
-            // Optionally refresh or navigate
+
+            // Navigate to the forecast screen after 10 seconds
+            setTimeout(() => {
+                router.push('/(routes)/forecast/forecast');
+            }, 2000);
         } catch (err) {
             console.error(err);
-            Toast.show({
-                type: 'error',
-                text1: 'Submission Failed',
-                text2: err.response?.data?.message || 'Something went wrong'
-            });
+            showToast('error', err.response?.data?.message || err.message || 'Something went wrong', 'Submission Failed');
         } finally {
             setSubmitting(false);
         }
     };
 
-    const filteredMatches = matches.filter(m => m.type === mode);
+    const isMoreThanTenMinutesToKickoff = (match) => {
+        const kickoffStr = match.kickoff_time || match.match_kickoff_time;
+        if (!kickoffStr) return true;
+
+        const kickoff = new Date(kickoffStr.replace(' ', 'T')).getTime();
+        const cutoff = kickoff - 10 * 60 * 1000; // 10 minutes before kickoff
+        const remainingMs = cutoff - now;
+
+        // Keep the game in the list while there is still time left
+        // It will be removed as soon as the countdown reaches 00:00:00
+        return remainingMs > 0;  
+    };
+
+    const filteredMatches = matches.filter(m => m.type === mode && isMoreThanTenMinutesToKickoff(m));
 
     return (
         <View style={styles.container}>
-            <ForecastHeader title="Whipple" />
+            <ForecastHeader title="Whipple" backButton={true} />
 
             <ScrollView
                 style={styles.content}
@@ -135,7 +161,8 @@ export default function ForecastDashboard() {
                 <View style={styles.banner}>
                     <View style={styles.bannerTextContainer}>
                         <Text style={styles.bannerTitle}>Fun Forecast</Text>
-                        <Text style={styles.bannerSubtitle}>Predict and Win Big!</Text>
+                        {/* <Text style={styles.bannerSubtitle}>Predict and Win Big!</Text> */}
+                        <Text style={styles.bannerSubtitle}>Forecast your Favorite Match(es), earn Whipple Points and access Free Games</Text>
                     </View>
                     <View style={styles.bannerIconContainer}>
                         <Trophy color="#FFD700" size={40} strokeWidth={2.5} />
@@ -195,6 +222,16 @@ export default function ForecastDashboard() {
             />
 
             <ForecastTabs />
+
+            <Toast
+                visible={toastVisible}
+                type={toastType}
+                title={toastTitle}
+                message={toastMessage}
+                position="bottom"
+                duration={3000}
+                onHide={() => setToastVisible(false)}
+            />
         </View>
     );
 }
@@ -228,7 +265,7 @@ const styles = StyleSheet.create({
     },
     bannerSubtitle: {
         color: 'rgba(255,255,255,0.8)',
-        fontSize: 14,
+        fontSize: 10,
         fontWeight: '600',
         marginTop: 4,
     },
