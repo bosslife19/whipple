@@ -28,6 +28,10 @@ const Support = () => {
     eight: true,
     nine: true,
     ten: true,
+    eleven:true,
+    twelve:true,
+    thirteen:true,
+    fourteen:true,  
   });
 
   // const toggleFAQ = (index) => {
@@ -350,6 +354,46 @@ const Support = () => {
                 then grant us the permission to reshare and get 4 additional
                 Whipple points for that day 4) Play the Pre-event Activity
                 events
+              </Text>
+            </Collapsible>
+          </View>
+           <View style={styles.accordion}>
+            <TouchableOpacity
+              onPress={() =>
+                setFaqstate((prev) => ({ ...prev, eleven: !faqState.eleven }))
+              }
+              style={styles.accordionHeader}
+            >
+              <Text style={styles.accordionText}>
+                What is Fun Forecast?
+              </Text>
+              <Text style={styles.accordionToggle}>
+                {faqState.eleven ? "+" : "-"}
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={faqState.eleven}>
+              <Text style={styles.accordionContent}>
+                Fun Forecast is a feature in Whipple platform, that enables you to make Forecasts on professional football matches and earn Whipple Points. With enough earned Whipple Points, you can proceed to play ANY game FOR FREE in Whipple platform. Fun Forecast is divided into General Forecast and Specific Forecast
+              </Text>
+            </Collapsible>
+          </View>
+           <View style={styles.accordion}>
+            <TouchableOpacity
+              onPress={() =>
+                setFaqstate((prev) => ({ ...prev, twelve: !faqState.twelve }))
+              }
+              style={styles.accordionHeader}
+            >
+              <Text style={styles.accordionText}>
+                What is Specific Forecast?
+              </Text>
+              <Text style={styles.accordionToggle}>
+                {faqState.twelve ? "+" : "-"}
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={faqState.twelve}>
+              <Text style={styles.accordionContent}>
+                In Specific forecast, users make forecasts on the outcome of football matches by inputting the scores they think the match will end, after the FULL 90 MINUTES of play. The First Forecast for the day is FREE, while subsequent forecasts attract a 1,000 naira Platform Fee, PER FORECAST. Users receive 80 whipple points PER CORRECT FORECASTS made.  Any incorrect forecast is forfeited, while Correct Forecasts get awarded 80 Whipple Points.
               </Text>
             </Collapsible>
           </View>
