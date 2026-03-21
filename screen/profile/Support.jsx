@@ -397,6 +397,26 @@ const Support = () => {
               </Text>
             </Collapsible>
           </View>
+           <View style={styles.accordion}>
+            <TouchableOpacity
+              onPress={() =>
+                setFaqstate((prev) => ({ ...prev, twelve: !faqState.twelve }))
+              }
+              style={styles.accordionHeader}
+            >
+              <Text style={styles.accordionText}>
+                What is General Forecast?
+              </Text>
+              <Text style={styles.accordionToggle}>
+                {faqState.thirteen ? "+" : "-"}
+              </Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={faqState.twelve}>
+              <Text style={styles.accordionContent}>
+                In general forecast, users make forecasts on the outcome of football matches in the format of 'WIN, 'DRAW' or 'LOSE'. The First Forecast for the day is FREE, while subsequent forecasts attract a One-time Platform Fee of 500 naira for that forecast day. Users receive 20 whipple points PER CORRECT FORECASTS made, but have to get ALL THE FORECASTS CORRECTLY, in order to be awarded the Whipple points. Any incorrect forecast invalidates the other forecasts, and the user WON'T BE AWARDED any Whipple Points
+              </Text>
+            </Collapsible>
+          </View>
         </View>
 
         {/* Contact Support Form */}
