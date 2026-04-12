@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button } from 'react-native';
 import { usePaystack } from 'react-native-paystack-webview';
+import {WebView} from 'react-native-webview';
+
 
 const PaystackCheckout = () => {
   const { popup } = usePaystack();
@@ -37,6 +39,7 @@ const PaystackCheckout = () => {
       onError: (err) => console.log('WebView Error:', err)
     });
   };
+  
 
   return <Button title="Pay Now" onPress={payNow} />;
 };

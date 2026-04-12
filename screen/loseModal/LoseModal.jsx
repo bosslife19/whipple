@@ -36,8 +36,8 @@ const Losingmodal = ({ visible,GameName, closeModal, correctNumber,stake,odds,ga
                 </Text>
               </View> */}
               <View style={{ flexDirection: "row", position: "absolute", bottom: "25%", right: "13%", gap: 10, marginHorizontal: "auto" }}>
-                <TouchableOpacity style={{ paddingHorizontal: "4%", borderWidth: 1, paddingVertical: 10, borderRadius: 5 }}>
-                  <Text style={maingamess.confirmText}>View Details</Text>
+                <TouchableOpacity onPress={()=>router.replace('/(tabs)/home')} style={{ paddingHorizontal: "4%", borderWidth: 1, paddingVertical: 10, borderRadius: 5 }}>
+                  <Text style={maingamess.confirmText}>Go Home</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity

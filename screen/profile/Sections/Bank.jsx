@@ -30,6 +30,7 @@ const BankInfoScreen = () => {
     try {
       setLoading(true);
       const res = await axiosClient.get("/paystack/getbank");
+     
       setBanks(res.data.banks.map((bank, index) => ({
         key: index.toString(), // unique key for each item
         label: bank.name, // for dropdown
@@ -89,8 +90,8 @@ const BankInfoScreen = () => {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Saved Bank Accounts</Text>
-        {bankAccounts.map((item) => (
-          <View key={item.id} style={styles.accountCard}>
+        {bankAccounts.map((item, index) => (
+          <View key={index} style={styles.accountCard}>
             <Text style={styles.bankName}>{item.bank_name}</Text>
             <Text style={styles.accountNumber}>{item.account_number}</Text>
           </View>

@@ -6,23 +6,25 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 const Index = () => {
-  const [userExists, setUserExists] = useState(false);
-// useEffect(()=>{
-//   const checkUserDets = async ()=>{
-//     const user = await AsyncStorage.getItem('userDetails');
-//     if(user){
-//       return router.replace('/(tabs)/home');
-//     }else{
-//       setUserExists(false)
-//     }
-//   }
+  const [userExists, setUserExists] = useState(true);
+useEffect(()=>{
+  const checkUserDets = async ()=>{
+    const user = await AsyncStorage.getItem('userDetails');
+    if(user){
+      return router.replace('/(tabs)/home');
+    }else{
+      setUserExists(false)
+    }
+  }
 
-//   checkUserDets();
-// }, [])
+  checkUserDets();
+}, [])
 
-// if(!userExists){
+if(!userExists){
  return <Redirect href={'/auth/login'}/>
-// }
+}
+
+
  
  
 }

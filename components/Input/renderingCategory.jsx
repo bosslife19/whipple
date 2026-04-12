@@ -10,7 +10,7 @@
 //         {games.map((game, index) => (
 //           <View key={index} style={gameCates.card}>
 //             <View style={gameCates.imageWrapper}>
-//               {title === 'Top Games' && (
+//               {title === 'EVENTS' && (
 //                 <Text style={gameCates.imageBadge}>{index + 1}</Text>
 //               )}
 //               <Image source={game.image} style={gameCates.image} />

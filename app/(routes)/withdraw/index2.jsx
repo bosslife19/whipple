@@ -1,120 +1,127 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { View, Text, Picker } from 'react-native';
 import styled from 'styled-components/native';
+import { Picker as RNPicker } from '@react-native-picker/picker';
 
 const Container = styled.View`
   flex: 1;
-  background-color: #1a1a1a;
-  padding: 16px;
+  background-color: #f7f9fc;
+  padding: 20px;
 `;
 
 const Header = styled.Text`
-  color: #fff;
-  font-size: 24px;
+  color: #1a1a1a;
+  font-size: 26px;
   font-weight: bold;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 `;
 
 const StepBox = styled.View`
-  background-color: #333;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  background-color: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #e6e9ef;
+  shadow-color: #000;
+  shadow-opacity: 0.05;
+  shadow-radius: 4px;
+  elevation: 2;
 `;
 
 const StepText = styled.Text`
-  color: #ccc;
-  margin-bottom: 4px;
+  color: #555;
+  margin-bottom: 6px;
+  font-size: 14px;
 `;
 
 const FormCard = styled.View`
-  background-color: #2a2a2a;
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  border: 1px solid #e6e9ef;
+  shadow-color: #000;
+  shadow-opacity: 0.05;
+  shadow-radius: 4px;
+  elevation: 2;
 `;
 
 const Label = styled.Text`
-  color: #f0f0f0;
-  margin-bottom: 4px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
 `;
 
 const Input = styled.TextInput`
-  background-color: #1a1a1a;
-  color: #fff;
-  padding: 12px;
-  border-radius: 6px;
-  margin-bottom: 12px;
+  background-color: #f1f4f9;
+  color: #1a1a1a;
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  border: 1px solid #dce1eb;
 `;
 
-const OTPSelector = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
+const StyledPickerContainer = styled.View`
+  background-color: #f1f4f9;
+  border-radius: 10px;
+  border: 1px solid #dce1eb;
   margin-bottom: 16px;
 `;
 
-const OTPButton = styled.TouchableOpacity`
-  flex: 1;
-  background-color: ${({ selected }) => (selected ? '#00cc44' : '#333')};
-  padding: 12px;
-  border-radius: 6px;
-  margin-right: ${({ isLast }) => (isLast ? '0px' : '8px')};
-`;
-
-const OTPText = styled.Text`
-  color: #fff;
-  text-align: center;
-`;
-
 const WithdrawButton = styled.TouchableOpacity`
-  background-color: #00cc44;
+  background-color: #0d6efd;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 12px;
   align-items: center;
+  justify-content: center;
+  margin-top: 10px;
 `;
 
 const WithdrawText = styled.Text`
-  color: #1a1a1a;
-  font-size: 18px;
+  color: #fff;
+  font-size: 17px;
   font-weight: bold;
 `;
 
 export default function WithdrawScreen() {
   const [amount, setAmount] = React.useState('');
   const [bankAccount, setBankAccount] = React.useState('');
-  const [otpMethod, setOtpMethod] = React.useState('sms');
 
   return (
     <Container>
       <Header>Withdraw</Header>
+
       <StepBox>
         <StepText>1) Enter the amount you wish to withdraw</StepText>
         <StepText>2) Choose a registered bank account</StepText>
         <StepText>3) Verify with SMS or Email OTP</StepText>
       </StepBox>
+
       <FormCard>
         <Label>Amount</Label>
         <Input
           placeholder="₦1,000 min"
           keyboardType="numeric"
-          placeholderTextColor="#555"
+          placeholderTextColor="#9ba1b7"
           value={amount}
           onChangeText={setAmount}
         />
+
         <Label>Bank Account</Label>
-        <Picker
-          selectedValue={bankAccount}
-          style={{ color: '#fff' }}
-          onValueChange={(value) => setBankAccount(value)}
-        >
-          <Picker.Item label="Select Account" value="" />
-          {/* Dynamically render registered accounts */}
-          <Picker.Item label="Zenith - 1234" value="1234" />
-        </Picker>
+        <StyledPickerContainer>
+          <RNPicker
+            selectedValue={bankAccount}
+            onValueChange={(value) => setBankAccount(value)}
+            style={{ color: '#1a1a1a' }}
+          >
+            <RNPicker.Item label="Select Account" value="" />
+            <RNPicker.Item label="Zenith - 1234" value="1234" />
+          </RNPicker>
+        </StyledPickerContainer>
       </FormCard>
-      
-      <WithdrawButton onPress={() => {/* handle withdrawal logic */}}>
+
+      <WithdrawButton>
         <WithdrawText>Request Withdrawal</WithdrawText>
       </WithdrawButton>
     </Container>

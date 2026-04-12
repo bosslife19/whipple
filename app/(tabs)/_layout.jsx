@@ -38,7 +38,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="PreBetActivities"
         options={{
           title: '',
@@ -49,7 +49,7 @@ export default function TabLayout() {
             </View>
           ),
         }}
-      />
+      /> */}
       <Tabs.Screen
         name="games"
         options={{

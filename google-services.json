@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "72749393332",
+    "project_id": "logintest-d7a4a",
+    "storage_bucket": "logintest-d7a4a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:72749393332:android:34e6343036978cf0de3ee1",
+        "android_client_info": {
+          "package_name": "com.davidwoks.comeso"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5zKuqH8WQRCZC3JnADBkuI0AmlHZu8WI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:72749393332:android:a186c502138b4a5fde3ee1",
+        "android_client_info": {
+          "package_name": "com.mycomeso.comeso"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5zKuqH8WQRCZC3JnADBkuI0AmlHZu8WI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:72749393332:android:4052e14367a62341de3ee1",
+        "android_client_info": {
+          "package_name": "com.whipple.whipple"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5zKuqH8WQRCZC3JnADBkuI0AmlHZu8WI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

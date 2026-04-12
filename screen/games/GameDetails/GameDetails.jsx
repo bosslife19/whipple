@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
  import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useGameContext } from '../../../context/AppContext';
 import HeaderBet from '../../Header/HeaderBet';
+import { AuthContext } from '../../../context/AuthContext';
 
 const GameDetails = () => {
     const router = useRouter();
+    const {userDetails} = useContext(AuthContext);
          const { gameData,updateGameData } = useGameContext();
       const { gameLabel, range, selected, GameName } = gameData || {};
       const {name, stake, odds, house, result, subcategory,id} = useLocalSearchParams()
@@ -208,8 +210,7 @@ const GameDetails = () => {
               <Text style={styles.value}>{odds}</Text>
             </View>
           </View>
-          <Text style={styles.label}>Players</Text>
-          <Text style={styles.value}>9 joined</Text>
+          
         </View>
 
         <View style={styles.card}>
@@ -231,7 +232,7 @@ const GameDetails = () => {
           <Text style={styles.value}>₦{stake}</Text>
 
           <Text style={styles.label}>Your Balance</Text>
-          <Text style={styles.value}>₦100,000</Text>
+          <Text style={styles.value}>₦{userDetails?.wallet_balance}</Text>
 
           <View style={styles.buttonRow}>
             <TouchableOpacity style={styles.secondaryBtn} onPress={() => router.back()}>

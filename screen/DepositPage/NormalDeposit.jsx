@@ -31,8 +31,8 @@ export default function NormalDeposit({ amount, setAmount }) {
     try {
       const { error, response }  = await makeRequest("/deposit/initialize", {   
         amount: parseFloat(amount), // Paystack expects amount in kobo
-        reference: "",
-        gateway: "paystack",
+        reference: "ref_" + new Date().getTime(),
+        gateway: "korapay",
         meta: ""
       }
       );  
@@ -40,23 +40,23 @@ export default function NormalDeposit({ amount, setAmount }) {
         return Alert.alert("Error", error);
       }
 
-      popup.checkout({
-        email: userDetails?.email,
-        amount: parseFloat(amount), // Convert to kobo
-        reference: response?.data?.ref,
-        metadata: {
-          custom_fields: [
-            {
-              display_name: userDetails?.name
-            }
-          ]
-        },
+      // popup.checkout({
+      //   email: userDetails?.email,
+      //   amount: parseFloat(amount), // Convert to kobo
+      //   reference: response?.data?.ref,
+      //   metadata: {
+      //     custom_fields: [
+      //       {
+      //         display_name: userDetails?.name
+      //       }
+      //     ]
+      //   },
         
-        onSuccess: (res) => handleVerifyPayment(res),
-        onCancel: () => console.log('User cancelled'),
-        onLoad: (res) => console.log('WebView Loaded:', res),
-        onError: (err) => console.log('WebView Error:', err)
-      });  
+      //   onSuccess: (res) => handleVerifyPayment(res),
+      //   onCancel: () => console.log('User cancelled'),
+      //   onLoad: (res) => console.log('WebView Loaded:', res),
+      //   onError: (err) => console.log('WebView Error:', err)
+      // });  
     } catch (error) {
       console.error(error);
       Alert.alert("Error", "Unable to initiate payment");
@@ -125,7 +125,18 @@ export default function NormalDeposit({ amount, setAmount }) {
         
       </View>
 
-      <TouchableOpacity onPress={() => handlePayment()} style={styles.button}>
+
+      <TouchableOpacity onPress={() =>{
+        handlePayment();
+         router.push({
+        pathname:'/(routes)/korapay',
+        params:{
+          amount: amount,
+      name: userDetails.name,
+      email: userDetails.email,
+        }
+      })
+      }} style={styles.button}>
         <Text style={styles.buttonText}>
         {loading ? 'Processing...' : `Deposit ${formatCurrency(amount)}`}
         </Text>

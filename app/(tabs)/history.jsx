@@ -11,8 +11,8 @@ import {formatDate} from '../../utlils/formatDate';
 
 
 export default function History() {
-  const [activeTab, setActiveTab] = useState('My Games');
-  const TABS = ['My Games', 'Past Games'];
+  const [activeTab, setActiveTab] = useState('My Events');
+  const TABS = ['My Events', 'Past Events'];
   const {userDetails} = useContext(AuthContext);
 const [playedGames, setPlayedGames] = useState([]);
   const myGamesData = [
@@ -85,7 +85,7 @@ const [playedGames, setPlayedGames] = useState([]);
     <View style={[styles.card,{marginBottom: 14,}]}>
       <View style={styles.flexD}>
       <Text style={styles.value}>{item.name}</Text>
-      {activeTab === 'My Games' ? (
+      {activeTab === 'My Events' ? (
   <Text style={[styles.value, { backgroundColor: '#3B82F6', padding: 4, borderRadius: 25, color: '#fff' }]}>
     GameList
   </Text>
@@ -107,7 +107,7 @@ const [playedGames, setPlayedGames] = useState([]);
       </View> 
 
 {
-  activeTab === 'My Games'? 
+  activeTab === 'My Events'? 
   <>
 <View style={[styles.card,{ flexDirection: 'row',}]}> 
       <View style={styles.details}>
@@ -181,11 +181,11 @@ const [playedGames, setPlayedGames] = useState([]);
     </View>
   );
 
-  const dataToDisplay = activeTab === 'My Games' ? myGames : playedGames;
+  const dataToDisplay = activeTab === 'My Events' ? myGames : playedGames;
 
   return (
     <>
-         <Header name="My Games" arrow="" backgroundColor="#A8BFED" />
+         <Header name="My Events" arrow="" backgroundColor="#A8BFED" />
     <View style={styles.container}>
       {/* Tabs */}
       <View style={styles.tabContainer}>

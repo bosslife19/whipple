@@ -20,6 +20,7 @@ const ColorRouletteSelect = () => {
     const [game, setGame] = useState(null)
     const [visible, setModalVisibled] = useState(false);
     const {id, name} = useLocalSearchParams();
+    
 
     const {makeRequest} = useRequest()
 
@@ -204,7 +205,7 @@ const ColorRouletteSelect = () => {
               ))}
             </View>
             
-            <Text style={Slectedcol.resultText}>House's Colors:</Text>
+            <Text style={Slectedcol.resultText}>Color Spun:</Text>
             <View style={Slectedcol.colorBlockContainer}>
               {activeColors.map(id => {
                 const colorObj = colors.find(c => c.id === id);
@@ -250,13 +251,13 @@ const ColorRouletteSelect = () => {
 
         {success === true && (
        <Winningmodal
-       visible={visible}
+       visible={success === true && visible}
        closeModal={closeModal}
       />
      )}
     {success === false && (
     <Losingmodal 
-    visible={visible}
+    visible={success===false &&visible}
     closeModal={closeModal}
     />
     )}

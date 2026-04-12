@@ -42,22 +42,19 @@ const SlideShowBet = () => {
     return () => clearInterval(interval);
   }, []);
 
-  return (
-    <ImageBackground 
-      source={imags} 
-      style={styles.container}
-    >
-     <MaterialIcons style={{justifyContent:"flex-start",}} name="speaker-phone" size={24} color="#fff" />      
-     <Animated.View style={{ transform: [{ translateY }] }}>
-        <Text style={styles.winnerText}>{getRandomWinner()}</Text>
-      </Animated.View>
-      <PlayButton/>
-      {/* <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Play</Text>
-        <MaterialIcons name="play-arrow" size={14} color="#fff" />
-      </TouchableOpacity> */}
-    </ImageBackground>
-  );
+  // return (
+  //   <ImageBackground 
+  //     source={imags} 
+  //     style={styles.container}
+  //   >
+  //    <MaterialIcons style={{justifyContent:"flex-start",}} name="speaker-phone" size={24} color="#fff" />      
+  //    <Animated.View style={{ transform: [{ translateY }] }}>
+  //       <Text style={styles.winnerText}>{getRandomWinner()}</Text>
+  //     </Animated.View>
+  //     <PlayButton/>
+
+  //   </ImageBackground>
+  // );
 };
 
 const styles = StyleSheet.create({

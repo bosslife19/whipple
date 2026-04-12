@@ -101,7 +101,7 @@ const {setUserDetails, setUserBalance, setUserPoint} = useContext(AuthContext);
               fontWeight: "400",
             }}
           >
-            Don't have an?{" "}
+            Don't have an accout?{" "}
           </Text>
           <TouchableOpacity onPress={() => router.push("/auth/signup")}>
             <Text
@@ -112,6 +112,35 @@ const {setUserDetails, setUserBalance, setUserPoint} = useContext(AuthContext);
               }}
             >
               Sign up
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            marginTop: "1%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: "PoppinsLight",
+              fontSize: 10,
+              fontWeight: "400",
+            }}
+          >
+            Forgot{" "}
+          </Text>
+          <TouchableOpacity onPress={() => router.push("/forgotpassword")}>
+            <Text
+              style={{
+                color: "rgba(0, 123, 255, 1)",
+                fontWeight: "bold",
+                fontSize: 13,
+              }}
+            >
+              Password?
             </Text>
           </TouchableOpacity>
         </View>
