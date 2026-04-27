@@ -8,7 +8,7 @@ import {
   FlatList,
 } from 'react-native';
 import { ArrowLeft, Trophy, Medal } from "lucide-react-native";
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import axiosClient from "../../../../axiosClient";
 import Toast from '../../../../components/Toast';
 import { AuthContext } from '../../../../context/AuthContext'
@@ -16,6 +16,8 @@ import { useRequest } from "../../../../hooks/useRequest";
 import { useIsFocused } from "@react-navigation/native";
 
 export default function MathClash() {
+  const { game_type = 'direct', tournament_id } = useLocalSearchParams();
+  const BG = '#0A1931';
   const [gameState, setGameState] = useState('waiting');
   const [matchmakingTimer, setMatchmakingTimer] = useState(30);
   const [countdownTimer, setCountdownTimer] = useState(5);
@@ -44,7 +46,7 @@ export default function MathClash() {
 
   const getMatchingJoining = async () => {
     try {
-      const res = await axiosClient.get("/skillgame/matches/join/math_clash");
+      const res = await axiosClient.get(`/skillgame/matches/join/math_clash/${game_type}`);
       setUserBalanceGen(res?.data.user_balance)
       setUserDetails(prev => ({ ...prev, wallet_balance: res?.data.user_balance }));
       setGameId(res.data.match.id)
@@ -618,18 +620,29 @@ export default function MathClash() {
             keyExtractor={(item) => item.id.toString()}
           />
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around", marginTop: 20, marginBottom: 20 }}>
-            <TouchableOpacity
-              style={[styles.btn, { backgroundColor: "#FFD04C" }]}
-              onPress={() => resetMatchmaking(false)}
-            >
-              <Text style={styles.btnText}>Back to Lobby</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.btn}
-              onPress={() => resetMatchmaking(true)}
-            >
-              <Text style={styles.btnText}>Play Again</Text>
-            </TouchableOpacity>
+            {game_type === 'tournament' ? (
+              <TouchableOpacity
+                style={[styles.btn, { backgroundColor: BG, flex: 1, marginHorizontal: 20 }]}
+                onPress={() => router.push(`/(routes)/leaderboard/tournament_detail?id=${tournament_id}`)}
+              >
+                <Text style={styles.btnText}>Go to Tournament Board</Text>
+              </TouchableOpacity>
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={[styles.btn, { backgroundColor: "#FFD04C" }]}
+                  onPress={() => resetMatchmaking(false)}
+                >
+                  <Text style={styles.btnText}>Back to Lobby</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.btn}
+                  onPress={() => resetMatchmaking(true)}
+                >
+                  <Text style={styles.btnText}>Play Again</Text>
+                </TouchableOpacity>
+              </>
+            )}
           </View>
         </View>
       )}
