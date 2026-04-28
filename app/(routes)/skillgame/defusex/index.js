@@ -13,7 +13,7 @@ import {
   Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Trophy, Medal, Bomb } from "lucide-react-native";
 import Toast from '../../../../components/Toast';
 import axiosClient from "../../../../axiosClient";
@@ -53,6 +53,8 @@ const WIRE_COLORS = [
 
 
 export default function DefuseX() {
+  const { game_type = 'direct', tournament_id } = useLocalSearchParams();
+  const BG = '#0A1931';
   // Game state variables
   const [phase, setPhase] = useState("waiting"); // waiting, countdown, phase1, phase1-input, phase2, phase3, finished
   const [matchTimer, setMatchTimer] = useState(30);
@@ -78,6 +80,7 @@ export default function DefuseX() {
   const { userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails } = useContext(AuthContext)
   const { loading, makeRequest } = useRequest();
   const [gameId, setGameId] = useState();
+  const [matchPlayerCount, setMatchPlayerCount] = useState(2);
 
   const isFocused = useIsFocused();
 
@@ -107,10 +110,11 @@ export default function DefuseX() {
 
   const getMatchingJoining = async () => {
     try {
-      const res = await axiosClient.get("/skillgame/matches/join/defuse_x");
+      const res = await axiosClient.get(`/skillgame/matches/join/defuse_x/${game_type}`);
       setUserBalanceGen(res?.data.user_balance)
       setUserDetails(prev => ({ ...prev, wallet_balance: res?.data.user_balance }));
       setGameId(res.data.match.id)
+      setMatchPlayerCount(res.data.match.max_players)
       setMatchTimer(res.data.countdown)
       if (res.data.countdown == 0) {
         setPhase("countdown");
@@ -865,7 +869,7 @@ export default function DefuseX() {
               </Animated.View>
 
               <View style={[styles.card, { marginTop: 40 }]}>
-                <Text style={styles.sectionTitle}>Players Ready ({playersReady}/4)</Text>
+                <Text style={styles.sectionTitle}>Players Ready ({playersReady}/{matchPlayerCount})</Text>
                 <View style={styles.playersWrap}>
                   {players.map((p, i) => (
                     <View key={p.id} style={styles.playerMini}>
@@ -1080,12 +1084,23 @@ export default function DefuseX() {
             </View>
 
             <View style={{ flexDirection: "row", marginTop: 40, gap: 12 }}>
-              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: "#FFD04C" }]} onPress={() => resetMatchmaking(false)}>
-                <Text style={{ color: "#fff" }}>Back to Lobby</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.actionBtn, { backgroundColor: "#0EA5E9" }]} onPress={() => resetMatchmaking(true)}>
-                <Text style={{ color: "#fff" }}>Play Again</Text>
-              </TouchableOpacity>
+              {game_type === 'tournament' ? (
+                <TouchableOpacity
+                  style={[styles.actionBtn, { backgroundColor: BG, flex: 1 }]}
+                  onPress={() => router.push(`/(routes)/leaderboard/tournament_detail?id=${tournament_id}`)}
+                >
+                  <Text style={{ color: "#fff", textAlign: 'center', fontWeight: 'bold' }}>Go to Tournament Board</Text>
+                </TouchableOpacity>
+              ) : (
+                <>
+                  <TouchableOpacity style={[styles.actionBtn, { backgroundColor: "#FFD04C" }]} onPress={() => resetMatchmaking(false)}>
+                    <Text style={{ color: "#fff" }}>Back to Lobby</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.actionBtn, { backgroundColor: "#0EA5E9" }]} onPress={() => resetMatchmaking(true)}>
+                    <Text style={{ color: "#fff" }}>Play Again</Text>
+                  </TouchableOpacity>
+                </>
+              )}
             </View>
           </>
         )}

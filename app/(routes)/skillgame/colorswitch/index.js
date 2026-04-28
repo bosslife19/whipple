@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useContext } from 'rea
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Animated, ScrollView } from 'react-native';
 import { LinearGradient } from "expo-linear-gradient";
 import { ArrowLeft, Trophy, Medal } from "lucide-react-native";
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import axiosClient from "../../../../axiosClient";
 import Toast from '../../../../components/Toast';
 import { AuthContext } from '../../../../context/AuthContext'
@@ -17,6 +17,8 @@ const COLORS = [
 ];
 
 export default function ColorSwitchReflex() {
+  const { game_type = 'direct', tournament_id } = useLocalSearchParams();
+  const BG = '#0A1931';
   const [gameState, setGameState] = useState('waiting');
   const [matchmakingTimer, setMatchmakingTimer] = useState(30);
   const [countdownTimer, setCountdownTimer] = useState(5);
@@ -36,15 +38,17 @@ export default function ColorSwitchReflex() {
   const { userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails } = useContext(AuthContext)
   const { loading, makeRequest } = useRequest();
   const [gameId, setGameId] = useState();
+  const [matchPlayerCount, setMatchPlayerCount] = useState(2);
 
   const isFocused = useIsFocused();
 
   const getMatchingJoining = async () => {
     try {
-      const res = await axiosClient.get("/skillgame/matches/join/color_switch");
+      const res = await axiosClient.get(`/skillgame/matches/join/color_switch/${game_type}`);
       setUserBalanceGen(res?.data.user_balance)
       setUserDetails(prev => ({ ...prev, wallet_balance: res?.data.user_balance }));
       setGameId(res.data.match.id)
+      setMatchPlayerCount(res.data.match.max_players)
       setMatchmakingTimer(res.data.countdown)
       if (res.data.countdown == 0) {
         setGameState("countdown");
@@ -476,7 +480,7 @@ export default function ColorSwitchReflex() {
             </View>
 
             <View style={{ marginTop: 10 }}>
-              <Text style={[styles.smallText, { textAlign: "center" }]}>Players Ready: {playersReady}/4</Text>
+              <Text style={[styles.smallText, { textAlign: "center" }]}>Players Ready: {playersReady}/{matchPlayerCount}</Text>
               <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 5, width: '100%', flexWrap: 'wrap' }}>
                 {players.map((p, ind) => (
                   <View key={p.id} style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginTop: 5, borderWidth: 1, backgroundColor: '#111', borderRadius: 20, padding: 10, width: '48%' }}>
@@ -589,18 +593,29 @@ export default function ColorSwitchReflex() {
             keyExtractor={(item) => item.id.toString()}
           />
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around", marginVertical: 20 }}>
-            <TouchableOpacity
-              style={[styles.playBtn, { backgroundColor: "#FFD04C" }]}
-              onPress={() => resetMatchmaking(false)}
-            >
-              <Text style={{ color: '#fff', fontWeight: 'bold' }}>Back to Lobby</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.playBtn}
-              onPress={() => resetMatchmaking(true)}
-            >
-              <Text style={{ color: '#fff', fontWeight: 'bold' }}>Play Again</Text>
-            </TouchableOpacity>
+            {game_type === 'tournament' ? (
+              <TouchableOpacity
+                style={[styles.playBtn, { backgroundColor: BG, flex: 1, marginHorizontal: 20 }]}
+                onPress={() => router.push(`/(routes)/leaderboard/tournament_detail?id=${tournament_id}`)}
+              >
+                <Text style={{ color: '#fff', fontWeight: 'bold', textAlign: 'center' }}>Go to Tournament Board</Text>
+              </TouchableOpacity>
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={[styles.playBtn, { backgroundColor: "#FFD04C" }]}
+                  onPress={() => resetMatchmaking(false)}
+                >
+                  <Text style={{ color: '#fff', fontWeight: 'bold' }}>Back to Lobby</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.playBtn}
+                  onPress={() => resetMatchmaking(true)}
+                >
+                  <Text style={{ color: '#fff', fontWeight: 'bold' }}>Play Again</Text>
+                </TouchableOpacity>
+              </>
+            )}
           </View>
         </View>
       )}
