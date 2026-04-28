@@ -38,6 +38,7 @@ export default function ColorSwitchReflex() {
   const { userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails } = useContext(AuthContext)
   const { loading, makeRequest } = useRequest();
   const [gameId, setGameId] = useState();
+  const [matchPlayerCount, setMatchPlayerCount] = useState(2);
 
   const isFocused = useIsFocused();
 
@@ -47,6 +48,7 @@ export default function ColorSwitchReflex() {
       setUserBalanceGen(res?.data.user_balance)
       setUserDetails(prev => ({ ...prev, wallet_balance: res?.data.user_balance }));
       setGameId(res.data.match.id)
+      setMatchPlayerCount(res.data.match.max_players)
       setMatchmakingTimer(res.data.countdown)
       if (res.data.countdown == 0) {
         setGameState("countdown");
@@ -478,7 +480,7 @@ export default function ColorSwitchReflex() {
             </View>
 
             <View style={{ marginTop: 10 }}>
-              <Text style={[styles.smallText, { textAlign: "center" }]}>Players Ready: {playersReady}/4</Text>
+              <Text style={[styles.smallText, { textAlign: "center" }]}>Players Ready: {playersReady}/{matchPlayerCount}</Text>
               <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 5, width: '100%', flexWrap: 'wrap' }}>
                 {players.map((p, ind) => (
                   <View key={p.id} style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginTop: 5, borderWidth: 1, backgroundColor: '#111', borderRadius: 20, padding: 10, width: '48%' }}>

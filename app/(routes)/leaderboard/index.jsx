@@ -138,7 +138,7 @@ export default function LeaderboardScreen() {
           headerTintColor: 'white',
           headerTitleStyle: { fontWeight: '800', fontSize: 18, color: 'white' },
           headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} style={{ paddingLeft: 12 }}>
+            <TouchableOpacity onPress={() => router.replace('/(tabs)/home')} style={{ paddingLeft: 12 }}>
               <AntDesign name="arrow-left" size={24} color="white" />
             </TouchableOpacity>
           ),
@@ -156,14 +156,14 @@ export default function LeaderboardScreen() {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
           <View style={{ alignItems: 'flex-end', paddingHorizontal: 16, marginTop: 12 }}>
-            <TouchableOpacity 
-              onPress={() => router.push('/(routes)/leaderboard/tournament')} 
-              style={{ 
-                flexDirection: 'row', 
-                alignItems: 'center', 
-                backgroundColor: '#F59E0B', 
-                paddingHorizontal: 12, 
-                paddingVertical: 8, 
+            <TouchableOpacity
+              onPress={() => router.push('/(routes)/leaderboard/tournament')}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: '#F59E0B',
+                paddingHorizontal: 12,
+                paddingVertical: 8,
                 borderRadius: 20,
                 elevation: 2,
                 shadowColor: '#000',
