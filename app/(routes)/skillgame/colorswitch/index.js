@@ -438,7 +438,7 @@ export default function ColorSwitchReflex() {
       router.push(`/(routes)/skillgame/colorswitch`)
     } else {
       setMatchmakingTimer(0);
-      router.push("/(routes)/skillgame")
+      game_type === 'tournament' ? router.push(`/(routes)/leaderboard/tournament_detail?id=${tournament_id}`) : router.push("/(routes)/skillgame")
     }
   };
 

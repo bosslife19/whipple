@@ -752,7 +752,7 @@ export default function DefuseX() {
       router.push(`/(routes)/skillgame/defusex`)
     } else {
       setMatchTimer(0);
-      router.push("/(routes)/skillgame")
+      game_type === 'tournament' ? router.push(`/(routes)/leaderboard/tournament_detail?id=${tournament_id}`) : router.push("/(routes)/skillgame")
     }
   }
 

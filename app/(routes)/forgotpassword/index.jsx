@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const API_URL = process.env.EXPO_PUBLIC_BASE_URL
+  // const API_URL = 'https://aphidious-lizzie-crashingly.ngrok-free.dev';
 
   const submit = async () => {
     await fetch(`${API_URL}/api/forgot-password`, {

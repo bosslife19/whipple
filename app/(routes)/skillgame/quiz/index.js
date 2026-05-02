@@ -187,11 +187,11 @@ export default function QuizScreen() {
   };
 
   const handleCloseSession = async () => {
-    try {
-      await makeRequest("/quiz/close", { session_id: session });
-    } catch (err) {
-      console.error("Error closing session:", err);
-    }
+    // try {
+    //   await makeRequest("/quiz/close", { session_id: session });
+    // } catch (err) {
+    //   console.error("Error closing session:", err);
+    // }
     resetMatchmaking(false);
   };
 
@@ -431,7 +431,7 @@ export default function QuizScreen() {
       router.push(`/(routes)/skillgame/quiz`)
     } else {
       setMatchmakingTimer(0);
-      router.push("/(routes)/skillquiz")
+      game_type === 'tournament' ? router.push(`/(routes)/leaderboard/tournament_detail?id=${tournament_id}`) : router.push("/(routes)/skillquiz")
     }
   };
 

@@ -488,7 +488,7 @@ export default function MathClash() {
       router.push(`/(routes)/skillgame/mathclash`)
     } else {
       setMatchmakingTimer(0);
-      router.push("/(routes)/skillgame")
+      game_type === 'tournament' ? router.push(`/(routes)/leaderboard/tournament_detail?id=${tournament_id}`) : router.push("/(routes)/skillgame")
     }
   };
 
