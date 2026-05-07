@@ -32,15 +32,12 @@ const Questions = ({ questions = [], userBalance = 0, onPointsUpdate, onQuizEnd,
   };
 
   const handleAnswerSelect = (answer) => {
-    if (selectedAnswer) return; // Prevent double select
+    if (selectedAnswer || showCorrect) return; // Prevent selection if already answered or time expired
     setSelectedAnswer(answer);
     clearInterval(timerRef.current);
 
     const currentQuestion = questions[currentIndex];
-    // if (answer === currentQuestion.correct) {
-      // onPointsUpdate(prev => prev + paramters?.award_point );
-      onPointsUpdate(currentQuestion.id, answer );
-    // }
+    onPointsUpdate(currentQuestion.id, answer);
 
     setShowCorrect(true);
     setTimeout(() => {
@@ -72,9 +69,9 @@ const Questions = ({ questions = [], userBalance = 0, onPointsUpdate, onQuizEnd,
     if (userBalance >= paramters?.boost_time_amount) {
       setUserBalance((prev) => prev - paramters?.boost_time_amount);
       setBoostUsed(true);
-      startTimer(timeLeft + paramters?.boost_time); 
+      startTimer(timeLeft + paramters?.boost_time);
       onBoost();
-    }else{
+    } else {
       setFund(true);
       setTimeout(() => setFund(false), 3000);
       return;
@@ -89,13 +86,13 @@ const Questions = ({ questions = [], userBalance = 0, onPointsUpdate, onQuizEnd,
       <ScrollView style={{ padding: 20 }}>
         <View
           style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 10
-        }}
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 10,
+          }}
         >
-          <Text style={{ fontSize: 16, fontWeight: "800" }}>Question {currentIndex + 1} / {paramters?.no_question}</Text>
+          <Text style={{ fontSize: 16, fontWeight: "800", backgroundColor: "white", padding: 5, borderRadius: 5 }}>Question {currentIndex + 1} / {paramters?.no_question}</Text>
           <TouchableOpacity
             onPress={handleBoostTime}
             style={{
@@ -110,8 +107,8 @@ const Questions = ({ questions = [], userBalance = 0, onPointsUpdate, onQuizEnd,
             </Text>
           </TouchableOpacity>
         </View>
-        <Text style={{ fontSize: 16, marginBottom: 20 }}>{currentQuestion.question}</Text>
-        <View style={{marginBottom: 50}}>
+        <Text style={{ fontSize: 16, marginBottom: 20, backgroundColor: "white", padding: 5, borderRadius: 5 }}>{currentQuestion.question}</Text>
+        <View style={{ marginBottom: 50 }}>
           {currentQuestion.options.map((option, idx) => {
             const isCorrect = option === currentQuestion.correct;
             const isSelected = selectedAnswer === option;
@@ -127,6 +124,7 @@ const Questions = ({ questions = [], userBalance = 0, onPointsUpdate, onQuizEnd,
               <TouchableOpacity
                 key={idx}
                 onPress={() => handleAnswerSelect(option)}
+                disabled={selectedAnswer !== null || showCorrect}
                 style={{
                   backgroundColor,
                   padding: 10,
@@ -157,7 +155,7 @@ const Questions = ({ questions = [], userBalance = 0, onPointsUpdate, onQuizEnd,
         <Text style={{ fontSize: 16, fontWeight: "600" }}>
           ⏳ Time Left: {timeLeft}s
         </Text>
-        
+
       </View>
     </View>
   );

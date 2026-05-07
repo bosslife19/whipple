@@ -23,6 +23,11 @@ export default function TournamentDetailScreen() {
   const [detail, setDetail] = useState(null);
   const [err, setErr] = useState(null);
   const [countdownRemaining, setCountdownRemaining] = useState(null);
+  const [expandedLobbies, setExpandedLobbies] = useState({});
+
+  const toggleLobby = (lobbyId) => {
+    setExpandedLobbies(prev => ({ ...prev, [lobbyId]: !prev[lobbyId] }));
+  };
 
   const load = async () => {
     if (!id) return;
@@ -46,7 +51,7 @@ export default function TournamentDetailScreen() {
   );
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || detail?.tournament?.status === 'completed') return;
     const t = setInterval(async () => {
       try {
         const d = await axiosClient.get(`/tournament/${id}`);
@@ -56,7 +61,7 @@ export default function TournamentDetailScreen() {
       }
     }, 3000);
     return () => clearInterval(t);
-  }, [id]);
+  }, [id, detail?.tournament?.status]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -116,7 +121,7 @@ export default function TournamentDetailScreen() {
           headerTintColor: 'white',
           headerTitleStyle: { fontWeight: '800', fontSize: 18, color: 'white' },
           headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} style={{ paddingLeft: 12 }}>
+            <TouchableOpacity onPress={() => router.replace('/(routes)/leaderboard/tournament')} style={{ paddingLeft: 12 }}>
               <AntDesign name="arrow-left" size={24} color="white" />
             </TouchableOpacity>
           ),
@@ -154,7 +159,7 @@ export default function TournamentDetailScreen() {
                 </View>
 
                 {/* Personal Status & Action Card */}
-                {me && (
+                {me && t.status === 'active' && (
                   <View style={[styles.actionCard, me.eliminated ? styles.cardEliminated : styles.cardActive]}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                       <View style={[styles.iconCircle, { backgroundColor: me.eliminated ? '#FEE2E2' : '#DBEAFE' }]}>
@@ -170,7 +175,7 @@ export default function TournamentDetailScreen() {
                       </View>
                     </View>
 
-                    {!me.eliminated && activeMatch && activeLobby?.status === 'countdown' && countdownRemaining > 0 && (
+                    {!me.eliminated && t.status === 'active' && activeMatch && activeLobby?.status === 'countdown' && countdownRemaining > 0 && (
                       <TouchableOpacity onPress={handleJoin} style={styles.joinBtn}>
                         <FontAwesome5 name="play" size={14} color="white" style={{ marginRight: 8 }} />
                         <Text style={styles.joinBtnText}>JOIN {activeMatch.game_name.toUpperCase()} ({countdownRemaining}s)</Text>
@@ -181,8 +186,8 @@ export default function TournamentDetailScreen() {
                       <View style={styles.waitingContainer}>
                         <ActivityIndicator size="small" color="#2563EB" />
                         <Text style={styles.waitingText}>
-                          {activeLobby?.status === 'live' || countdownRemaining === 0 
-                            ? 'Game is running wait for the next game...' 
+                          {activeLobby?.status === 'live' || countdownRemaining === 0
+                            ? 'Game is running wait for the next game...'
                             : 'Waiting for admin to start the next stage...'}
                         </Text>
                       </View>
@@ -204,14 +209,14 @@ export default function TournamentDetailScreen() {
                         <View style={styles.playerInfo}>
                           <Text style={[styles.playerRank, { color: rankColor, width: 32 }]}>
                             {p.current_rank}
-                            {(isTop1 || isTop2 || isTop3) && <Text style={{fontSize: 12}}> 🏆</Text>}
+                            {(isTop1 || isTop2 || isTop3) && <Text style={{ fontSize: 12 }}> 🏆</Text>}
                           </Text>
                           <View>
                             <Text style={[styles.playerName, p.eliminated && styles.textEliminated, (isTop1 || isTop2 || isTop3) && { color: rankColor }]}>{p.name}</Text>
                             {p.eliminated && (
-                               <View style={styles.eliminatedTagContainer}>
-                                 <Text style={styles.eliminatedTagText}>ELIMINATED</Text>
-                               </View>
+                              <View style={styles.eliminatedTagContainer}>
+                                <Text style={styles.eliminatedTagText}>ELIMINATED</Text>
+                              </View>
                             )}
                           </View>
                         </View>
@@ -239,12 +244,67 @@ export default function TournamentDetailScreen() {
                             </View>
                             <View style={{ alignItems: 'flex-end' }}>
                               <Text style={styles.playerScore}>{s.score} pts</Text>
-                              {isPlayerEliminated && <Text style={styles.eliminatedTag}>ELIMINATED</Text>}
+                              {isPlayerEliminated && (
+                                <View style={styles.eliminatedTagContainer}>
+                                  <Text style={styles.eliminatedTagText}>ELIMINATED</Text>
+                                </View>
+                              )}
                             </View>
                           </View>
                         );
                       })}
                     </View>
+                  </>
+                )}
+
+                {/* Games Played Accordion */}
+                {t.lobbies && t.lobbies.length > 0 && (
+                  <>
+                    <Text style={[styles.sectionHeader, { marginTop: 12 }]}>Games Played</Text>
+                    {[...t.lobbies].sort((a, b) => b.id - a.id).map((lobby) => {
+                      const isExpanded = expandedLobbies[lobby.id];
+                      const gameName = lobby.game_key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                      const lobbyTitle = lobby.label ? `${lobby.label} (${gameName})` : gameName;
+
+                      return (
+                        <View key={lobby.id} style={styles.accordionContainer}>
+                          <TouchableOpacity
+                            style={styles.accordionHeader}
+                            onPress={() => toggleLobby(lobby.id)}
+                            activeOpacity={0.7}
+                          >
+                            <View>
+                              <Text style={styles.accordionTitle}>{lobbyTitle}</Text>
+                              <Text style={styles.accordionSub}>Total Players: {lobby.leaderboard?.length || 0}</Text>
+                            </View>
+                            <MaterialIcons name={isExpanded ? "keyboard-arrow-up" : "keyboard-arrow-down"} size={24} color="#64748B" />
+                          </TouchableOpacity>
+
+                          {isExpanded && (
+                            <View style={styles.accordionBody}>
+                              {lobby.leaderboard && lobby.leaderboard.length > 0 ? (
+                                lobby.leaderboard.map((s) => {
+                                  const isPlayerEliminated = t.players.find(p => p.user_id === s.user_id)?.eliminated;
+                                  return (
+                                    <View key={s.user_id} style={styles.accordionRow}>
+                                      <View style={styles.playerInfo}>
+                                        <Text style={styles.playerRank}>{s.rank}</Text>
+                                        <Text style={[styles.playerName, isPlayerEliminated && styles.textEliminated]}>{s.name}</Text>
+                                      </View>
+                                      <View style={{ alignItems: 'flex-end' }}>
+                                        <Text style={styles.playerScore}>{s.score} pts</Text>
+                                      </View>
+                                    </View>
+                                  );
+                                })
+                              ) : (
+                                <Text style={styles.noDataText}>No scores recorded yet.</Text>
+                              )}
+                            </View>
+                          )}
+                        </View>
+                      );
+                    })}
                   </>
                 )}
               </>
@@ -337,7 +397,7 @@ const styles = StyleSheet.create({
   joinBtnText: {
     color: '#fff',
     fontWeight: '900',
-    fontSize: 16,
+    fontSize: 12,
   },
   waitingContainer: {
     flexDirection: 'row',
@@ -426,5 +486,51 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
+  },
+  accordionContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    overflow: 'hidden',
+  },
+  accordionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#fff',
+  },
+  accordionTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  accordionSub: {
+    fontSize: 13,
+    color: '#64748B',
+    marginTop: 4,
+    fontWeight: '600',
+  },
+  accordionBody: {
+    borderTopWidth: 1,
+    borderTopColor: '#F1F5F9',
+    backgroundColor: '#FAFAFA',
+    padding: 8,
+  },
+  accordionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+  },
+  noDataText: {
+    padding: 16,
+    textAlign: 'center',
+    color: '#94A3B8',
+    fontStyle: 'italic',
   },
 });

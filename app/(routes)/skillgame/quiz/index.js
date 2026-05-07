@@ -5,29 +5,33 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
-  Animated
+  Animated,
+  ActivityIndicator,
+  Alert
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { ArrowLeft, Trophy, Medal } from "lucide-react-native";
 import { router, useLocalSearchParams } from 'expo-router';
+import { Ionicons, Entypo, MaterialIcons } from "@expo/vector-icons";
 import axiosClient from "../../../../axiosClient";
 import Toast from '../../../../components/Toast';
 import { AuthContext } from '../../../../context/AuthContext'
 import { useRequest } from "../../../../hooks/useRequest";
 import { useIsFocused } from "@react-navigation/native";
+import QuizSection from "../../../../components/quiz/Questions";
+import { formatCurrency } from '../../../../utlils';
 
-export default function TapRush() {
+export default function QuizScreen() {
   const { game_type = 'direct', tournament_id } = useLocalSearchParams();
   const BG = '#0A1931';
-  const { userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails } = useContext(AuthContext)
+  const { userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails, userDetails } = useContext(AuthContext)
   const { loading, makeRequest } = useRequest();
+
   const [gameId, setGameId] = useState();
   const [matchPlayerCount, setMatchPlayerCount] = useState(2);
   const [gameState, setGameState] = useState("waiting");
   const [matchmakingTimer, setMatchmakingTimer] = useState(30);
   const [countdownTimer, setCountdownTimer] = useState(5);
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [tapCount, setTapCount] = useState(0);
   const [winnings, setWinnings] = useState(0);
   const [playersReady, setPlayersReady] = useState();
   const [players, setPlayers] = useState([]);
@@ -37,6 +41,13 @@ export default function TapRush() {
   const [toastTitle, setToastTitle] = useState("info");
   const [toastMessage, setToastMessage] = useState("info");
   const isFocused = useIsFocused();
+
+  // Quiz Specific States
+  const [session, setSession] = useState('');
+  const [questions, setQuestions] = useState([]);
+  const [points, setPoints] = useState(0);
+  const [admpar, setAdmpar] = useState('');
+  const [userBalance, setUserBalance] = useState(userBalanceGen);
 
   const glowAnim = useRef(new Animated.Value(0)).current;
   const timeoutsRef = useRef([]);
@@ -57,7 +68,6 @@ export default function TapRush() {
   const clearAllTimers = () => {
     timeoutsRef.current.forEach(clearTimeout);
     intervalsRef.current.forEach(clearInterval);
-
     timeoutsRef.current = [];
     intervalsRef.current = [];
   };
@@ -82,17 +92,16 @@ export default function TapRush() {
         }),
       ])
     ).start();
-  }, [glowAnim]);
+  }, [glowAnim, isFocused]);
 
-  // Interpolate shadow color and intensity
   const shadowColor = glowAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['rgba(0, 180, 255, 0.3)', 'rgba(0, 255, 255, 1)'], // strong blue glow
+    outputRange: ['rgba(0, 180, 255, 0.3)', 'rgba(0, 255, 255, 1)'],
   });
 
   const shadowRadius = glowAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [10, 35], // increases shadow spread
+    outputRange: [10, 35],
   });
 
   const animatedStyle = {
@@ -106,9 +115,91 @@ export default function TapRush() {
     }),
   };
 
+  // --- Quiz Logic ---
+
+  const fetchAdminParameter = async () => {
+    try {
+      const res = await axiosClient.get("/admin/parameter");
+      setAdmpar(res.data.data ?? "");
+    } catch (error) {
+      console.error('Error fetching admin parameter:', error);
+    }
+  };
+
+  const fetchQuestion = async () => {
+    try {
+      const res = await axiosClient.get("/quiz/start/tournament");
+      setQuestions(res.data.data?.questions ?? []);
+      setSession(res.data.data?.session_id ?? '')
+    } catch (error) {
+      console.error('Error fetching quiz:', error);
+      handleNetworkError("Daily Limit", "You’ve reached daily limit. Try again tomorrow!")
+    }
+  };
+
+  const handlePoints = async (question, selectedAnswer) => {
+    try {
+      const { error, response } = await makeRequest("/quiz/answer", {
+        session_id: session,
+        question_id: question,
+        selected: selectedAnswer
+      });
+      if (error) {
+        handleNetworkError("Error", "An error occur submitting answer. Please try again!");
+        return;
+      }
+      const newScore = response?.data?.current_score;
+      setPoints(newScore);
+      // Update match score for global leaderboard
+      getMatchingUpdate("ingame", newScore);
+    } catch (err) {
+      handleNetworkError("Error", "An error occur. Please try again!");
+    }
+  };
+
+  const handleQuizEnd = async () => {
+    try {
+      const { error, response } = await makeRequest("/quiz/complete", {
+        session_id: session,
+      });
+      if (error) {
+        handleNetworkError("Error", "An error occur completing quiz. Please try again!");
+        return;
+      }
+      // Trigger match completion
+      endGame();
+    } catch (err) {
+      handleNetworkError("Error", "An error occur. Please try again!");
+    }
+  };
+
+  const handleBoost = async () => {
+    try {
+      const { error, response } = await makeRequest("/quiz/boost", {
+        session_id: session,
+      });
+      if (error) return;
+      setUserBalanceGen(response?.data)
+      setUserDetails(prev => ({ ...prev, wallet_balance: response?.data }));
+    } catch (err) {
+      console.error("Error boosting:", err);
+    }
+  };
+
+  const handleCloseSession = async () => {
+    try {
+      await makeRequest("/quiz/close", { session_id: session });
+    } catch (err) {
+      console.error("Error closing session:", err);
+    }
+    resetMatchmaking(false);
+  };
+
+  // --- Matchmaking Logic (based on handspeed) ---
+
   const getMatchingJoining = async () => {
     try {
-      const res = await axiosClient.get(`/skillgame/matches/join/tap_rush/${game_type}`);
+      const res = await axiosClient.get(`/skillgame/matches/join/quiz/${game_type}`);
       setUserBalanceGen(res?.data.user_balance)
       setUserDetails(prev => ({ ...prev, wallet_balance: res?.data.user_balance }));
       setGameId(res.data.match.id)
@@ -120,8 +211,6 @@ export default function TapRush() {
       }
     } catch (error) {
       handleNetworkError("Insufficient balance", "Your balance is too low for this game.")
-    } finally {
-      // setLoader("");
     }
   };
 
@@ -140,74 +229,62 @@ export default function TapRush() {
       const res = await axiosClient.get(`/skillgame/matches/start/${gameId}`);
       if (res.data.status == "error") {
         handleNetworkError('Match start error', res.data.message)
+        return;
       }
       setPlayers((prev) => {
         const existingIds = new Set(prev.map((p) => p.id));
         const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
-
         return [
           ...prev,
           ...newPlayers?.map((player) => ({
             id: player.id,
             name: player.user_id,
-            taps: player.score,
+            score: player.score,
           })),
         ];
       });
       setPlayersReady(res.data.playerCount);
-
     } catch (error) {
-      handleNetworkError
-
-    } finally {
-
+      console.error(error);
     }
   };
 
   const getMatchingPlayer = async () => {
     try {
       const res = await axiosClient.get(`/skillgame/matches/status/${gameId}`);
-      // console.log(res.data.players)
       if (res?.data?.match?.status == "cancelled") {
         handleNetworkError("No active players", "No users available for this game. Please try again later.")
+        return;
       }
       setPlayers((prev) => {
         const existingIds = new Set(prev.map((p) => p.id));
         const newPlayers = res?.data?.players?.filter((p) => !existingIds.has(p.id));
-
         return [
           ...prev,
           ...newPlayers?.map((player) => ({
             id: player.id,
             name: player.user_id,
-            taps: player.score,
+            score: player.score,
           })),
         ];
       });
       setPlayersReady(res.data.playerCount);
 
-      // Start countdown
-      // if (playersReady >= 4 || newTimer === 0) {
       if (res.data.match.status === "started") {
-        getMatchingUpdate()
+        getMatchingUpdate("game", points);
         startGame();
         setIsMounted(false)
-        // setCountdownTimer(2);
       }
-
     } catch (error) {
-      handleNetworkError
-
-    } finally {
-
+      console.error(error);
     }
   };
 
-  const getMatchingUpdate = async (ingame = 'game') => {
+  const getMatchingUpdate = async (ingame = 'game', currentScore = points) => {
     try {
       const { error, response } = await makeRequest("/skillgame/matches/updateScore", {
         matchId: gameId,
-        score: Number(tapCount || 0),
+        score: Number(currentScore || 0),
         ingame: ingame,
       });
 
@@ -216,30 +293,27 @@ export default function TapRush() {
           response?.leaderboard.map((player) => ({
             id: player.id,
             name: player.name,
-            taps: player.score,
+            score: player.score,
           }))
         );
       }
-
-    } catch (error) { handleNetworkError } finally { }
+    } catch (error) { console.error(error) }
   };
 
   const getMatchingComplete = async () => {
     try {
-      const { error, response } = await makeRequest("/skillgame/matches/complete", {
+      await makeRequest("/skillgame/matches/complete", {
         matchId: gameId,
-        score: tapCount,
-        time: countdownTimer
+        score: points,
+        time: 0
       });
       getMatchingEndUpdate();
-
-    } catch (error) { handleNetworkError } finally { }
+    } catch (error) { console.error(error) }
   };
 
   const getMatchingEndUpdate = async () => {
     try {
       const res = await axiosClient.get(`/skillgame/matches/checkStatus/${gameId}`);
-
       if (res.data.status === "finished") {
         setWinnings(res?.data.user_winning)
         setUserBalanceGen(res?.data.user_balance)
@@ -248,39 +322,34 @@ export default function TapRush() {
           res.data.results.map((player) => ({
             id: player.rank,
             name: player.name,
-            taps: player.score,
+            score: player.score,
             win: player.winnings,
           }))
         );
         setIsMounted(false)
         setGameState("finished");
       }
-
     } catch (error) {
-      handleNetworkError
-
-    } finally {
+      console.error(error);
     }
   };
 
   useEffect(() => {
     if (!isFocused) return;
+    fetchAdminParameter();
+    fetchQuestion();
     getMatchingJoining();
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
     if (!isFocused) return;
     let interval;
-
     if (isMounted) {
-      // Run once immediately
       if (gameState === "countdown" && countdownTimer === 0) {
         getMatchingPlayer()
       } else {
         getMatchingEndUpdate();
       }
-
-      // Start polling
       interval = safeSetInterval(() => {
         if (isMounted) {
           if (gameState === "countdown" && countdownTimer === 0) {
@@ -291,15 +360,11 @@ export default function TapRush() {
         }
       }, 2000);
     }
-
-    // Cleanup when unmounting or when isMounted becomes false
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isMounted]);
+  }, [isMounted, isFocused, gameState, countdownTimer]);
 
-
-  // Matchmaking timer
   useEffect(() => {
     if (!isFocused) return;
     if (gameState === "waiting" && matchmakingTimer > 0) {
@@ -312,12 +377,10 @@ export default function TapRush() {
       }, 1000);
       return () => clearTimeout(timer);
     } else if (matchmakingTimer === 0 && gameState === "waiting") {
-      // Force start the game
       setGameState("countdown");
     }
-  }, [gameState, matchmakingTimer, playersReady]);
+  }, [gameState, matchmakingTimer, playersReady, isFocused]);
 
-  // Countdown timer
   useEffect(() => {
     if (!isFocused) return;
     if (gameState === "countdown" && countdownTimer > 0) {
@@ -333,67 +396,29 @@ export default function TapRush() {
       getMatchingStart();
       setIsMounted(true)
     }
-  }, [gameState, countdownTimer]);
+  }, [gameState, countdownTimer, isFocused]);
 
-  // Simulate other players tapping
+  // Live ranking polling during the game
   useEffect(() => {
-    if (!isFocused) return;
-    if (gameState === "playing") {
-      getMatchingUpdate()
-    }
-  }, [gameState, tapCount]);
+    if (!isFocused || gameState !== "playing") return;
 
-  // Game timer
-  useEffect(() => {
-    if (!isFocused) return;
-    if (gameState === "playing" && timeLeft > 0) {
-      const timer = safeSetTimeout(() => {
-        setTimeLeft(timeLeft - 1)
-        getMatchingUpdate("ingame")
-      }, 1000);
-      return () => clearTimeout(timer);
-    } else if (timeLeft === 0 && gameState === "playing") {
-      setGameState("completed");
-      endGame();
-    }
-  }, [gameState, timeLeft]);
+    const interval = safeSetInterval(() => {
+      getMatchingUpdate("ingame");
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [gameState, isFocused, points]);
 
   const startGame = () => {
     setGameState("playing");
-    setTapCount(0);
-    setTimeLeft(30);
-    // setPlayers((prev) => prev.map((p) => ({ ...p, taps: 0 })));
+    setPoints(0);
   };
-
-  const handleTap = useCallback(() => {
-    if (gameState === "playing") {
-      setTapCount((prev) => prev + 1);
-      // setPlayers((prev) =>
-      //   prev.map((p) =>
-      //     p.id === 1 ? { ...p, taps: p.taps + 1 } : p
-      //   )
-      // );
-    }
-  }, [gameState]);
 
   const endGame = () => {
-    setIsMounted(true)
+    setGameState("completed");
+    setIsMounted(true);
     getMatchingComplete();
   };
-
-  const renderLeaderboardItem = ({ item, index }) => (
-    <View
-      style={[
-        styles.leaderItem,
-        item.id === 1 ? styles.highlight : styles.normalItem,
-      ]}
-    >
-      <Text style={styles.rank}>#{index + 1}</Text>
-      <Text style={styles.name}>{item.name}</Text>
-      <Text style={styles.taps}>{item.taps}</Text>
-    </View>
-  );
-
 
   const resetMatchmaking = (bckclc) => {
     setGameState("waiting");
@@ -403,22 +428,35 @@ export default function TapRush() {
     setIsMounted(false);
     if (bckclc) {
       setMatchmakingTimer(30);
-      router.push(`/(routes)/skillgame/handspeed`)
+      router.push(`/(routes)/skillgame/quiz`)
     } else {
       setMatchmakingTimer(0);
-      router.push("/(routes)/skillgame")
+      router.push("/(routes)/skillquiz")
     }
   };
+
+  const renderLeaderboardItem = ({ item, index }) => (
+    <View
+      style={[
+        styles.leaderItem,
+        item.name === "You" ? styles.highlight : styles.normalItem,
+      ]}
+    >
+      <Text style={styles.rank}>#{index + 1}</Text>
+      <Text style={styles.name}>{item.name}</Text>
+      <Text style={styles.taps}>{item.score}</Text>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => resetMatchmaking(false)} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => handleCloseSession()} style={styles.backBtn}>
           <ArrowLeft size={20} color="#fff" />
           <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Tap Rush</Text>
+        <Text style={styles.title}>Skill Quiz</Text>
         <View style={{ width: 60 }} />
       </View>
 
@@ -434,9 +472,8 @@ export default function TapRush() {
             <Text style={styles.subText}>Finding players...</Text>
           </Animated.View>
           <View style={{ marginTop: 10, flexDirection: "column", justifyContent: "flex-start" }}>
-            <Text style={styles.smallText}> • Tap as fast as possible for 30 seconds!</Text>
-            <Text style={styles.smallText}> • Highest tap count wins</Text>
-            <Text style={styles.smallText}> • In case of tie, fastest last tap wins</Text>
+            <Text style={styles.smallText}> • Answer questions correctly as fast as you can!</Text>
+            <Text style={styles.smallText}> • Highest points wins the match</Text>
           </View>
 
           <View style={{ marginTop: 20 }}>
@@ -444,18 +481,7 @@ export default function TapRush() {
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 5, width: '100%', flexWrap: 'wrap' }}>
               {players.map((p, ind) => (
                 <View key={p.id} style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginTop: 5, borderWidth: 1, backgroundColor: '#111', borderRadius: 20, padding: 10, width: '48%' }}>
-                  <Text style={{
-                    backgroundColor: '#1A4051',
-                    color: '#00B3D2',
-                    padding: 10,
-                    marginRight: 5,
-                    borderRadius: 50, // use number instead of "50%"
-                    width: 40,
-                    height: 40,
-                    textAlign: 'center',
-                    textAlignVertical: 'center', // centers text vertically on Android
-                    fontWeight: 'bold'
-                  }}>{ind + 1}</Text>
+                  <Text style={styles.playerAvatarInd}>{ind + 1}</Text>
                   <Text style={styles.playerText}>{p.name}</Text>
                 </View>
               ))}
@@ -477,33 +503,46 @@ export default function TapRush() {
       {/* Playing */}
       {gameState === "playing" && (
         <View style={{ flex: 1 }}>
-          <Text style={styles.timeLeft}>{timeLeft}s</Text>
-          <View style={styles.tapBox}>
-            <Text style={styles.tapCount}>{tapCount}</Text>
-            <TouchableOpacity onPress={handleTap}>
-              <LinearGradient
-                colors={["#4c6ef5", "#15aabf"]}
-                style={styles.tapButton}
-              >
-                <Text style={styles.tapText}>TAP!</Text>
-              </LinearGradient>
-            </TouchableOpacity>
+          <View style={styles.quizHeader}>
+            <Text style={styles.level}>
+              <Ionicons name="school-outline" size={16} color="#4c6ef5" /> {admpar?.level || 'Beginner'}
+            </Text>
+            <Text style={{ fontWeight: '700', color: '#15aabf' }}>NGN {formatCurrency(userBalance)}</Text>
+            <View style={styles.pointsBox}>
+              <Ionicons name="trophy-outline" size={16} color="#ffd43b" />
+              <Text style={styles.points}> {points} pts</Text>
+            </View>
           </View>
-          <Text style={styles.subText}>Live Leaderboard</Text>
-          <FlatList
-            data={[...players].sort((a, b) => b.taps - a.taps)}
-            renderItem={renderLeaderboardItem}
-            keyExtractor={(item) => item.id.toString()}
-          />
+
+          <View style={{ flex: 1 }}>
+            <QuizSection
+              paramters={admpar}
+              questions={questions}
+              userBalance={userBalance}
+              setUserBalance={setUserBalance}
+              onPointsUpdate={handlePoints}
+              onQuizEnd={handleQuizEnd}
+              onBoost={handleBoost}
+            />
+          </View>
+
+          <View style={{ maxHeight: 150, marginTop: 10 }}>
+            <Text style={[styles.subText, { fontSize: 12, marginBottom: 5 }]}>Match Rankings</Text>
+            <FlatList
+              data={[...players].sort((a, b) => b.score - a.score)}
+              renderItem={renderLeaderboardItem}
+              keyExtractor={(item) => item.id.toString()}
+            />
+          </View>
         </View>
       )}
 
-      {/* completed */}
+      {/* Completed */}
       {gameState === 'completed' && (
         <View style={styles.centerBox}>
           <Animated.View style={[styles.card, animatedStyle]}>
             <Text style={styles.bigText}>Completed</Text>
-            <Text style={styles.subText}>Waiting for result!</Text>
+            <Text style={styles.subText}>Waiting for match result!</Text>
           </Animated.View>
         </View>
       )}
@@ -511,18 +550,14 @@ export default function TapRush() {
       {/* Finished */}
       {gameState === "finished" && (
         <View style={{ flex: 1 }}>
-          <Text style={styles.bigText}>Game Over!</Text>
+          <Text style={styles.bigResultTitle}>Quiz Results</Text>
           <FlatList
             data={players}
             renderItem={({ item, index }) => (
               <View
                 style={[
                   styles.resultItem,
-                  index === 0
-                    ? styles.gold
-                    : index === 1
-                      ? styles.silver
-                      : styles.normalItem,
+                  index === 0 ? styles.gold : index === 1 ? styles.silver : styles.normalItem,
                 ]}
               >
                 <View style={styles.resultRow}>
@@ -532,32 +567,33 @@ export default function TapRush() {
                     <Medal color="#adb5bd" size={20} />
                   ) : null}
                   <Text style={styles.resultText}>
-                    {item.name} — {item.taps} taps
+                    {item.name} — {item.score} pts
                   </Text>
                 </View>
+                {item.win > 0 && <Text style={styles.winText}>Won ₦{item.win}</Text>}
               </View>
             )}
             keyExtractor={(item) => item.id.toString()}
           />
 
-          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around", marginTop: 20, marginBottom: 20 }}>
+          <View style={styles.finishActions}>
             {game_type === 'tournament' ? (
               <TouchableOpacity
-                style={[styles.playAgain, { backgroundColor: BG, flex: 1, marginHorizontal: 20 }]}
+                style={[styles.playAgain, { backgroundColor: BG, flex: 1 }]}
                 onPress={() => router.push(`/(routes)/leaderboard/tournament_detail?id=${tournament_id}`)}
               >
-                <Text style={styles.playAgainText}>Go to Tournament Board</Text>
+                <Text style={styles.playAgainText}>Tournament Board</Text>
               </TouchableOpacity>
             ) : (
               <>
                 <TouchableOpacity
-                  style={[styles.playAgain, { backgroundColor: "#FFD04C" }]}
+                  style={[styles.playAgain, { backgroundColor: "#FFD04C", flex: 1, marginRight: 10 }]}
                   onPress={() => resetMatchmaking(false)}
                 >
-                  <Text style={styles.playAgainText}>Back to Lobby</Text>
+                  <Text style={styles.playAgainText}>Lobby</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.playAgain}
+                  style={[styles.playAgain, { flex: 1 }]}
                   onPress={() => resetMatchmaking(true)}
                 >
                   <Text style={styles.playAgainText}>Play Again</Text>
@@ -587,62 +623,30 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 20
+    marginTop: 20,
+    marginBottom: 10
   },
   backBtn: { flexDirection: "row", alignItems: "center" },
   backText: { marginLeft: 6, fontSize: 16, color: "#fff" },
   title: { fontSize: 20, fontWeight: "bold", color: "#00BFFF" },
-  centerBox: { justifyContent: "center", alignItems: "center", backgroundColor: '#121216', shadowOpacity: 0.9, borderRadius: 5 },
+  centerBox: { justifyContent: "center", alignItems: "center", backgroundColor: '#121216', paddingVertical: 20 },
   timerText: { fontSize: 80, color: "#4c6ef5", fontWeight: "bold" },
   bigText: { fontSize: 52, color: "#15aabf", fontWeight: "bold" },
-  subText: { fontSize: 16, color: "#666", marginVertical: 10 },
-  smallText: { fontSize: 14, color: "#888" },
-  playerText: { textAlign: "center", fontSize: 16, color: "#fff" },
-  timeLeft: { textAlign: "center", fontSize: 48, color: "#4c6ef5", marginTop: 10 },
-  tapBox: { justifyContent: "center", alignItems: "center", marginVertical: 20 },
-  tapCount: { fontSize: 80, color: "#15aabf", fontWeight: "bold" },
-  tapButton: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5,
-  },
-  tapText: { fontSize: 32, fontWeight: "bold", color: "#fff" },
-  leaderItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 12,
-    marginVertical: 4,
-    borderRadius: 8,
-  },
-  highlight: { backgroundColor: "#e7f5ff" },
-  normalItem: { backgroundColor: "#f1f3f5" },
-  rank: { fontWeight: "bold", color: "#495057" },
-  name: { color: "#212529", fontWeight: "500" },
-  taps: { fontWeight: "bold", color: "#15aabf" },
-  resultItem: {
-    padding: 14,
-    borderRadius: 10,
-    marginVertical: 15,
-    alignItems: "center",
-    marginHorizontal: 20
-  },
-  gold: { backgroundColor: "#fff3bf" },
-  silver: { backgroundColor: "#dee2e6" },
-  resultRow: { flexDirection: "row", alignItems: "center", gap: 10 },
-  resultText: { fontSize: 16, fontWeight: "600" },
-  playAgain: {
-    backgroundColor: "#4c6ef5",
-    padding: 14,
-    borderRadius: 10,
-  },
-  playAgainText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
+  subText: { fontSize: 16, color: "#888", marginVertical: 5 },
+  smallText: { fontSize: 14, color: "#666" },
+  playerText: { fontSize: 14, color: "#fff", flex: 1 },
+  playerAvatarInd: {
+    backgroundColor: '#1A4051',
+    color: '#00B3D2',
+    padding: 8,
+    marginRight: 8,
+    borderRadius: 20,
+    width: 32,
+    height: 32,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontWeight: 'bold',
+    fontSize: 12
   },
   card: {
     backgroundColor: '#111',
@@ -650,9 +654,67 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 40,
+    marginVertical: 20,
     borderWidth: 2,
-    // borderColor: '#00eaff',
-    width: '100%'
+    width: '100%',
+    borderColor: 'rgba(0, 180, 255, 0.1)'
+  },
+  quizHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+    paddingHorizontal: 5
+  },
+  level: { fontSize: 14, color: "#fff", fontWeight: '600' },
+  pointsBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#1A1A20",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 10,
+  },
+  points: { fontSize: 14, fontWeight: "bold", color: "#fff" },
+  leaderItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 10,
+    marginVertical: 2,
+    borderRadius: 8,
+    backgroundColor: "#1A1A20"
+  },
+  highlight: { backgroundColor: "rgba(76, 110, 245, 0.2)", borderWidth: 1, borderColor: "#4c6ef5" },
+  normalItem: { backgroundColor: "#1A1A20" },
+  rank: { fontWeight: "bold", color: "#888", width: 30 },
+  name: { color: "#fff", fontWeight: "500", flex: 1 },
+  taps: { fontWeight: "bold", color: "#15aabf" },
+  bigResultTitle: { fontSize: 32, color: "#15aabf", fontWeight: "bold", textAlign: 'center', marginVertical: 20 },
+  resultItem: {
+    padding: 16,
+    borderRadius: 12,
+    marginVertical: 8,
+    alignItems: "center",
+    marginHorizontal: 10,
+    backgroundColor: '#1A1A20'
+  },
+  gold: { backgroundColor: "rgba(255, 212, 59, 0.15)", borderWidth: 1, borderColor: "#ffd43b" },
+  silver: { backgroundColor: "rgba(173, 181, 189, 0.15)", borderWidth: 1, borderColor: "#adb5bd" },
+  resultRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  resultText: { fontSize: 18, fontWeight: "bold", color: '#fff' },
+  winText: { color: '#40c057', fontWeight: 'bold', marginTop: 5 },
+  finishActions: { flexDirection: "row", marginTop: 20, paddingHorizontal: 10 },
+  playAgain: {
+    backgroundColor: "#4c6ef5",
+    padding: 15,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  playAgainText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
+

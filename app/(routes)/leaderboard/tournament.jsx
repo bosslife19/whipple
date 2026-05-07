@@ -29,7 +29,7 @@ function Countdown({ targetDate }) {
     const calculate = () => {
       const diff = new Date(targetDate) - new Date();
       if (diff <= 0) return 'Live now!';
-      
+
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
       const minutes = Math.floor((diff / 1000 / 60) % 60);
@@ -107,6 +107,12 @@ function TournamentCard({ tournament, isHistory = false }) {
                 </View>
               ))}
               {(t.winners_top_3 || []).length === 0 && <Text style={{ color: '#94A3B8', fontSize: 12 }}>Results pending final review.</Text>}
+              <TouchableOpacity
+                onPress={() => router.push(`/(routes)/leaderboard/tournament_detail?id=${t.id}`)}
+                style={{ backgroundColor: '#F1F5F9', paddingVertical: 10, borderRadius: 12, marginTop: 12, alignItems: 'center', borderWidth: 1, borderColor: '#E2E8F0' }}
+              >
+                <Text style={{ color: BG, fontWeight: '800', fontSize: 13 }}>View Final Standings</Text>
+              </TouchableOpacity>
             </View>
           ) : (
             <View>
@@ -117,7 +123,7 @@ function TournamentCard({ tournament, isHistory = false }) {
                   <Text style={{ color: BG, fontWeight: '800' }}>{p.score} wins</Text>
                 </View>
               ))}
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={() => router.push(`/(routes)/leaderboard/tournament_detail?id=${t.id}`)}
                 style={{ backgroundColor: BG, paddingVertical: 12, borderRadius: 12, marginTop: 12, alignItems: 'center' }}
               >
@@ -173,7 +179,7 @@ export default function TournamentScreen() {
           headerTintColor: 'white',
           headerTitleStyle: { fontWeight: '800', fontSize: 18, color: 'white' },
           headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} style={{ paddingLeft: 12 }}>
+            <TouchableOpacity onPress={() => router.replace('/(routes)/leaderboard')} style={{ paddingLeft: 12 }}>
               <AntDesign name="arrow-left" size={24} color="white" />
             </TouchableOpacity>
           ),

@@ -80,6 +80,7 @@ export default function DefuseX() {
   const { userBalance: userBalanceGen, setUserBalance: setUserBalanceGen, setUserPoint: setUserPointGen, setUserDetails } = useContext(AuthContext)
   const { loading, makeRequest } = useRequest();
   const [gameId, setGameId] = useState();
+  const [matchPlayerCount, setMatchPlayerCount] = useState(2);
 
   const isFocused = useIsFocused();
 
@@ -113,6 +114,7 @@ export default function DefuseX() {
       setUserBalanceGen(res?.data.user_balance)
       setUserDetails(prev => ({ ...prev, wallet_balance: res?.data.user_balance }));
       setGameId(res.data.match.id)
+      setMatchPlayerCount(res.data.match.max_players)
       setMatchTimer(res.data.countdown)
       if (res.data.countdown == 0) {
         setPhase("countdown");
@@ -867,7 +869,7 @@ export default function DefuseX() {
               </Animated.View>
 
               <View style={[styles.card, { marginTop: 40 }]}>
-                <Text style={styles.sectionTitle}>Players Ready ({playersReady}/4)</Text>
+                <Text style={styles.sectionTitle}>Players Ready ({playersReady}/{matchPlayerCount})</Text>
                 <View style={styles.playersWrap}>
                   {players.map((p, i) => (
                     <View key={p.id} style={styles.playerMini}>
