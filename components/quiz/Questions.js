@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 
-const Questions = ({ questions = [], userBalance = 0, onPointsUpdate, onQuizEnd, onBoost, setUserBalance, paramters = {} }) => {
+const Questions = ({ questions = [], userBalance = 0, onPointsUpdate, onQuizEnd, onBoost, setUserBalance, paramters = {}, showBoost = true }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(paramters?.allow_time);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -93,19 +93,21 @@ const Questions = ({ questions = [], userBalance = 0, onPointsUpdate, onQuizEnd,
           }}
         >
           <Text style={{ fontSize: 16, fontWeight: "800", backgroundColor: "white", padding: 5, borderRadius: 5 }}>Question {currentIndex + 1} / {paramters?.no_question}</Text>
-          <TouchableOpacity
-            onPress={handleBoostTime}
-            style={{
-              backgroundColor: boostUsed ? "#ccc" : "#007BFF",
-              paddingVertical: 10,
-              paddingHorizontal: 16,
-              borderRadius: 8,
-            }}
-          >
-            <Text style={{ color: "#fff", fontWeight: "600", fontSize: 12 }}>
-              Boost Time (-₦{paramters?.boost_time_amount})
-            </Text>
-          </TouchableOpacity>
+          {showBoost && (
+            <TouchableOpacity
+              onPress={handleBoostTime}
+              style={{
+                backgroundColor: boostUsed ? "#ccc" : "#007BFF",
+                paddingVertical: 10,
+                paddingHorizontal: 16,
+                borderRadius: 8,
+              }}
+            >
+              <Text style={{ color: "#fff", fontWeight: "600", fontSize: 12 }}>
+                Boost Time (-₦{paramters?.boost_time_amount})
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
         <Text style={{ fontSize: 16, marginBottom: 20, backgroundColor: "white", padding: 5, borderRadius: 5 }}>{currentQuestion.question}</Text>
         <View style={{ marginBottom: 50 }}>

@@ -52,15 +52,15 @@ export default function TournamentDetailScreen() {
 
   useEffect(() => {
     if (!id || detail?.tournament?.status === 'completed') return;
-    const t = setInterval(async () => {
-      try {
-        const d = await axiosClient.get(`/tournament/${id}`);
-        setDetail(d.data);
-      } catch {
-        /* ignore poll errors */
-      }
-    }, 3000);
-    return () => clearInterval(t);
+    // const t = setInterval(async () => {
+    //   try {
+    //     const d = await axiosClient.get(`/tournament/${id}`);
+    //     setDetail(d.data);
+    //   } catch {
+    //     /* ignore poll errors */
+    //   }
+    // }, 3000);
+    // return () => clearInterval(t);
   }, [id, detail?.tournament?.status]);
 
   const onRefresh = () => {

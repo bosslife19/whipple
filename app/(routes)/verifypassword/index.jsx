@@ -13,6 +13,8 @@ export default function VerifyCode() {
   const { email } = useLocalSearchParams();
   const [code, setCode] = useState('');
   const API_URL = process.env.EXPO_PUBLIC_BASE_URL;
+  // const API_URL = 'https://aphidious-lizzie-crashingly.ngrok-free.dev';
+
 
   const verify = async () => {
     if (code.length !== 4) {

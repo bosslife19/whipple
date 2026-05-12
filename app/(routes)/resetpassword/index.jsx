@@ -13,6 +13,8 @@ export default function ResetPassword() {
   const { email, code } = useLocalSearchParams();
   const [password, setPassword] = useState('');
   const API_URL = process.env.EXPO_PUBLIC_BASE_URL;
+  // const API_URL = 'https://aphidious-lizzie-crashingly.ngrok-free.dev';
+
 
   const reset = async () => {
     if (!password || password.length < 8) {

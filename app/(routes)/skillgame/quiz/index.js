@@ -166,8 +166,10 @@ export default function QuizScreen() {
         handleNetworkError("Error", "An error occur completing quiz. Please try again!");
         return;
       }
-      // Trigger match completion
+      // Trigger match completion after a 60-second delay
+      
       endGame();
+      
     } catch (err) {
       handleNetworkError("Error", "An error occur. Please try again!");
     }
@@ -187,11 +189,11 @@ export default function QuizScreen() {
   };
 
   const handleCloseSession = async () => {
-    try {
-      await makeRequest("/quiz/close", { session_id: session });
-    } catch (err) {
-      console.error("Error closing session:", err);
-    }
+    // try {
+    //   await makeRequest("/quiz/close", { session_id: session });
+    // } catch (err) {
+    //   console.error("Error closing session:", err);
+    // }
     resetMatchmaking(false);
   };
 
@@ -417,7 +419,9 @@ export default function QuizScreen() {
   const endGame = () => {
     setGameState("completed");
     setIsMounted(true);
+    safeSetTimeout(() => {
     getMatchingComplete();
+    }, 60000);  
   };
 
   const resetMatchmaking = (bckclc) => {
@@ -431,7 +435,7 @@ export default function QuizScreen() {
       router.push(`/(routes)/skillgame/quiz`)
     } else {
       setMatchmakingTimer(0);
-      router.push("/(routes)/skillquiz")
+      game_type === 'tournament' ? router.push(`/(routes)/leaderboard/tournament_detail?id=${tournament_id}`) : router.push("/(routes)/skillquiz")
     }
   };
 
@@ -523,6 +527,7 @@ export default function QuizScreen() {
               onPointsUpdate={handlePoints}
               onQuizEnd={handleQuizEnd}
               onBoost={handleBoost}
+              showBoost={game_type !== 'tournament'}
             />
           </View>
 

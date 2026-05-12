@@ -332,14 +332,26 @@ export default function LeaderboardScreen() {
                           </View>
                         )}
 
-                        {reqs?.fun_forecast_min_3 && (
+                        {reqs?.forecast_general_min_3 && (
                           <View style={{ width: '47%' }}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-                              <Text style={{ color: '#94A3B8', fontSize: 10 }}>FUN FORECAST</Text>
-                              <Text style={{ color: reqs.fun_forecast_min_3.met ? '#22C55E' : '#94A3B8', fontSize: 10, fontWeight: '700' }}>{reqs.fun_forecast_min_3.count}/3</Text>
+                              <Text style={{ color: '#94A3B8', fontSize: 10 }}>GENERAL FORECAST</Text>
+                              <Text style={{ color: reqs.forecast_general_min_3.met ? '#22C55E' : '#94A3B8', fontSize: 10, fontWeight: '700' }}>{reqs.forecast_general_min_3.count}/3</Text>
                             </View>
                             <View style={{ height: 4, backgroundColor: '#1E293B', borderRadius: 2 }}>
-                              <View style={{ height: '100%', backgroundColor: '#22C55E', borderRadius: 2, width: `${Math.min(100, (reqs.fun_forecast_min_3.count / 3) * 100)}%` }} />
+                              <View style={{ height: '100%', backgroundColor: '#22C55E', borderRadius: 2, width: `${Math.min(100, (reqs.forecast_general_min_3.count / 3) * 100)}%` }} />
+                            </View>
+                          </View>
+                        )}
+
+                        {reqs?.forecast_specific_min_3 && (
+                          <View style={{ width: '47%' }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+                              <Text style={{ color: '#94A3B8', fontSize: 10 }}>SPECIFIC FORECAST</Text>
+                              <Text style={{ color: reqs.forecast_specific_min_3.met ? '#22C55E' : '#94A3B8', fontSize: 10, fontWeight: '700' }}>{reqs.forecast_specific_min_3.count}/3</Text>
+                            </View>
+                            <View style={{ height: 4, backgroundColor: '#1E293B', borderRadius: 2 }}>
+                              <View style={{ height: '100%', backgroundColor: '#22C55E', borderRadius: 2, width: `${Math.min(100, (reqs.forecast_specific_min_3.count / 3) * 100)}%` }} />
                             </View>
                           </View>
                         )}
@@ -349,16 +361,19 @@ export default function LeaderboardScreen() {
                         <View style={{ marginTop: 12, borderTopWidth: 1, borderTopColor: '#1E293B', pt: 8 }}>
                           <Text style={{ color: '#EF4444', fontSize: 11, fontWeight: '700', marginBottom: 4 }}>Missing requirements:</Text>
                           {reqs?.skill_games_min_3_each?.per_game?.filter(sg => sg.played < 3).map(sg => (
-                            <Text key={sg.key} style={{ color: '#94A3B8', fontSize: 10 }}>• Play {3 - sg.played} more {sg.key.replace(/_/g, ' ')} game(s)</Text>
+                            <Text key={sg.key} style={{ color: '#94A3B8', fontSize: 10 }}>• Play at least {3 - sg.played} more {sg.key.replace(/_/g, ' ')} game(s)</Text>
                           ))}
                           {reqs?.quiz_min_3_sessions?.sessions < 3 && (
-                            <Text style={{ color: '#94A3B8', fontSize: 10 }}>• Play {3 - reqs.quiz_min_3_sessions.sessions} more Quiz Sessions</Text>
+                            <Text style={{ color: '#94A3B8', fontSize: 10 }}>• Play at least {3 - reqs.quiz_min_3_sessions.sessions} more Quiz Sessions</Text>
                           )}
-                          {reqs?.fun_forecast_min_3 && !reqs.fun_forecast_min_3.met && (
-                            <Text style={{ color: '#94A3B8', fontSize: 10 }}>• Make {3 - reqs.fun_forecast_min_3.count} more Forecasts</Text>
+                          {reqs?.forecast_general_min_3 && !reqs.forecast_general_min_3.met && (
+                            <Text style={{ color: '#94A3B8', fontSize: 10 }}>• Make at least {3 - reqs.forecast_general_min_3.count} more General Forecast game(s)</Text>
+                          )}
+                          {reqs?.forecast_specific_min_3 && !reqs.forecast_specific_min_3.met && (
+                            <Text style={{ color: '#94A3B8', fontSize: 10 }}>• Make at least {3 - reqs.forecast_specific_min_3.count} more Specific Forecast game(s)</Text>
                           )}
                           {(reqs?.deposits_min_3?.count ?? 0) < 3 && (
-                            <Text style={{ color: '#94A3B8', fontSize: 10 }}>• Make {3 - (reqs?.deposits_min_3?.count ?? 0)} more Deposits</Text>
+                            <Text style={{ color: '#94A3B8', fontSize: 10 }}>• Make at least {3 - (reqs?.deposits_min_3?.count ?? 0)} more Deposits (minimum of {reqs?.deposits_min_3?.min_amount ?? 500} naira)</Text>
                           )}
                         </View>
                       )}

@@ -406,7 +406,7 @@ export default function TapRush() {
       router.push(`/(routes)/skillgame/handspeed`)
     } else {
       setMatchmakingTimer(0);
-      router.push("/(routes)/skillgame")
+      game_type === 'tournament' ? router.push(`/(routes)/leaderboard/tournament_detail?id=${tournament_id}`) : router.push("/(routes)/skillgame")
     }
   };
 
